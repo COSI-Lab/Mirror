@@ -1,0 +1,100 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "type": "object",
+    "properties": {
+        "mirrors": {
+            "description": "List of all mirrors",
+            "type": "array",
+            "items": {
+                "type": "object",
+                "title": "mirror",
+                "description": "Information needed to create scripts for a particular distro",
+                "properties": {
+                    "name": {
+                        "description": "Human name of the repo",
+                        "type": "string"
+                    },
+                    "rsync": {
+                        "description": "Upstream location to rsync from",
+                        "type": "object",
+                        "properties": {
+                            "options": {
+                                "description": "Command line options passed with rsync call",
+                                "type": "string",
+                                "default": "-avzrH --numeric-ids --delete --delete-delay --delay-updates --ignore-errors --exclude \".~tmp~\" --bwlimit=50000"
+                            },
+                            "password": {
+                                "description": "Adds a password file for sync"
+                            },
+                            "user": {
+                                "type": "string"
+                            },
+                            "host": {
+                                "description": "Host address of the upstream mirror",
+                                "type": "string",
+                                "pattern": "^((?!-)[A-Za-z0-9-]{1,63}(?<!-)\\.)+[A-Za-z]{2,6}$"
+                            },
+                            "src": {
+                                "description": "Location on the upstream to clone from",
+                                "type": "string"
+                            },
+                            "dest": {
+                                "description": "Location on disk to save to",
+                                "type": "string"
+                            },
+                            "sync_file": {
+                                "description": "A file that tracks if the mirror is in sync",
+                                "type": "string"
+                            },
+                            "syncs_per_day": {
+                                "description": "How many times a day to sync",
+                                "type": "number",
+                                "minimum": 1,
+                                "maximum": 24
+                            }
+                        },
+                        "required": [
+                            "options",
+                            "host",
+                            "src",
+                            "dest",
+                            "syncs_per_day"
+                        ]
+                    },
+                    "static": {
+                        "description": "Host a repository that never changes",
+                        "type": "object",
+                        "properties": {
+                            "homepage": {
+                                "type": "string",
+                                "description": "Remote location to learn more about a project"
+                            },
+                            "location": {
+                                "type": "string",
+                                "description": "Location on disk to serve files from"
+                            }
+                        }
+                    },
+                    "official": {
+                        "description": "Are we an official mirror for this software",
+                        "type": "boolean"
+                    }
+                },
+                "required": [
+                    "official"
+                ],
+                "oneOf":[
+                    {
+                        "required": ["rsync"]
+                    },
+                    {
+                        "required": ["static"]
+                    }
+                ]
+            }
+        }
+    },
+    "required": [
+        "mirrors"
+    ]
+}

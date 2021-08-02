@@ -1,0 +1,36 @@
+{
+    "$schema": "./mirrors.schema.json",
+    "mirrors": [
+        {
+            "name": "Alpine Linux",
+            "rsync": {
+                "host": "rsync.alpinelinux.org",
+                "src": "alpine",
+                "dest": "/storage/alpine",
+                "options": "-avzrH --exclude \".~tmp~\" --bwlimit=50000",
+                "sync_file": "last-updated",
+                "syncs_per_day": 2
+            },
+            "official": true
+        },
+        {
+            "name": "Blender",
+            "rsync": {
+                "host": "downloads.blender.org",
+                "src": "blender",
+                "dest": "/storage/blender",
+                "options": "-avzrH --exclude \".~tmp~\" --bwlimit=50000",
+                "syncs_per_day": 6
+            },
+            "official": true
+        },
+        {
+            "name": "MS-DOS",
+            "static": {
+                "homepage": "https://github.com/Microsoft/MS-DOS",
+                "location": "/storage/msdos"
+            },
+            "official": false
+        }
+    ]
+}
