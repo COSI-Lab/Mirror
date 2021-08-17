@@ -3,7 +3,7 @@
     "type": "object",
     "properties": {
         "mirrors": {
-            "description": "List of all mirrors",
+            "description": "List of mirrored linux distributions",
             "type": "array",
             "items": {
                 "type": "object",
@@ -15,7 +15,7 @@
                         "type": "string"
                     },
                     "rsync": {
-                        "description": "Upstream location to rsync from",
+                        "description": "Instructions for how to run rsync",
                         "type": "object",
                         "properties": {
                             "options": {
@@ -65,10 +65,6 @@
                         "description": "Host a repository that never changes",
                         "type": "object",
                         "properties": {
-                            "homepage": {
-                                "type": "string",
-                                "description": "Remote location to learn more about a project"
-                            },
                             "location": {
                                 "type": "string",
                                 "description": "Location on disk to serve files from"
@@ -78,10 +74,21 @@
                     "official": {
                         "description": "Are we an official mirror for this software",
                         "type": "boolean"
+                    },
+                    "isDistro": {
+                        "description": "True for 'distribution' False for 'software'",
+                        "type": "boolean"
+                    },
+                    "homepage": {
+                        "description": "URL to the homepage for the mirrored project",
+                        "type": "string"
                     }
                 },
                 "required": [
-                    "official"
+                    "name",
+                    "official",
+                    "isDistro",
+                    "homepage"
                 ],
                 "oneOf":[
                     {
@@ -93,8 +100,5 @@
                 ]
             }
         }
-    },
-    "required": [
-        "mirrors"
-    ]
+    }
 }

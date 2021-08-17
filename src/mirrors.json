@@ -3,6 +3,7 @@
     "mirrors": [
         {
             "name": "Alpine Linux",
+            "isDistro": true,
             "rsync": {
                 "host": "rsync.alpinelinux.org",
                 "src": "alpine",
@@ -11,10 +12,12 @@
                 "sync_file": "last-updated",
                 "syncs_per_day": 2
             },
-            "official": true
+            "official": false,
+            "homepage": "https://www.alpinelinux.org/"
         },
         {
             "name": "Blender",
+            "isDistro": false,
             "rsync": {
                 "host": "downloads.blender.org",
                 "src": "blender",
@@ -22,15 +25,17 @@
                 "options": "-avzrH --exclude \".~tmp~\" --bwlimit=50000",
                 "syncs_per_day": 6
             },
-            "official": true
+            "official": true,
+            "homepage": " https://www.blender.org"
         },
         {
             "name": "MS-DOS",
+            "isDistro": false,
             "static": {
-                "homepage": "https://github.com/Microsoft/MS-DOS",
                 "location": "/storage/msdos"
             },
-            "official": false
+            "official": false,
+            "homepage": "https://github.com/Microsoft/MS-DOS"
         }
     ]
 }
