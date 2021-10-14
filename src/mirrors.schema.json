@@ -14,6 +14,20 @@
                         "description": "Human name of the repo",
                         "type": "string"
                     },
+                    "short": {
+                        "description": "short name of the repo, folders will be named this",
+                        "type": "string"
+                    },
+                    "script": {
+                        "description": "Host a project by periodically calling a script",
+                        "type": "object",
+                        "syncs_per_day": {
+                            "description": "How many times a day to sync",
+                            "type": "number",
+                            "minimum": 1,
+                            "maximum": 24
+                        }
+                    },
                     "rsync": {
                         "description": "Instructions for how to run rsync",
                         "type": "object",
@@ -21,13 +35,7 @@
                             "options": {
                                 "description": "Command line options passed with rsync call",
                                 "type": "string",
-                                "default": "-avzrH --numeric-ids --delete --delete-delay --delay-updates --ignore-errors --exclude \".~tmp~\" --bwlimit=50000"
-                            },
-                            "password": {
-                                "description": "Adds a password file for sync"
-                            },
-                            "user": {
-                                "type": "string"
+                                "default": "-avzrH --numeric-ids --delete --delete-delay --delay-updates --ignore-errors --exclude \".~tmp~\""
                             },
                             "host": {
                                 "description": "Host address of the upstream mirror",
@@ -86,6 +94,7 @@
                 },
                 "required": [
                     "name",
+                    "short",
                     "official",
                     "isDistro",
                     "homepage"

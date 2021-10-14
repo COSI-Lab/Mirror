@@ -3,12 +3,13 @@
     "mirrors": [
         {
             "name": "Alpine Linux",
+            "short": "alpine",
             "isDistro": true,
             "rsync": {
                 "host": "rsync.alpinelinux.org",
                 "src": "alpine",
                 "dest": "/storage/alpine",
-                "options": "-avzrH --exclude \".~tmp~\" --bwlimit=50000",
+                "options": "-avzrH --exclude \".~tmp~\"",
                 "sync_file": "last-updated",
                 "syncs_per_day": 2
             },
@@ -17,12 +18,13 @@
         },
         {
             "name": "Blender",
+            "short": "blender",
             "isDistro": false,
             "rsync": {
                 "host": "downloads.blender.org",
                 "src": "blender",
                 "dest": "/storage/blender",
-                "options": "-avzrH --exclude \".~tmp~\" --bwlimit=50000",
+                "options": "-avzrH --exclude \".~tmp~\"",
                 "syncs_per_day": 6
             },
             "official": true,
@@ -30,6 +32,7 @@
         },
         {
             "name": "MS-DOS",
+            "short": "msdos",
             "isDistro": false,
             "static": {
                 "location": "/storage/msdos"
