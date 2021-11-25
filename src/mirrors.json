@@ -39,6 +39,17 @@
             },
             "official": false,
             "homepage": "https://github.com/Microsoft/MS-DOS"
+        },
+        {
+            "name": "Raspbian",
+            "short": "raspbian",
+            "isDistro": false,
+            "script": {
+                "command": "echo \"hello world!\"",
+                "syncs_per_day": 2
+            },
+            "official": false,
+            "homepage": "https://github.com/Microsoft/MS-DOS"
         }
     ]
 }
