@@ -19,14 +19,22 @@
                         "type": "string"
                     },
                     "script": {
-                        "description": "Host a project by periodically calling a script",
+                        "description": "Host a project by periodically executing a command",
                         "type": "object",
+                        "command": {
+                            "description": "Command to execute",
+                            "type": "string"
+                        },
                         "syncs_per_day": {
                             "description": "How many times a day to sync",
                             "type": "number",
                             "minimum": 1,
                             "maximum": 24
-                        }
+                        },
+                        "required": [
+                            "command", 
+                            "syncs_per_day"
+                        ]
                     },
                     "rsync": {
                         "description": "Instructions for how to run rsync",
@@ -105,6 +113,9 @@
                     },
                     {
                         "required": ["static"]
+                    },
+                    {
+                        "required": ["script"]
                     }
                 ]
             }
