@@ -19,7 +19,7 @@
                         "type": "string"
                     },
                     "script": {
-                        "description": "Host a project by periodically executing a command",
+                        "description": "Host a project by periodically executing a shell command",
                         "type": "object",
                         "command": {
                             "description": "Command to execute",
