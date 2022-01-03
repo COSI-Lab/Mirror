@@ -36,10 +36,6 @@ type ConfigFile struct {
 	} `json:"mirrors"`
 }
 
-func main() {
-	fmt.Println(ParseConfig("configs/mirrors.json", "configs/mirrors.schema.json"))
-}
-
 func ParseConfig(configFile, schemaFile string) (config ConfigFile) {
 	// Parse the schema file
 	schemaBytes, err := ioutil.ReadFile(schemaFile)
