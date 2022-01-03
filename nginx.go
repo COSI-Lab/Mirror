@@ -12,20 +12,16 @@ import (
 	"github.com/nxadm/tail"
 )
 
-// Parses nginx logs and streams out to a channel
-
-type HTTP_METHOD int
-
 type LogEntry struct {
 	IP        net.IP
-	time      time.Time
-	method    string
-	distro    string
-	url       string
-	version   string
-	status    int
-	bytesSent int
-	agent     string
+	Time      time.Time
+	Method    string
+	Distro    string
+	Url       string
+	Version   string
+	Status    int
+	BytesSent int
+	Agent     string
 }
 
 // It is critical that NGINX uses the following log format:
@@ -73,11 +69,11 @@ func ParseLine(line string) (*LogEntry, error) {
 		return nil, errors.New("invalid number of parameters in log")
 	}
 
-	var log *LogEntry
+	var entry *LogEntry
 
 	// IPv4 or IPv6 address
-	log.IP = net.ParseIP(quoteList[0])
-	if log.IP == nil {
+	entry.IP = net.ParseIP(quoteList[0])
+	if entry.IP == nil {
 		return nil, errors.New("failed to parse ip")
 	}
 
@@ -87,7 +83,7 @@ func ParseLine(line string) (*LogEntry, error) {
 	if err != nil {
 		return nil, err
 	}
-	log.time = tm
+	entry.Time = tm
 
 	// Method url http version
 	split := strings.Split(quoteList[2], " ")
@@ -95,9 +91,9 @@ func ParseLine(line string) (*LogEntry, error) {
 		// this should never fail
 		return nil, errors.New("invalid number of strings in request")
 	}
-	log.method = split[0]
-	log.url = split[1]
-	log.version = split[2]
+	entry.Method = split[0]
+	entry.Url = split[1]
+	entry.Version = split[2]
 	// TODO Extract the disto from the url
 
 	// HTTP response status
@@ -106,7 +102,7 @@ func ParseLine(line string) (*LogEntry, error) {
 		// this should never fail
 		return nil, errors.New("could not parse http response status")
 	}
-	log.status = status
+	entry.Status = status
 
 	// Bytes sent
 	bytesSent, err := strconv.Atoi(quoteList[4])
@@ -114,10 +110,10 @@ func ParseLine(line string) (*LogEntry, error) {
 		// this should never fail
 		return nil, errors.New("could not parse bytes_sent")
 	}
-	log.bytesSent = bytesSent
+	entry.BytesSent = bytesSent
 
 	// User agent
-	log.agent = quoteList[5]
+	entry.Agent = quoteList[5]
 
-	return log, nil
+	return entry, nil
 }
