@@ -1,5 +1,5 @@
 {
-    "$schema": "http://json-schema.org/draft-04/schema#",
+    "$schema": "http://json-schema.org/draft-07/schema#",
     "type": "object",
     "properties": {
         "mirrors": {
@@ -47,8 +47,7 @@
                             },
                             "host": {
                                 "description": "Host address of the upstream mirror",
-                                "type": "string",
-                                "pattern": "^((?!-)[A-Za-z0-9-]{1,63}(?<!-)\\.)+[A-Za-z]{2,6}$"
+                                "type": "string"
                             },
                             "src": {
                                 "description": "Location on the upstream to clone from",
@@ -84,6 +83,10 @@
                             "location": {
                                 "type": "string",
                                 "description": "Location on disk to serve files from"
+                            },
+                            "source": {
+                                "type": "string",
+                                "description": "Location that we originally cloned from"
                             }
                         }
                     },
