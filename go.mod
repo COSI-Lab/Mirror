@@ -3,6 +3,7 @@ module gitea.cosi.clarkson.edu/mahonec/mirror
 go 1.17
 
 require (
+	github.com/joho/godotenv v1.4.0
 	github.com/nxadm/tail v1.4.8
 	github.com/xeipuuv/gojsonschema v1.2.0
 )

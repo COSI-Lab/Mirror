@@ -9,3 +9,7 @@ WIP monolithic software for [mirror](https://mirror.clarkson.edu) that handles
 - [ ] Exposing sync status and other data from an API
 - [ ] Backing statistics up to a database
 - [ ] Notifies our discord server when things fail
+
+
+Env File Formatting
+- HOOK_URL = url
