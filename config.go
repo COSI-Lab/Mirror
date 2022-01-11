@@ -19,12 +19,13 @@ type ConfigFile struct {
 			SyncsPerDay int    `json:"syncs_per_day"`
 		}
 		Rsync struct {
-			Options     string `json:"options"`
-			Host        string `json:"host"`
-			Src         string `json:"src"`
-			Dest        string `json:"dest"`
-			SyncFile    string `json:"sync_file"`
-			SyncsPerDay int    `json:"syncs_per_day"`
+			Options      string `json:"options"`
+			Host         string `json:"host"`
+			Src          string `json:"src"`
+			Dest         string `json:"dest"`
+			SyncFile     string `json:"sync_file"`
+			SyncsPerDay  int    `json:"syncs_per_day"`
+			PasswordFile int    `json:"password_file"`
 		} `json:"rsync"`
 		Static struct {
 			Location string `json:"location"`

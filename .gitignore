@@ -1,6 +1,4 @@
 dist/
 node_modules/
 scripts
-
-src/secrets.json
 .env
