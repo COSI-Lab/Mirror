@@ -66,6 +66,10 @@
                                 "type": "number",
                                 "minimum": 1,
                                 "maximum": 24
+                            },
+                            "password_file": {
+                                "description": "Read daemon-access password from FILE",
+                                "type": "string"
                             }
                         },
                         "required": [

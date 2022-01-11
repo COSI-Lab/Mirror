@@ -25,7 +25,8 @@
                 "src": "blender",
                 "dest": "/storage/blender",
                 "options": "-avzrH --exclude \".~tmp~\"",
-                "syncs_per_day": 6
+                "syncs_per_day": 6,
+                "password_file": "blender.secret"
             },
             "official": true,
             "homepage": " https://www.blender.org"
