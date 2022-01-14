@@ -13,3 +13,4 @@ WIP monolithic software for [mirror](https://mirror.clarkson.edu) that handles
 
 Env File Formatting
 - HOOK_URL = url
+- INFLUX_TOKEN = token

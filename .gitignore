@@ -2,3 +2,6 @@ dist/
 node_modules/
 scripts
 .env
+mirror
+
+access.log

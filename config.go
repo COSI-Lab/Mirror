@@ -25,7 +25,7 @@ type ConfigFile struct {
 			Dest         string `json:"dest"`
 			SyncFile     string `json:"sync_file"`
 			SyncsPerDay  int    `json:"syncs_per_day"`
-			PasswordFile int    `json:"password_file"`
+			PasswordFile string `json:"password_file"`
 		} `json:"rsync"`
 		Static struct {
 			Location string `json:"location"`
