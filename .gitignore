@@ -5,3 +5,4 @@ scripts
 mirror
 
 access.log
+GeoLite2-City.mmdb
