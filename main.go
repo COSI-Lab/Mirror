@@ -18,15 +18,12 @@ func main() {
 	// config := ParseConfig("configs/mirrors.json", "configs/mirrors.schema.json")
 
 	shorts := []string{"almalinux", "alpine", "archlinux", "archlinux32", "artix-linux", "blender", "centos", "clonezilla", "cpan", "cran", "ctan", "cygwin", "debian", "debian-cd", "debian-security", "eclipse", "fedora", "fedora-epel", "freebsd", "gentoo", "gentoo-portage", "gnu", "gparted", "ipfire", "isabelle", "linux", "linuxmint", "manjaro", "msys2", "odroid", "openbsd", "opensuse", "parrot", "raspbian", "RebornOS", "ros", "sabayon", "serenity", "slackware", "slitaz", "tdf", "templeos", "ubuntu", "ubuntu-cdimage", "ubuntu-ports", "ubuntu-releases", "videolan", "voidlinux", "zorinos"}
-	points := make(chan DataPoint)
-
-	go HandleNGINX(shorts, points)
-
 	writer := SetupWriteClient(os.Getenv("INFLUX_TOKEN"))
+	nginx_entries := make(chan *LogEntry, 100)
+	map_entries := make(chan *LogEntry, 100)
 
-	for p := range points {
-		writer.WritePoint(p)
-	}
+	go ReadLogFile("access.log", nginx_entries, map_entries)
+	// ReadLogs("/var/log/nginx/access.log", channels)
 
-	writer.Flush()
+	HandleNGINXStats(shorts, nginx_entries, writer)
 }
