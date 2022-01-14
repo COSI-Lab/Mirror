@@ -14,10 +14,12 @@ import (
 
 	influxdb2 "github.com/influxdata/influxdb-client-go/v2"
 	"github.com/nxadm/tail"
+	"github.com/oschwald/geoip2-golang"
 )
 
 type LogEntry struct {
 	IP        net.IP
+	Country   string
 	Time      time.Time
 	Method    string
 	Distro    string
@@ -33,6 +35,16 @@ type LogEntry struct {
 // "$remote_addr" "$time_local" "$request" "$status" "$body_bytes_sent" "$request_length" "$http_user_agent";
 
 var reQuotes *regexp.Regexp
+var db *geoip2.Reader
+
+func InitDb() (err error) {
+	db, err = geoip2.Open("GeoLite2-City.mmdb")
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
 
 // Compiles regular expressions
 func InitRegex() (err error) {
@@ -103,6 +115,9 @@ func ReadLogFile(logFile string, ch chan *LogEntry) (err error) {
 	if reQuotes == nil {
 		InitRegex()
 	}
+	if db == nil {
+		InitDb()
+	}
 
 	f, err := os.Open(logFile)
 	if err != nil {
@@ -137,6 +152,9 @@ func ReadLogFile(logFile string, ch chan *LogEntry) (err error) {
 func ReadLogs(logFile string, ch chan *LogEntry) (err error) {
 	if reQuotes == nil {
 		InitRegex()
+	}
+	if db == nil {
+		InitDb()
 	}
 
 	// Tail the log file `tail -F`
@@ -185,6 +203,12 @@ func ParseLine(line string) (*LogEntry, error) {
 	if entry.IP == nil {
 		return nil, errors.New("failed to parse ip")
 	}
+
+	dbResult, err := db.City(entry.IP)
+	if err != nil {
+		return nil, err
+	}
+	entry.Country = dbResult.Country.IsoCode
 
 	// Time
 	t := "02/Jan/2006:15:04:05 -0700"

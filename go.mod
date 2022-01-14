@@ -9,6 +9,11 @@ require (
 )
 
 require (
+	github.com/oschwald/geoip2-golang v1.5.0 // indirect
+	github.com/oschwald/maxminddb-golang v1.8.0 // indirect
+)
+
+require (
 	github.com/deepmap/oapi-codegen v1.8.2 // indirect
 	github.com/fsnotify/fsnotify v1.5.1 // indirect
 	github.com/influxdata/influxdb-client-go/v2 v2.6.0
