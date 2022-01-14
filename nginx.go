@@ -58,6 +58,7 @@ func ReadLogFile(logFile string, ch1 chan *LogEntry, ch2 chan *LogEntry) (err er
 	if reQuotes == nil {
 		InitRegex()
 	}
+
 	if db == nil {
 		InitDb()
 	}
