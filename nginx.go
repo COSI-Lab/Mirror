@@ -3,7 +3,6 @@ package main
 import (
 	"bufio"
 	"errors"
-	"fmt"
 	"log"
 	"net"
 	"os"
@@ -12,7 +11,6 @@ import (
 	"strings"
 	"time"
 
-	influxdb2 "github.com/influxdata/influxdb-client-go/v2"
 	"github.com/nxadm/tail"
 )
 
@@ -44,62 +42,7 @@ func InitRegex() (err error) {
 	return nil
 }
 
-func HandleNGINX(shorts []string, ch chan DataPoint) {
-	// Map from short names to bytes sent
-	bytes_by_distro := make(map[string]int)
-
-	for i := 0; i < len(shorts); i++ {
-		bytes_by_distro[shorts[i]] = 0
-	}
-
-	entries := make(chan *LogEntry, 100)
-
-	go func() {
-		// ReadLogs("/var/log/nginx/access.log", channels)
-		ReadLogFile("access.log", entries)
-	}()
-
-	timer := time.NewTimer(10 * time.Second)
-
-LOOP:
-	for {
-		select {
-		case <-timer.C:
-			// Measure time
-			t := time.Now()
-
-			// Create points
-			for short, bytes := range bytes_by_distro {
-				ch <- influxdb2.NewPoint("mirror", map[string]string{"distro": short}, map[string]interface{}{"bytes_sent": bytes}, t)
-			}
-
-			fmt.Println(bytes_by_distro)
-			timer.Reset(10 * time.Second)
-		case entry, ok := <-entries:
-			if !ok {
-				break LOOP
-			}
-
-			if entry.Distro == "blender" {
-				fmt.Println(bytes_by_distro[entry.Distro], entry.BytesSent)
-			}
-
-			if _, ok := bytes_by_distro[entry.Distro]; ok {
-				bytes_by_distro[entry.Distro] += entry.BytesSent
-			} else {
-				bytes_by_distro["other"] += entry.BytesSent
-			}
-		default:
-			// do nothing
-		}
-
-		time.Sleep(200 * time.Millisecond)
-	}
-
-	fmt.Println("Stopped?")
-}
-
-func ReadLogFile(logFile string, ch chan *LogEntry) (err error) {
+func ReadLogFile(logFile string, ch1 chan *LogEntry, ch2 chan *LogEntry) (err error) {
 	if reQuotes == nil {
 		InitRegex()
 	}
@@ -117,15 +60,12 @@ func ReadLogFile(logFile string, ch chan *LogEntry) (err error) {
 		if err != nil {
 			log.Printf("[WARN] failed to parse line %s %s", scanner.Text(), err.Error())
 		} else {
-			if entry.Distro == "blender" {
-				fmt.Println("[INFO]", entry.BytesSent)
-			}
-
 			// Send a pointer to the entry down each channel
 			select {
-			case ch <- entry:
+			case ch1 <- entry:
+			case ch2 <- entry:
 			default:
-				// TODO: Warn that a channel is starting to hang
+				// TODO: Warn that a channel is starting to hang and remove sleep
 				time.Sleep(1 * time.Second)
 			}
 		}
@@ -134,7 +74,7 @@ func ReadLogFile(logFile string, ch chan *LogEntry) (err error) {
 	return nil
 }
 
-func ReadLogs(logFile string, ch chan *LogEntry) (err error) {
+func ReadLogs(logFile string, ch1 chan *LogEntry, ch2 chan *LogEntry) (err error) {
 	if reQuotes == nil {
 		InitRegex()
 	}
@@ -152,7 +92,8 @@ func ReadLogs(logFile string, ch chan *LogEntry) (err error) {
 		} else {
 			// Send a pointer to the entry down each channel
 			select {
-			case ch <- entry:
+			case ch1 <- entry:
+			case ch2 <- entry:
 			default:
 				// TODO: Warn that a channel is starting to hang
 			}
@@ -160,7 +101,8 @@ func ReadLogs(logFile string, ch chan *LogEntry) (err error) {
 	}
 
 	log.Println("[ERROR] Closing ReadLogs *LogEntry channel for unknown reason. This should not happen!")
-	close(ch)
+	close(ch1)
+	close(ch2)
 
 	return nil
 }
