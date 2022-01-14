@@ -14,6 +14,7 @@ WIP monolithic software for [mirror](https://mirror.clarkson.edu) that handles
 
 This software includes GeoLite2 data created by MaxMind, available from [www.maxmind.com](https://www.maxmind.com)
 
-Env File Formatting
+## Env File Formatting
+
 - HOOK_URL = url
 - INFLUX_TOKEN = token
