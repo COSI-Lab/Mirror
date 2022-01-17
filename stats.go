@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"log"
 	"time"
 
@@ -11,12 +12,7 @@ import (
 var bytes_by_distro map[string]int
 
 // Loads the latest NGINX stats from the database
-func InitNGINXStats() {
-
-}
-
-// NGINX statisitcs
-func HandleNGINXStats(shorts []string, entries chan *LogEntry, writer api.WriteAPI) {
+func InitNGINXStats(shorts []string, reader api.QueryAPI) {
 	// Map from short names to bytes sent
 	bytes_by_distro = make(map[string]int)
 
@@ -24,6 +20,45 @@ func HandleNGINXStats(shorts []string, entries chan *LogEntry, writer api.WriteA
 		bytes_by_distro[shorts[i]] = 0
 	}
 
+	/*
+		from(bucket: \"test\")
+			|> range(start: -7d)
+			|> filter(fn: (r) => r[\"_measurement\"] == \"mirror\" and  r[\"_field\"] == \"bytes_sent\")
+			|> last()
+	*/
+	result, err := reader.Query(context.Background(), "from(bucket: \"test\") |> range(start: -7d) |> filter(fn: (r) => r[\"_measurement\"] == \"mirror\" and  r[\"_field\"] == \"bytes_sent\") |> last()")
+
+	if err != nil {
+		log.Println("[ERROR]", err)
+	} else {
+		for result.Next() {
+			if result.Err() == nil {
+				distro, ok := result.Record().ValueByKey("distro").(string)
+				if !ok {
+					log.Println("[WARN] InitNGINXStats can not parse distro to string")
+					continue
+				}
+
+				bytes, ok := result.Record().Value().(int64)
+				if !ok {
+					log.Printf("[WARN] InitNGINXStats can not parse %s bytes to int\n%s\n", distro, result.Record().String())
+					continue
+				}
+
+				if _, ok := bytes_by_distro[distro]; ok {
+					bytes_by_distro[distro] = int(bytes)
+				}
+			} else {
+				log.Println("[WARN] InitNGINXStats Flux Query Error", result.Err().Error())
+			}
+		}
+	}
+
+	log.Println("[INFO] InitNGINXStats successfully loaded previous stats from influxdb")
+}
+
+// NGINX statisitcs
+func HandleNGINXStats(entries chan *LogEntry, writer api.WriteAPI) {
 	timer := time.NewTimer(10 * time.Second)
 
 LOOP:
@@ -42,7 +77,7 @@ LOOP:
 			log.Print("[INFO] Distro bytes sent")
 			timer.Reset(10 * time.Second)
 		case entry, ok := <-entries:
-			// TODO this shouldn't ever happen, keeping this in while we're testing
+			// TODO this shouldn't ever happen, but I'm keeping this in while we're testing
 			if !ok {
 				break LOOP
 			}

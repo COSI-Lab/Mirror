@@ -56,11 +56,15 @@ func InitRegex() (err error) {
 
 func ReadLogFile(logFile string, ch1 chan *LogEntry, ch2 chan *LogEntry) (err error) {
 	if reQuotes == nil {
-		InitRegex()
+		if InitRegex() != nil {
+			log.Println("[ERROR] could not compile nginx log parsing regex")
+		}
 	}
 
 	if db == nil {
-		InitDb()
+		if InitDb() != nil {
+			log.Println("[ERROR] could not initilze geolite city db")
+		}
 	}
 
 	f, err := os.Open(logFile)
@@ -92,10 +96,15 @@ func ReadLogFile(logFile string, ch1 chan *LogEntry, ch2 chan *LogEntry) (err er
 
 func ReadLogs(logFile string, ch1 chan *LogEntry, ch2 chan *LogEntry) (err error) {
 	if reQuotes == nil {
-		InitRegex()
+		if InitRegex() != nil {
+			log.Println("[ERROR] could not compile nginx log parsing regex")
+		}
 	}
+
 	if db == nil {
-		InitDb()
+		if InitDb() != nil {
+			log.Println("[ERROR] could not initilze geolite city db")
+		}
 	}
 
 	// Tail the log file `tail -F`
