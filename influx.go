@@ -8,8 +8,9 @@ import (
 
 type DataPoint *write.Point
 
-func SetupWriteClient(token string) api.WriteAPI {
+func InfluxClients(token string) (api.WriteAPI, api.QueryAPI) {
 	// create new client with default option for server url authenticate by token
 	client := influxdb2.NewClient("https://mirror.clarkson.edu:8086", token)
-	return client.WriteAPI("COSI", "test")
+
+	return client.WriteAPI("COSI", "test"), client.QueryAPI("COSI")
 }
