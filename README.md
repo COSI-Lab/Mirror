@@ -8,7 +8,7 @@ WIP monolithic software for [mirror](https://mirror.clarkson.edu) that handles
 - [ ] Exposing nginx bandwidth per repo
 - [ ] Exposing rsync bandwidth
 - [ ] Exposing total network bandwidth
-- [ ] Mirror map of real time downloads
+- [x] Mirror map of real time downloads
 - [ ] Periodically syncing projects
 - [ ] Exposing sync status
 - [x] Discord webhook integration

@@ -47,7 +47,7 @@ func serve(clients map[string]chan []byte, entries chan *LogEntry) {
 		entry := <-entries
 
 		clients_lock.RLock()
-		skip := len(clients) == 0
+		skip := len(clients) == 0 || entry.City == nil
 		clients_lock.RUnlock()
 
 		if prevSkip != skip {
