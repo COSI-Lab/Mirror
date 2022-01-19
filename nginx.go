@@ -35,10 +35,13 @@ type LogEntry struct {
 
 var reQuotes *regexp.Regexp
 var db *geoip2.Reader
+var useDB bool
 
 func InitDb() (err error) {
 	db, err = geoip2.Open("GeoLite2-City.mmdb")
 	if err != nil {
+		log.Panicln("[ERROR] could not open geolite city db")
+		useDB = false
 		return err
 	}
 
@@ -157,12 +160,17 @@ func ParseLine(line string) (*LogEntry, error) {
 		return nil, errors.New("failed to parse ip")
 	}
 
-	dbResult, err := db.City(entry.IP)
-	if err != nil {
-		return nil, err
+	if useDB {
+		dbResult, err := db.City(entry.IP)
+		if err != nil {
+			return nil, err
+		}
+		entry.Country = dbResult.Country.IsoCode
+		entry.City = dbResult
+	} else {
+		entry.Country = ""
+		entry.City = nil
 	}
-	entry.Country = dbResult.Country.IsoCode
-	entry.City = dbResult
 
 	// Time
 	t := "02/Jan/2006:15:04:05 -0700"
