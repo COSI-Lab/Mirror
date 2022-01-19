@@ -18,6 +18,7 @@ import (
 type LogEntry struct {
 	IP        net.IP
 	Country   string
+	City      *geoip2.City
 	Time      time.Time
 	Method    string
 	Distro    string
@@ -161,6 +162,7 @@ func ParseLine(line string) (*LogEntry, error) {
 		return nil, err
 	}
 	entry.Country = dbResult.Country.IsoCode
+	entry.City = dbResult
 
 	// Time
 	t := "02/Jan/2006:15:04:05 -0700"
