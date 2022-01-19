@@ -2,6 +2,20 @@
     "$schema": "./mirrors.schema.json",
     "mirrors": [
         {
+            "name": "AlmaLinux",
+            "short": "alma",
+            "isDistro": true,
+            "rsync": {
+                "host": "rsync.repo.almalinux.org",
+                "src": "alma",
+                "dest": "/storage/almalinux",
+                "options": "-avzrH --numeric-ids --delete --delete-delay --delay-updates --ignore-errors --exclude \".~tmp~\"",
+                "syncs_per_day": 8
+            },
+            "official": false,
+            "homepage": "https://almalinux.org"
+        },
+        {
             "name": "Alpine Linux",
             "short": "alpine",
             "isDistro": true,
@@ -9,12 +23,54 @@
                 "host": "rsync.alpinelinux.org",
                 "src": "alpine",
                 "dest": "/storage/alpine",
-                "options": "-avzrH --exclude \".~tmp~\"",
+                "options": "-avzrH --numeric-ids --delete --delete-delay --delay-updates --ignore-errors --exclude \".~tmp~\"",
                 "sync_file": "last-updated",
-                "syncs_per_day": 2
+                "syncs_per_day": 4
             },
             "official": false,
             "homepage": "https://www.alpinelinux.org/"
+        },
+        {
+            "name": "Arch Linux",
+            "short": "archlinux",
+            "isDistro": true,
+            "rsync":{
+                "host": "mirrors.rit.edu",
+                "src": "archlinux",
+                "dest": "/storage/archlinux",
+                "options": "-vrlptH --safe-links --delete-delay --delay-updates",
+                "syncs_per_day": 12
+            },
+            "official": true,
+            "homepage": "http://www.archlinux.org/"
+        },
+        {
+            "name": "Arch Linux 32",
+            "short": "archlinux32",
+            "isDistro": true,
+            "rsync": {
+                "host": "mirror.archlinux32.org",
+                "src": "archlinux32",
+                "dest": "/storage/archlinux32",
+                "options": "-rtlvH --delete-after --delay-updates --safe-links --bwlimit=50000",
+                "syncs_per_day": 4
+            },
+            "official": true,
+            "homepage": "http://www.archlinux32.org/"
+        },
+        {
+            "name": "Artix Linux",
+            "short": "artix-linux",
+            "isDistro": true,
+            "rsync": {
+                "host": "mirror1.artixlinux.org",
+                "src": "artix-linux",
+                "dest": "/storage/artix-linux/repos",
+                "options": " -rtlvH --delete-after --delay-updates --safe-links --bwlimit=50000",
+                "syncs_per_day": 3
+            },
+            "official": true,
+            "homepage": "https://artixlinux.org/"
         },
         {
             "name": "Blender",
@@ -32,25 +88,203 @@
             "homepage": " https://www.blender.org"
         },
         {
-            "name": "MS-DOS",
-            "short": "msdos",
+            "name": "CentOS",
+            "short": "centos",
+            "isDistro": true,
+            "rsync": {
+                "host": "msync.centos.org",
+                "src": "centos",
+                "dest": "/storage/centos",
+                "options": "-avzrH --numeric-ids --delete --delete-delay --delay-updates --ignore-errors --exclude \".~tmp~\"",
+                "syncs_per_day": 2
+            },
+            "official": true,
+            "homepage": " https://www.centos.org/"
+        },
+        {
+            "name": "CPAN",
+            "short": "cpan",
             "isDistro": false,
-            "static": {
-                "location": "/storage/msdos"
+            "rsync": {
+                "host": "mirrors.rit.edu",
+                "src": "cpan",
+                "dest": "/storage/cpan",
+                "options": "-avzrH --numeric-ids --delete --delete-delay --delay-updates --ignore-errors --exclude \".~tmp~\"",
+                "syncs_per_day": 2
             },
             "official": false,
-            "homepage": "https://github.com/Microsoft/MS-DOS"
+            "homepage": "http://www.cpan.org/"
+        },
+        {
+            "name": "CRAN",
+            "short": "cran",
+            "isDistro": false,
+            "rsync": {
+                "host": "cran.r-project.org",
+                "src": "cran",
+                "dest": "/storage/cran",
+                "options": "-rtlzv --delete --bwlimit=50000",
+                "syncs_per_day": 1
+            },
+            "official": false,
+            "homepage": " http://cran.r-project.org/"
+        },
+        {
+            "name": "CTAN",
+            "short": "ctan",
+            "isDistro": false,
+            "rsync": {
+                "host": "ctan.math.utah.edu",
+                "src": "ctan",
+                "dest": "/storage/ctan",
+                "options": "-avzrH --numeric-ids --delete --delete-delay --delay-updates --ignore-errors --exclude \".~tmp~\"",
+                "syncs_per_day": 2
+            },
+            "official": false,
+            "homepage":  "http://www.ctan.org/"
+        },
+        {
+            "name": "Parrot Security OS",
+            "short": "parrot",
+            "isDistro": true,
+            "rsync": {
+                "host": "rsync.parrot.org",
+                "src": "parrot",
+                "dest": "/storage/parrot",
+                "syncs_per_day": 4,
+                "options": "-avzrH --numeric-ids --delete --delete-delay --delay-updates --ignore-errors --exclude \".~tmp~\""
+            },
+            "official": true,
+            "homepage": "https://www.parrotsec.org/"
         },
         {
             "name": "Raspbian",
             "short": "raspbian",
-            "isDistro": false,
+            "isDistro": true,
             "script": {
-                "command": "echo \"hello world!\"",
-                "syncs_per_day": 2
+                "env": {
+                    "mirror": "mirror.umd.edu"
+                },
+                "command": "python3 raspbmirror.py --tmpdir /storage/raspbian-tmp/ --sourcepool /storage/debian/pool http://${mirror}/raspbian http://${mirror}/raspbian http://snapshot.raspbian.org/hashpool",
+                "syncs_per_day": 3
             },
             "official": false,
-            "homepage": "https://github.com/Microsoft/MS-DOS"
+            "homepage": "https://www.raspbian.org/"
+        },
+        {
+            "name": "RebornOS",
+            "short": "RebornOS",
+            "isDistro": true,
+            "rsync": {
+                "host": "mirrors.dotsrc.org",
+                "src": "osdn/storage/g/r/re/rebornos/repo/RebornOS",
+                "dest": "/storage/RebornOS",
+                "options": "-avzrH --numeric-ids --delete --delete-delay --delay-updates --ignore-errors --exclude \".~tmp~\"",
+                "syncs_per_day": 1
+            },
+            "official": true,
+            "homepage": "https://rebornos.org/"
+        },
+        {
+            "name": "Sabayon",
+            "short": "sabayon",
+            "isDistro": true,
+            "rsync": {
+                "host": "mirror.umd.edu",
+                "src": "sabayonlinux",
+                "dest": "/storage/sabayon",
+                "syncs_per_day": 4,
+                "sync_file": "mirror.umd.edu.timestamp.txt",
+                "options": "-avzrH --numeric-ids --delete --delete-delay --delay-updates --ignore-errors --exclude \".~tmp~\" --exclude=\"packages.db.lock\" --exclude=\".*\""
+            },
+            "official": true,
+            "homepage": "http://sabayon.org/"
+        },
+        {
+            "name": "Slackware",
+            "short": "slackware",
+            "isDistro": false,
+            "rsync": {
+                "host": "mirror.cs.princeton.edu",
+                "src": "slackware",
+                "dest": "/storage/slackware",
+                "syncs_per_day": 12,
+                "options": "-avzrH --numeric-ids --delete --delete-delay --delay-updates --ignore-errors --exclude \".~tmp~\""
+            },
+            "official": false,
+            "homepage": "https://www.slackware.com/"
+        },
+        {
+            "name": "SliTaz Linux",
+            "short": "slitaz",
+            "isDistro": true,           
+            "rsync": {
+                "host": "mirror1.slitaz.org",
+                "src": "slitaz",
+                "dest": "/storage/slitaz",
+                "syncs_per_day": 2,
+                "options": "-avzrH --numeric-ids --delete --delete-delay --delay-updates --ignore-errors --exclude \".~tmp~\""
+            },
+            "official": true,
+            "homepage": "http://www.slitaz.org/en/"
+        },
+        {
+            "name": "LibreOffice",
+            "short": "tdf",
+            "isDistro": false,
+            "rsync": {
+                "host": "rsync.documentfoundation.org",
+                "src": "tdf-pub",
+                "dest": "/storage/tdf",
+                "options": "-avzrH --numeric-ids --delete --delete-delay --delay-updates --ignore-errors --exclude \".~tmp~\"",
+                "syncs_per_day": 4
+            },
+            "official": true,
+            "homepage": "http://www.documentfoundation.org/"
+        },
+        {
+            "name": "VLC",
+            "short": "videolan",
+            "isDistro": false,
+            "rsync": {
+                "host": "rsync.videolan.org",
+                "src": "videolan-ftp",
+                "dest": "/storage/videolan",
+                "syncs_per_day": 24,
+                "options": "--verbose --recursive --times --links --hard-links --perms --stats --delete-after --timeout=300"
+            },
+            "official": true,
+            "homepage": "https://www.videolan.org/index.html"
+        },
+        {
+            "name": "Void Linux",
+            "short": "voidlinux",
+            "isDistro": true,
+            "rsync": {
+                "user": "vmirror",
+                "password_file": "voidlinux.password",
+                "host": "alpha.de.repo.voidlinux.org",
+                "src": "voidmirror",
+                "dest": "/storage/voidlinux",
+                "syncs_per_day": 4,
+                "options": "-avzrH --numeric-ids --delete --delete-delay --delay-updates --ignore-errors --exclude \".~tmp~\" --exclude=\".*\" --exclude=\"*.lock\" --exclude=\"*.XXXX*\""
+            },
+            "official": true,
+            "homepage": "http://www.voidlinux.org/"
+        },
+        {
+            "name": "Zorin OS",
+            "short": "zorinos",
+            "isDistro": true,
+            "rsync": {
+                "host": "mirror.zorinos.com",
+                "src": "isos",
+                "dest": "/storage/zorinos/isos",
+                "syncs_per_day": 4,
+                "options": "-avzrH --numeric-ids --delete --delete-delay --delay-updates --ignore-errors --exclude \".~tmp~\""
+            },
+            "official": true,
+            "homepage": "https://zorinos.com/"
         }
     ]
 }

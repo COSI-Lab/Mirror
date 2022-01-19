@@ -21,6 +21,11 @@
                     "script": {
                         "description": "Host a project by periodically executing a shell command",
                         "type": "object",
+                        "env": {
+                            "description": "Map of envirment variables to be set before calling the command",
+                            "type": "object",
+                            "additionalProperties": { "type": "string" }
+                        },
                         "command": {
                             "description": "Command to execute",
                             "type": "string"
@@ -45,6 +50,10 @@
                                 "type": "string",
                                 "default": "-avzrH --numeric-ids --delete --delete-delay --delay-updates --ignore-errors --exclude \".~tmp~\""
                             },
+                            "user": {
+                                "description": "Host username for the upstream mirror",
+                                "type": "string"
+                            },
                             "host": {
                                 "description": "Host address of the upstream mirror",
                                 "type": "string"
@@ -58,7 +67,7 @@
                                 "type": "string"
                             },
                             "sync_file": {
-                                "description": "A file that tracks if the mirror is in sync",
+                                "description": "A file that tracks if the mirror is in sync with the upstream",
                                 "type": "string"
                             },
                             "syncs_per_day": {

@@ -1,20 +1,28 @@
 # Mirror
 
 WIP monolithic software for [mirror](https://mirror.clarkson.edu) that handles
-- [ ] Total bandwidth statistics
-- [ ] Bandwidth statistics per repo
+- [x] Defining what projects we host from a centralized config
+- [x] Recording nginx bandwidth per repo
+- [ ] Recording rsync bandwidth
+- [ ] Recording total network bandwidth
+- [ ] Exposing nginx bandwidth per repo
+- [ ] Exposing rsync bandwidth
+- [ ] Exposing total network bandwidth
 - [ ] Mirror map of real time downloads
-- [ ] Defining what projects we host from a centralized config
 - [ ] Periodically syncing projects
-- [ ] Exposing sync status and other data from an API
-- [ ] Backing statistics up to a database
+- [ ] Exposing sync status
+- [x] Discord webhook integration
 - [ ] Notifies our discord server when things fail
 
-## GeoLite2 Attribution
+## New frontend
 
-This software includes GeoLite2 data created by MaxMind, available from [www.maxmind.com](https://www.maxmind.com)
+We need to discuss this
 
 ## Env File Formatting
 
 - HOOK_URL = url
 - INFLUX_TOKEN = token
+
+## GeoLite2 Attribution
+
+This software includes GeoLite2 data created by MaxMind, available from [www.maxmind.com](https://www.maxmind.com)
