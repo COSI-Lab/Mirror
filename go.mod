@@ -1,4 +1,4 @@
-module gitea.cosi.clarkson.edu/mahonec/mirror
+module github.com/COSI_Lab/Mirror
 
 go 1.17
 

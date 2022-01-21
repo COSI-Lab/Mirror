@@ -3,7 +3,7 @@
     "mirrors": [
         {
             "name": "AlmaLinux",
-            "short": "alma",
+            "short": "almalinux",
             "isDistro": true,
             "rsync": {
                 "host": "rsync.repo.almalinux.org",

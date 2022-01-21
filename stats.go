@@ -29,19 +29,19 @@ func InitNGINXStats(shorts []string, reader api.QueryAPI) {
 	result, err := reader.Query(context.Background(), "from(bucket: \"test\") |> range(start: -7d) |> filter(fn: (r) => r[\"_measurement\"] == \"mirror\" and  r[\"_field\"] == \"bytes_sent\") |> last()")
 
 	if err != nil {
-		log.Println("[ERROR]", err)
+		log.Println("\x1B[31m[Error]\x1B[0m", err)
 	} else {
 		for result.Next() {
 			if result.Err() == nil {
 				distro, ok := result.Record().ValueByKey("distro").(string)
 				if !ok {
-					log.Println("[WARN] InitNGINXStats can not parse distro to string")
+					log.Println("\x1B[33m[WARN]\x1B[0m InitNGINXStats can not parse distro to string")
 					continue
 				}
 
 				bytes, ok := result.Record().Value().(int64)
 				if !ok {
-					log.Printf("[WARN] InitNGINXStats can not parse %s bytes to int\n%s\n", distro, result.Record().String())
+					log.Printf("\x1B[33m[WARN]\x1B[0m InitNGINXStats can not parse %s bytes to int\n%s\n", distro, result.Record().String())
 					continue
 				}
 
@@ -49,7 +49,7 @@ func InitNGINXStats(shorts []string, reader api.QueryAPI) {
 					bytes_by_distro[distro] = int(bytes)
 				}
 			} else {
-				log.Println("[WARN] InitNGINXStats Flux Query Error", result.Err().Error())
+				log.Println("\x1B[33m[WARN]\x1B[0m InitNGINXStats Flux Query Error", result.Err().Error())
 			}
 		}
 	}
@@ -74,7 +74,6 @@ LOOP:
 				writer.WritePoint(p)
 			}
 
-			log.Print("[INFO] Distro bytes sent")
 			timer.Reset(10 * time.Second)
 		case entry, ok := <-entries:
 			// TODO this shouldn't ever happen, but I'm keeping this in while we're testing
@@ -92,4 +91,8 @@ LOOP:
 		// TODO: Remove sleep condition
 		time.Sleep(200 * time.Millisecond)
 	}
+
+	// This loop should never break out to here, if we hit this state then we're no longer sending distro usage stats
+	// TODO add fail detection so we can restart this loop
+	log.Print("\x1B[31m[Error]\x1B[0m HandleNGINXStats stop sending distro bytes")
 }
