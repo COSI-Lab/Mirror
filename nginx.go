@@ -35,13 +35,11 @@ type LogEntry struct {
 
 var reQuotes *regexp.Regexp
 var db *geoip2.Reader
-var useDB bool
 
 func InitDb() (err error) {
 	db, err = geoip2.Open("GeoLite2-City.mmdb")
 	if err != nil {
-		log.Panicln("[ERROR] could not open geolite city db")
-		useDB = false
+		log.Panicln("\x1B[31m[Error]\x1B[0m could not open geolite city db")
 		return err
 	}
 
@@ -61,13 +59,13 @@ func InitRegex() (err error) {
 func ReadLogFile(logFile string, ch1 chan *LogEntry, ch2 chan *LogEntry) (err error) {
 	if reQuotes == nil {
 		if InitRegex() != nil {
-			log.Println("[ERROR] could not compile nginx log parsing regex")
+			log.Println("\x1B[31m[Error]\x1B[0m could not compile nginx log parsing regex")
 		}
 	}
 
 	if db == nil {
 		if InitDb() != nil {
-			log.Println("[ERROR] could not initilze geolite city db")
+			log.Println("\x1B[31m[Error]\x1B[0m could not initilze geolite city db")
 		}
 	}
 
@@ -82,7 +80,7 @@ func ReadLogFile(logFile string, ch1 chan *LogEntry, ch2 chan *LogEntry) (err er
 	for scanner.Scan() {
 		entry, err := ParseLine(scanner.Text())
 		if err != nil {
-			log.Printf("[WARN] failed to parse line %s %s", scanner.Text(), err.Error())
+			log.Printf("\x1B[33m[WARN]\x1B[0m failed to parse line %s %s", scanner.Text(), err.Error())
 		} else {
 			// Send a pointer to the entry down each channel
 			select {
@@ -90,9 +88,10 @@ func ReadLogFile(logFile string, ch1 chan *LogEntry, ch2 chan *LogEntry) (err er
 			case ch2 <- entry:
 			default:
 				// TODO: Warn that a channel is starting to hang and remove sleep
-				time.Sleep(1 * time.Second)
 			}
 		}
+
+		time.Sleep(1 * time.Second)
 	}
 
 	return nil
@@ -101,13 +100,13 @@ func ReadLogFile(logFile string, ch1 chan *LogEntry, ch2 chan *LogEntry) (err er
 func ReadLogs(logFile string, ch1 chan *LogEntry, ch2 chan *LogEntry) (err error) {
 	if reQuotes == nil {
 		if InitRegex() != nil {
-			log.Println("[ERROR] could not compile nginx log parsing regex")
+			log.Println("\x1B[31m[Error]\x1B[0m could not compile nginx log parsing regex")
 		}
 	}
 
 	if db == nil {
 		if InitDb() != nil {
-			log.Println("[ERROR] could not initilze geolite city db")
+			log.Println("\x1B[31m[Error]\x1B[0m could not initilze geolite city db")
 		}
 	}
 
@@ -120,7 +119,7 @@ func ReadLogs(logFile string, ch1 chan *LogEntry, ch2 chan *LogEntry) (err error
 	for line := range tail.Lines {
 		entry, err := ParseLine(line.Text)
 		if err != nil {
-			log.Printf("[WARN] failed to parse line %s | %s", line.Text, err.Error())
+			log.Printf("\x1B[33m[WARN]\x1B[0m failed to parse line %s | %s", line.Text, err.Error())
 		} else {
 			// Send a pointer to the entry down each channel
 			select {
@@ -132,7 +131,7 @@ func ReadLogs(logFile string, ch1 chan *LogEntry, ch2 chan *LogEntry) (err error
 		}
 	}
 
-	log.Println("[ERROR] Closing ReadLogs *LogEntry channel for unknown reason. This should not happen!")
+	log.Println("\x1B[31m[Error]\x1B[0m Closing ReadLogs *LogEntry channel for unknown reason. This should not happen!")
 	close(ch1)
 	close(ch2)
 
@@ -160,15 +159,10 @@ func ParseLine(line string) (*LogEntry, error) {
 		return nil, errors.New("failed to parse ip")
 	}
 
-	if useDB {
-		dbResult, err := db.City(entry.IP)
-		if err != nil {
-			return nil, err
-		}
-		entry.Country = dbResult.Country.IsoCode
-		entry.City = dbResult
+	// Optional GeoIP lookup
+	if db != nil {
+		entry.City, _ = db.City(entry.IP)
 	} else {
-		entry.Country = ""
 		entry.City = nil
 	}
 

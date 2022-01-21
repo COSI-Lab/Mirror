@@ -103,6 +103,10 @@
                             }
                         }
                     },
+                    "color": {
+                        "type": "string",
+                        "description": "Color this repo is represented as on the Map"
+                    },
                     "official": {
                         "description": "Are we an official mirror for this software",
                         "type": "boolean"

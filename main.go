@@ -10,15 +10,14 @@ import (
 func main() {
 	godotenv.Load()
 
-	if os.Getenv("INFLUX_TOKEN") == "" {
-		log.Fatal("Missing .env envirnment variable INFLUX_TOKEN")
+	// Load config file and check schema
+	config := ParseConfig("configs/mirrors.json", "configs/mirrors.schema.json")
+
+	shorts := make([]string, len(config.Mirrors))
+	for _, mirror := range config.Mirrors {
+		shorts = append(shorts, mirror.Name)
 	}
 
-	// Load config file and check schema
-	// config := ParseConfig("configs/mirrors.json", "configs/mirrors.schema.json")
-
-	// TODO replace hardcoded shorts with values generated from config
-	shorts := []string{"almalinux", "alpine", "archlinux", "archlinux32", "artix-linux", "blender", "centos", "clonezilla", "cpan", "cran", "ctan", "cygwin", "debian", "debian-cd", "debian-security", "eclipse", "fedora", "fedora-epel", "freebsd", "gentoo", "gentoo-portage", "gnu", "gparted", "ipfire", "isabelle", "linux", "linuxmint", "manjaro", "msys2", "odroid", "openbsd", "opensuse", "parrot", "raspbian", "RebornOS", "ros", "sabayon", "serenity", "slackware", "slitaz", "tdf", "templeos", "ubuntu", "ubuntu-cdimage", "ubuntu-ports", "ubuntu-releases", "videolan", "voidlinux", "zorinos"}
 	writer, reader := InfluxClients(os.Getenv("INFLUX_TOKEN"))
 
 	nginx_entries := make(chan *LogEntry, 100)
@@ -27,8 +26,14 @@ func main() {
 	go ReadLogFile("access.log", nginx_entries, map_entries)
 	// ReadLogs("/var/log/nginx/access.log", channels)
 
-	InitNGINXStats(shorts, reader)
-	HandleNGINXStats(nginx_entries, writer)
+	if os.Getenv("INFLUX_TOKEN") == "" {
+		log.Println("\x1B[31m[Error]\x1B[0m Missing .env envirnment variable INFLUX_TOKEN, not using database")
+	} else {
+		InitNGINXStats(shorts, reader)
+		go HandleNGINXStats(nginx_entries, writer)
+	}
 
-	// HandleMap(map_entries)
+	if InitWebserver() == nil {
+		HandleWebserver(map_entries)
+	}
 }
