@@ -4,6 +4,7 @@ import (
 	"log"
 	"os"
 
+	"github.com/COSI_Lab/Mirror/mirrorErrors"
 	"github.com/joho/godotenv"
 )
 
@@ -27,6 +28,7 @@ func main() {
 	// ReadLogs("/var/log/nginx/access.log", channels)
 
 	if os.Getenv("INFLUX_TOKEN") == "" {
+		mirrorErrors.Error("\x1B[31m[Error]\x1B[0m Missing .env envirnment variable INFLUX_TOKEN, not using database")
 		log.Println("\x1B[31m[Error]\x1B[0m Missing .env envirnment variable INFLUX_TOKEN, not using database")
 	} else {
 		InitNGINXStats(shorts, reader)

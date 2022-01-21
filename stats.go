@@ -5,6 +5,7 @@ import (
 	"log"
 	"time"
 
+	"github.com/COSI_Lab/Mirror/mirrorErrors"
 	influxdb2 "github.com/influxdata/influxdb-client-go/v2"
 	"github.com/influxdata/influxdb-client-go/v2/api"
 )
@@ -29,6 +30,7 @@ func InitNGINXStats(shorts []string, reader api.QueryAPI) {
 	result, err := reader.Query(context.Background(), "from(bucket: \"test\") |> range(start: -7d) |> filter(fn: (r) => r[\"_measurement\"] == \"mirror\" and  r[\"_field\"] == \"bytes_sent\") |> last()")
 
 	if err != nil {
+		mirrorErrors.Error("\x1B[31m[Error]\x1B[0m ")
 		log.Println("\x1B[31m[Error]\x1B[0m", err)
 	} else {
 		for result.Next() {
@@ -94,5 +96,6 @@ LOOP:
 
 	// This loop should never break out to here, if we hit this state then we're no longer sending distro usage stats
 	// TODO add fail detection so we can restart this loop
+	mirrorErrors.Error("\x1B[31m[Error]\x1B[0m HandleNGINXStats stop sending distro bytes")
 	log.Print("\x1B[31m[Error]\x1B[0m HandleNGINXStats stop sending distro bytes")
 }

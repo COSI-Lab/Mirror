@@ -1,4 +1,4 @@
-package main
+package mirrorErrors
 
 import (
 	"bytes"
@@ -12,7 +12,7 @@ import (
 var rysncErrorCodes map[int]string
 var hookURL string
 
-func init() {
+func setup() {
 	hookURL = os.Getenv("HOOK_URL")
 
 	rysncErrorCodes = make(map[int]string)
@@ -61,26 +61,10 @@ func sendHook(content string, url string) {
 	fmt.Println(res["json"])
 }
 
-func test() {
-	distro := "Ubuntu"
-	time := "1:00"
-	code := 1
-	errorFrom := "rsync"
-
-	/*
-		Error types:
-		rysnc
-		nginxLogBreak
-		generic (for all other errors)
-	*/
-
-	switch errorFrom {
-	case "rsync":
-		sendHook(fmt.Sprintf("%s: %s: %s", distro, rysncErrorCodes[code], time), hookURL)
-	case "nginxLogBreak":
-		sendHook(fmt.Sprintf("%s: %s: %s", distro, "nginx log break", time), hookURL)
-	case "generic":
-		sendHook(fmt.Sprintf("%s: %s: %s", distro, "Generic error", time), hookURL)
+func Error(mesage string) {
+	// TODO: Have this handle logging to console and send hook
+	if hookURL == "" {
+		setup()
 	}
-
+	sendHook(mesage, hookURL)
 }
