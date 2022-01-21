@@ -147,7 +147,11 @@ func healthHandler(w http.ResponseWriter, r *http.Request) {
 	clients_lock.RUnlock()
 }
 
-func HandleMap(r *mux.Router, entries chan *LogEntry) {
+func indexHandler(w http.ResponseWriter, r *http.Request) {
+
+}
+
+func MapRouter(r *mux.Router, entries chan *LogEntry) {
 	clients = make(map[string]chan []byte)
 
 	// Read entries and pass cordinates to each client
@@ -156,5 +160,5 @@ func HandleMap(r *mux.Router, entries chan *LogEntry) {
 	r.HandleFunc("/health", healthHandler)
 	r.HandleFunc("/register", registerHandler)
 	r.HandleFunc("/socket/{id}", socketHandler)
-	r.PathPrefix("/").Handler(http.StripPrefix("/map", http.FileServer(http.Dir("static"))))
+	r.HandleFunc("/", indexHandler)
 }
