@@ -61,10 +61,22 @@ func sendHook(content string, url string) {
 	fmt.Println(res["json"])
 }
 
-func Error(mesage string) {
+func Error(message string, errorType string) {
 	// TODO: Have this handle logging to console and send hook
 	if hookURL == "" {
 		setup()
 	}
-	sendHook(mesage, hookURL)
+	if errorType == "info" {
+		log.Printf("[INFO] %s", message)
+	} else if errorType == "warn" {
+		log.Printf("\x1B[WARN]\x1B %s", message)
+	} else if errorType == "error" {
+		log.Printf("\x1B[ERROR]\x1B %s", message)
+		sendHook(message, hookURL)
+	} else if errorType == "panic" {
+		log.Printf("[PANIC] %s", message)
+		sendHook(message, hookURL)
+	} else {
+		log.Printf("[DEBUG] %s", message)
+	}
 }
