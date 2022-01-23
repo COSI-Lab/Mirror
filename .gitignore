@@ -3,6 +3,7 @@ node_modules/
 scripts
 .env
 mirror
+Mirror
 
 access.log
 GeoLite2-City.mmdb
