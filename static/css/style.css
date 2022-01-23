@@ -1,0 +1,27 @@
+h1 {
+    color: red
+}
+
+a{
+    color: white;
+}
+.topnav a {
+    float: left;
+    background-color: darkgreen;
+    color: white;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+    font-size: 17px;
+    margin: auto;
+    display: block;
+}
+.foot {
+    background-color: darkgreen;
+    color: white;
+    display: block;
+    
+}
+p{
+    color : black;
+}
