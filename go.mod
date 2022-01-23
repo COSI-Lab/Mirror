@@ -11,14 +11,6 @@ require (
 )
 
 require (
-	github.com/oschwald/maxminddb-golang v1.8.0 // indirect
-	github.com/pkg/errors v0.9.1 // indirect
-	github.com/xeipuuv/gojsonreference v0.0.0-20180127040603-bd5ef7bd5415 // indirect
-	gopkg.in/tomb.v1 v1.0.0-20141024135613-dd632973f1e7 // indirect
-	gopkg.in/yaml.v2 v2.4.0 // indirect
-)
-
-require (
 	github.com/deepmap/oapi-codegen v1.9.0 // indirect
 	github.com/fsnotify/fsnotify v1.5.1 // indirect
 	github.com/gorilla/mux v1.8.0
