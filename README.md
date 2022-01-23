@@ -14,7 +14,7 @@ WIP monolithic software for [mirror](https://mirror.clarkson.edu) that handles
 - [ ] Periodically syncing projects
 - [ ] Exposing sync status
 - [x] Discord webhook integration
-- [ ] Notifies our discord server when things fail
+- [x] Notifies our discord server when things fail
 
 ## New frontend
 

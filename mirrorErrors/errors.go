@@ -3,7 +3,6 @@ package mirrorErrors
 import (
 	"bytes"
 	"encoding/json"
-	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -58,7 +57,7 @@ func sendHook(content string, url string) {
 
 	json.NewDecoder(resp.Body).Decode(&res)
 
-	fmt.Println(res["json"])
+	// fmt.Println(res["json"])
 }
 
 func Error(message string, errorType string) {
@@ -69,14 +68,18 @@ func Error(message string, errorType string) {
 	if errorType == "info" {
 		log.Printf("[INFO] %s", message)
 	} else if errorType == "warn" {
-		log.Printf("\x1B[WARN]\x1B %s", message)
+		log.Printf("\033[33m[WARN]\033[0m %s", message)
 	} else if errorType == "error" {
-		log.Printf("\x1B[ERROR]\x1B %s", message)
+		log.Printf("\033[31m[ERROR]\033[0m %s", message)
 		sendHook(message, hookURL)
 	} else if errorType == "panic" {
 		log.Printf("[PANIC] %s", message)
 		sendHook(message, hookURL)
+	} else if errorType == "startup" {
+		log.Printf("[STARTUP] %s", message)
+		sendHook(message, hookURL)
 	} else {
-		log.Printf("[DEBUG] %s", message)
+		log.Printf("\033[34m[DEBUG]\033[0m %s", message)
+		sendHook(message, hookURL)
 	}
 }

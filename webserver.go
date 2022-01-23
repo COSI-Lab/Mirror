@@ -41,11 +41,10 @@ func InitWebserver() error {
 
 	if err == nil {
 		// log.Println("[INFO] Webserver", tmpls.DefinedTemplates())
-		mirrorErrors.Error("[INFO] Webserver"+tmpls.DefinedTemplates(), "info")
+		mirrorErrors.Error("Webserver"+tmpls.DefinedTemplates(), "info")
 		return err
 	} else {
-		mirrorErrors.Error("\x1B[31m[Error]\x1B[0m InitWebserver", "error")
-		// log.Println("\x1B[31m[Error]\x1B[0m InitWebserver", err)
+		mirrorErrors.Error("InitWebserver", "error")
 		tmpls = nil
 	}
 
@@ -82,6 +81,6 @@ func HandleWebserver(entries chan *LogEntry) {
 	}
 
 	// log.Printf("[INFO] Serving on http://localhost:%d", 8001)
-	mirrorErrors.Error("[INFO] Serving on http://localhost:8001", "info")
+	mirrorErrors.Error("Serving on http://localhost:8001", "info")
 	log.Fatalf("%s", l.ListenAndServe())
 }
