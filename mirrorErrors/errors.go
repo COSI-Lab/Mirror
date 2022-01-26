@@ -3,6 +3,7 @@ package mirrorErrors
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"log"
 	"net/http"
 	"os"
@@ -10,9 +11,14 @@ import (
 
 var rysncErrorCodes map[int]string
 var hookURL string
+var hookUnset = false
 
-func setup() {
+func setup() error {
 	hookURL = os.Getenv("HOOK_URL")
+	if hookURL == "" {
+		hookUnset = true
+		return errors.New("HOOK_URL is not set")
+	}
 
 	rysncErrorCodes = make(map[int]string)
 
@@ -36,34 +42,41 @@ func setup() {
 	rysncErrorCodes[25] = "The --max-delete limit stopped deletions"
 	rysncErrorCodes[30] = "Timeout in data send/receive"
 	rysncErrorCodes[35] = "Timeout waiting for daemon connection"
+
+	return nil
 }
 
 func sendHook(content string, url string) {
-	values := map[string]string{"content": content}
-	json_data, err := json.Marshal(values)
+	if !hookUnset {
+		values := map[string]string{"content": content}
+		json_data, err := json.Marshal(values)
 
-	if err != nil {
-		log.Fatal(err)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		resp, err := http.Post(url, "application/json",
+			bytes.NewBuffer(json_data))
+
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		var res map[string]interface{}
+
+		json.NewDecoder(resp.Body).Decode(&res)
 	}
-
-	resp, err := http.Post(url, "application/json",
-		bytes.NewBuffer(json_data))
-
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	var res map[string]interface{}
-
-	json.NewDecoder(resp.Body).Decode(&res)
 
 	// fmt.Println(res["json"])
 }
 
 func Error(message string, errorType string) {
 	// TODO: Have this handle logging to console and send hook
-	if hookURL == "" {
-		setup()
+	if hookURL == "" && hookUnset {
+		err := setup()
+		if err != nil {
+			log.Print("\033[33m[WARN]\033[0m Webhook not set in env file")
+		}
 	}
 	if errorType == "info" {
 		log.Printf("[INFO] %s", message)
@@ -82,4 +95,5 @@ func Error(message string, errorType string) {
 		log.Printf("\033[34m[DEBUG]\033[0m %s", message)
 		sendHook(message, hookURL)
 	}
+
 }
