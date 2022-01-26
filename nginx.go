@@ -13,8 +13,6 @@ import (
 
 	"github.com/nxadm/tail"
 	"github.com/oschwald/geoip2-golang"
-
-	"github.com/COSI_Lab/Mirror/mirrorErrors"
 )
 
 type LogEntry struct {
@@ -41,8 +39,6 @@ var db *geoip2.Reader
 func InitDb() (err error) {
 	db, err = geoip2.Open("GeoLite2-City.mmdb")
 	if err != nil {
-		// I plan to rework so mirrorErrors.Error is used instead of using log.panic
-		mirrorErrors.Error("\x1B[31m[Error]\x1B[0m could not open geolite city db")
 		log.Panicln("\x1B[31m[Error]\x1B[0m could not open geolite city db")
 		return err
 	}
@@ -63,14 +59,12 @@ func InitRegex() (err error) {
 func ReadLogFile(logFile string, ch1 chan *LogEntry, ch2 chan *LogEntry) (err error) {
 	if reQuotes == nil {
 		if InitRegex() != nil {
-			mirrorErrors.Error("\x1B[31m[Error]\x1B[0m could not compile nginx log parsing regex")
 			log.Println("\x1B[31m[Error]\x1B[0m could not compile nginx log parsing regex")
 		}
 	}
 
 	if db == nil {
 		if InitDb() != nil {
-			mirrorErrors.Error("\x1B[31m[Error]\x1B[0m could not initilze geolite city db")
 			log.Println("\x1B[31m[Error]\x1B[0m could not initilze geolite city db")
 		}
 	}
@@ -85,9 +79,7 @@ func ReadLogFile(logFile string, ch1 chan *LogEntry, ch2 chan *LogEntry) (err er
 	scanner := bufio.NewScanner(f)
 	for scanner.Scan() {
 		entry, err := ParseLine(scanner.Text())
-		if err != nil {
-			log.Printf("\x1B[33m[WARN]\x1B[0m failed to parse line %s %s", scanner.Text(), err.Error())
-		} else {
+		if err == nil {
 			// Send a pointer to the entry down each channel
 			select {
 			case ch1 <- entry:
@@ -106,14 +98,12 @@ func ReadLogFile(logFile string, ch1 chan *LogEntry, ch2 chan *LogEntry) (err er
 func ReadLogs(logFile string, ch1 chan *LogEntry, ch2 chan *LogEntry) (err error) {
 	if reQuotes == nil {
 		if InitRegex() != nil {
-			mirrorErrors.Error("\x1B[31m[Error]\x1B[0m could not compile nginx log parsing regex")
 			log.Println("\x1B[31m[Error]\x1B[0m could not compile nginx log parsing regex")
 		}
 	}
 
 	if db == nil {
 		if InitDb() != nil {
-			mirrorErrors.Error("\x1B[31m[Error]\x1B[0m could not initilze geolite city db")
 			log.Println("\x1B[31m[Error]\x1B[0m could not initilze geolite city db")
 		}
 	}
@@ -126,10 +116,7 @@ func ReadLogs(logFile string, ch1 chan *LogEntry, ch2 chan *LogEntry) (err error
 
 	for line := range tail.Lines {
 		entry, err := ParseLine(line.Text)
-		if err != nil {
-			log.Printf("\x1B[33m[WARN]\x1B[0m failed to parse line %s %s", line.Text, err.Error())
-			log.Printf("\x1B[33m[WARN]\x1B[0m failed to parse line %s | %s", line.Text, err.Error())
-		} else {
+		if err == nil {
 			// Send a pointer to the entry down each channel
 			select {
 			case ch1 <- entry:
@@ -140,7 +127,6 @@ func ReadLogs(logFile string, ch1 chan *LogEntry, ch2 chan *LogEntry) (err error
 		}
 	}
 
-	mirrorErrors.Error("\x1B[31m[Error]\x1B[0m Closing ReadLogs *LogEntry channel for unknown reason. This should not happen!")
 	log.Println("\x1B[31m[Error]\x1B[0m Closing ReadLogs *LogEntry channel for unknown reason. This should not happen!")
 	close(ch1)
 	close(ch2)

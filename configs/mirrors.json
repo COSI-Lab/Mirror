@@ -262,7 +262,7 @@
             "isDistro": true,
             "rsync": {
                 "user": "vmirror",
-                "password_file": "voidlinux.password",
+                "password_file": "voidlinux.secret",
                 "host": "alpha.de.repo.voidlinux.org",
                 "src": "voidmirror",
                 "dest": "/storage/voidlinux",
