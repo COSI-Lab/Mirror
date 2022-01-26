@@ -3,6 +3,7 @@
 WIP monolithic software for [mirror](https://mirror.clarkson.edu) that handles
 - [x] Defining what projects we host from a centralized config
 - [ ] Parsing passwords from config
+- [ ] Config reloading using SIGHUP
 - [x] Recording nginx bandwidth per repo
 - [ ] Recording rsync bandwidth
 - [ ] Recording tranmission bittorrent bandwidth
@@ -24,7 +25,7 @@ WIP monolithic software for [mirror](https://mirror.clarkson.edu) that handles
 
 ```
 go get github.com/codegangsta/gin
-gin -p 3000 -b mirror
+gin --all -p 3002 -b mirror -i --excludeDir mirror static
 ```
 
 Enjoy!
