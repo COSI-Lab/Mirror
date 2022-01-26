@@ -5,7 +5,6 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/COSI_Lab/Mirror/mirrorErrors"
 	"github.com/gorilla/mux"
 )
 
@@ -43,7 +42,6 @@ func InitWebserver() error {
 		log.Println("[INFO] Webserver", tmpls.DefinedTemplates())
 		return err
 	} else {
-		mirrorErrors.Error("\x1B[31m[Error]\x1B[0m InitWebserver")
 		log.Println("\x1B[31m[Error]\x1B[0m InitWebserver", err)
 		tmpls = nil
 	}

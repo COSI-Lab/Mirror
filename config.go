@@ -10,31 +10,34 @@ import (
 )
 
 type ConfigFile struct {
-	Schema  string `json:"$schema"`
-	Mirrors []struct {
-		Name   string `json:"name"`
-		Short  string `json:"short"`
-		Script struct {
-			Command     string `json:"command"`
-			SyncsPerDay int    `json:"syncs_per_day"`
-		}
-		Rsync struct {
-			Options      string `json:"options"`
-			Host         string `json:"host"`
-			Src          string `json:"src"`
-			Dest         string `json:"dest"`
-			SyncFile     string `json:"sync_file"`
-			SyncsPerDay  int    `json:"syncs_per_day"`
-			PasswordFile string `json:"password_file"`
-		} `json:"rsync"`
-		Static struct {
-			Location string `json:"location"`
-			Source   string `json:"source"`
-		} `json:"static"`
-		Official bool   `json:"official"`
-		IsDistro bool   `json:"isDistro"`
-		HomePage string `json:"homepage"`
-	} `json:"mirrors"`
+	Schema  string    `json:"$schema"`
+	Mirrors []Project `json:"mirrors"`
+}
+
+type Project struct {
+	Name   string `json:"name"`
+	Short  string `json:"short"`
+	Script struct {
+		Command     string `json:"command"`
+		SyncsPerDay int    `json:"syncs_per_day"`
+	}
+	Rsync struct {
+		Options      string `json:"options"`
+		Host         string `json:"host"`
+		Src          string `json:"src"`
+		Dest         string `json:"dest"`
+		SyncFile     string `json:"sync_file"`
+		SyncsPerDay  int    `json:"syncs_per_day"`
+		PasswordFile string `json:"password_file"`
+		Password     string `json:"password,omitempty"`
+	} `json:"rsync"`
+	Static struct {
+		Location string `json:"location"`
+		Source   string `json:"source"`
+	} `json:"static"`
+	Official bool   `json:"official"`
+	IsDistro bool   `json:"isDistro"`
+	HomePage string `json:"homepage"`
 }
 
 func ParseConfig(configFile, schemaFile string) (config ConfigFile) {
@@ -72,5 +75,22 @@ func ParseConfig(configFile, schemaFile string) (config ConfigFile) {
 		log.Fatal("Could not parse the config file even though it fits the schema file: ", err.Error())
 	}
 
+	// Parse passwords
+	for _, project := range config.Mirrors {
+		if project.Rsync.PasswordFile != "" {
+			project.Rsync.Password = getPassword("configs/" + project.Rsync.PasswordFile)
+		}
+	}
+
 	return config
+}
+
+func getPassword(filename string) string {
+	bytes, err := ioutil.ReadFile(filename)
+
+	if err != nil {
+		log.Fatal("Could not read password file: ", err.Error())
+	}
+
+	return string(bytes)
 }
