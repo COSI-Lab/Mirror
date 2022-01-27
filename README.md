@@ -24,8 +24,8 @@ WIP monolithic software for [mirror](https://mirror.clarkson.edu) that handles
 ## Want live rebuilding?
 
 ```
-go get github.com/codegangsta/gin
-gin --all -p 3002 -b mirror -i --excludeDir mirror static
+go install github.com/codegangsta/gin@latest
+gin --all -p 3002 -b mirror -i
 ```
 
 Enjoy!
