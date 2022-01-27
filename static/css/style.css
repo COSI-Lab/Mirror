@@ -1,26 +1,52 @@
-h1 {
-    color: red
+/* {
+    box-sizing: border-box;
+}*/
+head{
+    background-color: darkgreen;
+    padding: 1em;
 }
-
 a{
     color: white;
 }
-.topnav a {
-    float: left;
+header, footer {
+    background: rgb(40, 104, 40);
+    padding: 1em;
+    /*height: 20vh;*/
+  }
+
+#Main_Layout{
+    display: flex;
+    min-height: 10vh;
+    flex-direction: column;
+    margin: 0;
+}
+.topbar {
+    /* Mobile Dropdown Main Bar */
+    background: rgb(40, 104, 40);
+    display: flex;
+    flex: 1;
+    justify-content: center;
+    align-items: center;
+}
+.topbar > a {
     background-color: darkgreen;
-    color: white;
-    text-align: center;
-    padding: 14px 16px;
-    text-decoration: none;
-    font-size: 17px;
-    margin: auto;
-    display: block;
+    margin: 0px;
+    padding: 20px;
+    font-size: 15px;
+}
+#title {
+    color: grey;
+    font-size: 40px;
 }
 .foot {
-    background-color: darkgreen;
     color: white;
     display: block;
-    
+    text-align: center;
+}
+.head {
+    color: white;
+    display: block;
+    text-align: center;
 }
 p{
     color : black;
