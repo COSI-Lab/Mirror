@@ -1,4 +1,4 @@
-package queue_test
+package datarithms_test
 
 import (
 	"testing"
