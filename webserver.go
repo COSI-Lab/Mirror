@@ -4,12 +4,16 @@ import (
 	"html/template"
 	"log"
 	"net/http"
+	"sync"
 
 	"github.com/COSI_Lab/Mirror/mirrorErrors"
 	"github.com/gorilla/mux"
 )
 
 var tmpls *template.Template
+var distributions []Project
+var software []Project
+var dataLock = &sync.RWMutex{}
 
 func handleIndex(w http.ResponseWriter, r *http.Request) {
 	tmpls.ExecuteTemplate(w, "index.gohtml", "")
@@ -20,7 +24,9 @@ func handleMap(w http.ResponseWriter, r *http.Request) {
 }
 
 func handleDistributions(w http.ResponseWriter, r *http.Request) {
-	tmpls.ExecuteTemplate(w, "distributions.gohtml", "chris")
+	dataLock.RLock()
+	tmpls.ExecuteTemplate(w, "distributions.gohtml", distributions)
+	dataLock.RUnlock()
 }
 
 func handleHistory(w http.ResponseWriter, r *http.Request) {
@@ -28,7 +34,9 @@ func handleHistory(w http.ResponseWriter, r *http.Request) {
 }
 
 func handleSoftware(w http.ResponseWriter, r *http.Request) {
-	tmpls.ExecuteTemplate(w, "software.gohtml", "")
+	dataLock.RLock()
+	tmpls.ExecuteTemplate(w, "software.gohtml", software)
+	dataLock.RUnlock()
 }
 
 func handleStatistics(w http.ResponseWriter, r *http.Request) {
@@ -44,7 +52,7 @@ func InitWebserver() error {
 		mirrorErrors.Error("Webserver"+tmpls.DefinedTemplates(), "info")
 		return err
 	} else {
-		mirrorErrors.Error("InitWebserver", "error")
+		mirrorErrors.Error("InitWebserver; "+err.Error(), "error")
 		tmpls = nil
 	}
 
@@ -58,6 +66,22 @@ func loggingMiddleware(next http.Handler) http.Handler {
 		mirrorErrors.Error("[INFO]"+r.Method+r.RequestURI, "info")
 		next.ServeHTTP(w, r)
 	})
+}
+
+// Setup distributions and software arrays
+func webserverLoadConfig(config ConfigFile) {
+	dataLock.Lock()
+	distributions = make([]Project, len(config.Mirrors))
+	software = make([]Project, len(config.Mirrors))
+
+	for _, project := range config.Mirrors {
+		if project.IsDistro {
+			distributions = append(distributions, project)
+		} else {
+			software = append(software, project)
+		}
+	}
+	dataLock.Unlock()
 }
 
 func HandleWebserver(entries chan *LogEntry) {

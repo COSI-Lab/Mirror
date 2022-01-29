@@ -2,6 +2,8 @@
 
 WIP monolithic software for [mirror](https://mirror.clarkson.edu) that handles
 - [x] Defining what projects we host from a centralized config
+- [ ] Parsing passwords from config
+- [ ] Config reloading using SIGHUP
 - [x] Recording nginx bandwidth per repo
 - [ ] Recording rsync bandwidth
 - [ ] Recording tranmission bittorrent bandwidth
@@ -16,14 +18,23 @@ WIP monolithic software for [mirror](https://mirror.clarkson.edu) that handles
 - [x] Discord webhook integration
 - [x] Notifies our discord server when things fail
 
-## New frontend
+## Frontend
 
-We need to discuss this
+
+## Want live rebuilding?
+
+```
+go install github.com/codegangsta/gin@latest
+gin --all -p 3002 -b mirror -i -x mirror
+```
+
+Enjoy!! :) 
 
 ## Env File Formatting
-
-- HOOK_URL = url
-- INFLUX_TOKEN = token
+```
+HOOK_URL = url
+INFLUX_TOKEN = token
+```
 
 ## GeoLite2 Attribution
 

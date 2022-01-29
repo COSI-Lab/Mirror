@@ -1,7 +1,8 @@
 <html>
-    <body>
-        {{template "header.gohtml" .}}
-        index.html
-        {{template "footer.gohtml" .}}
-    </body>
+    {{template "head.gohtml" . }}
+    <div id = "Main_Layout">
+      {{template "header.gohtml" .}}
+      <p > index.html </p>
+      {{template "footer.gohtml" .}}
+    </div>
 </html>

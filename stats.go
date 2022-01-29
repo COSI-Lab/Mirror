@@ -29,7 +29,7 @@ func InitNGINXStats(shorts []string, reader api.QueryAPI) {
 	result, err := reader.Query(context.Background(), "from(bucket: \"test\") |> range(start: -7d) |> filter(fn: (r) => r[\"_measurement\"] == \"mirror\" and  r[\"_field\"] == \"bytes_sent\") |> last()")
 
 	if err != nil {
-		mirrorErrors.Error("Query went bad", "error")
+		mirrorErrors.Error("Query to influxdb failed ; "+err.Error(), "error")
 	} else {
 		for result.Next() {
 			if result.Err() == nil {

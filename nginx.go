@@ -11,10 +11,9 @@ import (
 	"strings"
 	"time"
 
+	"github.com/COSI_Lab/Mirror/mirrorErrors"
 	"github.com/nxadm/tail"
 	"github.com/oschwald/geoip2-golang"
-
-	"github.com/COSI_Lab/Mirror/mirrorErrors"
 )
 
 type LogEntry struct {
@@ -41,7 +40,6 @@ var db *geoip2.Reader
 func InitDb() (err error) {
 	db, err = geoip2.Open("GeoLite2-City.mmdb")
 	if err != nil {
-		// I plan to rework so mirrorErrors.Error is used instead of using log.panic
 		mirrorErrors.Error("could not open geolite city db", "error")
 		return err
 	}
@@ -82,9 +80,7 @@ func ReadLogFile(logFile string, ch1 chan *LogEntry, ch2 chan *LogEntry) (err er
 	scanner := bufio.NewScanner(f)
 	for scanner.Scan() {
 		entry, err := ParseLine(scanner.Text())
-		if err != nil {
-			log.Printf("\x1B[33m[WARN]\033[0m Failed to parse line %s %s", scanner.Text(), err.Error())
-		} else {
+		if err == nil {
 			// Send a pointer to the entry down each channel
 			select {
 			case ch1 <- entry:
@@ -121,10 +117,7 @@ func ReadLogs(logFile string, ch1 chan *LogEntry, ch2 chan *LogEntry) (err error
 
 	for line := range tail.Lines {
 		entry, err := ParseLine(line.Text)
-		if err != nil {
-			log.Printf("\x1B[33m[WARN]\x1B[0m failed to parse line %s %s", line.Text, err.Error())
-			log.Printf("\x1B[33m[WARN]\x1B[0m failed to parse line %s | %s", line.Text, err.Error())
-		} else {
+		if err == nil {
 			// Send a pointer to the entry down each channel
 			select {
 			case ch1 <- entry:
