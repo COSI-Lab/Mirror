@@ -13,11 +13,11 @@ var rysncErrorCodes map[int]string
 var hookURL string
 var hookUnset = false
 
-func setup() error {
+func Setup() error {
 	hookURL = os.Getenv("HOOK_URL")
 	if hookURL == "" {
 		hookUnset = true
-		return errors.New("HOOK_URL is not set")
+		return errors.New("missing .env envirnment variable HOOK_URL, not interfacing with discord")
 	}
 
 	rysncErrorCodes = make(map[int]string)
@@ -72,12 +72,6 @@ func sendHook(content string, url string) {
 
 func Error(message string, errorType string) {
 	// TODO: Have this handle logging to console and send hook
-	if hookURL == "" && hookUnset {
-		err := setup()
-		if err != nil {
-			log.Print("\033[33m[WARN]\033[0m Webhook not set in env file")
-		}
-	}
 	if errorType == "info" {
 		log.Printf("[INFO] %s", message)
 	} else if errorType == "warn" {
@@ -95,5 +89,4 @@ func Error(message string, errorType string) {
 		log.Printf("\033[34m[DEBUG]\033[0m %s", message)
 		sendHook(message, hookURL)
 	}
-
 }

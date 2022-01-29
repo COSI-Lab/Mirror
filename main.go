@@ -12,6 +12,13 @@ import (
 
 func main() {
 	godotenv.Load()
+
+	// Setup error logger
+	err := mirrorErrors.Setup()
+	if err != nil {
+		mirrorErrors.Error(err.Error(), "error")
+	}
+
 	mirrorErrors.Error("Starting Mirror", "startup")
 
 	// Load config file and check schema
