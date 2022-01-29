@@ -1,24 +1,29 @@
 /* {
     box-sizing: border-box;
 }*/
+
+/* For head/gohtml */
 head{
     background-color: darkgreen;
     padding: 1em;
 }
-a{
-    color: white;
-}
+
+/* For header.gohtml and footer.gohtml*/
 header, footer {
     background: rgb(40, 104, 40);
     padding: 1em;
     /*height: 20vh;*/
-  }
+}
 
-#Main_Layout{
-    display: flex;
-    min-height: 10vh;
-    flex-direction: column;
-    margin: 0;
+/* For header.gohtml */
+#title {
+    color: grey;
+    font-size: 40px;
+}
+.head {
+    color: white;
+    display: block;
+    text-align: center;
 }
 .topbar {
     /* Mobile Dropdown Main Bar */
@@ -35,20 +40,26 @@ header, footer {
     padding: 20px;
     font-size: 15px;
 }
-#title {
-    color: grey;
-    font-size: 40px;
-}
+
+/* For footer.gohtml */
 .foot {
     color: white;
     display: block;
     text-align: center;
 }
-.head {
-    color: white;
-    display: block;
-    text-align: center;
+
+/* For index.gohtml */
+#Main_Layout{
+    display: flex;
+    min-height: 10vh;
+    flex-direction: column;
+    margin: 0;
 }
+
+/* General Use: CHANGE WITH CAUTION */
 p{
     color : black;
+}
+a{
+    color: white;
 }
