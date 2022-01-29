@@ -56,6 +56,18 @@ header, footer {
     margin: 0;
 }
 
+/* For disributions.gohtml */
+.distro {
+    border-bottom: 2px solid #cccccc;
+    padding-bottom: 1em;
+    width: 100%;
+    overflow: hidden;
+}
+
+.distro > a {
+    color:rgb(40, 104, 40)
+}
+
 /* General Use: CHANGE WITH CAUTION */
 p{
     color : black;
