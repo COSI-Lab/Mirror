@@ -1,0 +1,392 @@
+         <div class="distro" id="almalinux">
+            <h3>AlmaLinux</h3>
+            <h5>HTTP:</h5>
+            <a href="./almalinux/">http://mirror.clarkson.edu/almalinux/</a>
+            <br>
+            <br>
+            <h5>Upstream Mirror</h5>
+            <a href="http://rsync.repo.almalinux.org/">http://rsync.repo.almalinux.org/</a>
+            <br>
+            <h5>Homepage:</h5>
+            <a href="https://almalinux.org">https://almalinux.org</a>
+          </div>
+          <div class="distro" id="alpine">
+            <h3>Alpine Linux (Official Mirror)</h3>
+            <h5>HTTP:</h5>
+            <a href="./alpine/">http://mirror.clarkson.edu/alpine/</a>
+            <br>
+            <br>
+            <h5>Upstream Mirror</h5>
+            <a href="rsync://rsync.alpinelinux.org">rsync://rsync.alpinelinux.org</a>
+            <br>
+            <h5>Homepage:</h5>
+            <a href="http://www.alpinelinux.org/">http://www.alpinelinux.org/</a>
+          </div>
+          <div class="distro" id="arch">
+            <h3>Arch Linux (Official Mirror)</h3>
+            <h5>ISOs:</h5>
+            <a href="./archlinux/iso/latest/">http://mirror.clarkson.edu/archlinux/iso/latest/</a>
+            <br>
+            <h5>HTTP:</h5>
+            <a href="./archlinux/">http://mirror.clarkson.edu/archlinux/</a>
+            <br>
+            <br>
+            <h5>Upstream Mirror:</h5>
+            <a href="http://mirrors.rit.edu">mirrors.rit.edu</a>
+            <br>
+            <h5>Homepage:</h5>
+            <a href="http://www.archlinux.org/">http://www.archlinux.org/</a>
+            <br>
+            <br>
+            <details>
+              <summary>Setup</summary>
+              <p>To setup Arch to use our Mirror, open up
+                <span class="file">/etc/pacman.d/mirrorlist</span> and add the following line:</p>
+              <pre>Server = http://mirror.clarkson.edu/archlinux/$repo/os/$arch</pre>
+            </details>
+          </div>
+          <div class="distro" id="arch32">
+            <h3>Arch Linux 32 (Official Mirror)</h3>
+            <h5>ISOs:</h5>
+            <a href="./archlinux32/archisos/">http://mirror.clarkson.edu/archlinux32/archisos/</a>
+            <br>
+            <h5>HTTP:</h5>
+            <a href="./archlinux32/">http://mirror.clarkson.edu/archlinux32/</a>
+            <br>
+            <br>
+            <h5>Upstream Mirror:</h5>
+            <a href="http://mirror.archlinux32.org">mirror.archlinux32.org</a>
+            <br>
+            <h5>Homepage:</h5>
+            <a href="http://www.archlinux32.org/">http://www.archlinux32.org/</a>
+            <!--
+
+            TODO: Someone investigate if this is correct or not.
+
+            <br>
+            <br>
+            <details>
+              <summary>Setup</summary>
+              <p>To setup ArchLinux32 to use our Mirror, open up
+                <span class="file">/etc/pacman.d/mirrorlist</span> and add the following line:</p>
+              <pre>Server = http://mirror.clarkson.edu/archlinux32/$repo/os/$arch</pre>
+            </details>
+            -->
+          </div>
+          <div class="distro" id="artix">
+            <h3>Artix Linux (Official Mirror)</h3>
+            <h5>HTTP:</h5>
+            <a href="./artix-linux/">http://mirror.clarkson.edu/artix-linux/</a>
+            <br>
+            <br>
+            <h5>Upstream Mirror:</h5>
+            <a href="http://mirror1.artixlinux.org">mirror1.artixlinux.org</a>
+            <br>
+            <h5>Homepage:</h5>
+            <a href="https://artixlinux.org/">https://artixlinux.org/</a>
+          </div>
+          <div class="distro" id="centos">
+            <h3>CentOS (Official Mirror)</h3>
+            <h5>HTTP:</h5>
+            <a href="./centos/">http://mirror.clarkson.edu/centos/</a>
+            <br>
+            <h5>Rsync:</h5>rsync://mirror.clarkson.edu/centos
+            <br>
+            <br>
+            <h5>Upstream Mirror:</h5>
+            <a href="http://mirrors.rit.edu">mirrors.rit.edu</a>
+            <br>
+            <h5>Homepage:</h5>
+            <a href="https://www.centos.org/">https://www.centos.org/</a>
+          </div>
+          <div class="distro" id="debian">
+            <h3>Debian</h3>
+            <h5>ISOs:</h5>
+            <a href="./debian-cd/">http://mirror.clarkson.edu/debian-cd/</a>
+            <br>
+            <h5>HTTP:</h5>
+            <a href="./debian/">http://mirror.clarkson.edu/debian/</a>
+            <br>
+            <h5>Security Updates:</h5>
+            <a href="./debian-security/">http://mirror.clarkson.edu/debian-security/</a>
+            <br>
+            <h5>Rsync:</h5>rsync://mirror.clarkson.edu/debian-cd
+            <br>
+            <h5>Rsync:</h5>rsync://mirror.clarkson.edu/debian
+            <br>
+            <br>
+            <h5>Upstream Mirrors:</h5>
+            <a href="http://mirrors.rit.edu">mirrors.rit.edu</a> &amp;
+            <a href="http://cdimage.debian.org">cdimage.debian.org</a>
+            <br>
+            <h5>Homepage:</h5>
+            <a href="http://www.debian.org/">http://www.debian.org/</a>
+            <br>
+            <br>
+            <details>
+              <summary>Setup</summary>
+              <p>To setup Debian to use our Mirror, open up
+                <span class="file">/etc/apt/sources.list</span> and modify it to have the following lines:</p>
+              <pre>deb  http://mirror.clarkson.edu/debian stretch main
+deb-src  http://mirror.clarkson.edu/debian stretch main
+
+deb  http://mirror.clarkson.edu/debian stretch-updates main
+deb-src  http://mirror.clarkson.edu/debian stretch-updates main
+
+deb http://mirror.clarkson.edu/debian-security stretch/updates main
+deb-src http://mirror.clarkson.edu/debian-security stretch/updates main
+</pre>
+            </details>
+          </div>
+          <div class="distro" id="freebsd">
+            <h3>FreeBSD</h3>
+            <h5>HTTP:</h5>
+            <a href="./freebsd/">http://mirror.clarkson.edu/freebsd/</a>
+            <br>
+            <h5>Rsync:</h5>rsync://mirror.clarkson.edu/freebsd
+            <br>
+            <br>
+            <h5>Upstream Mirror:</h5>
+            <a href="http://ftp2.de.freebsd.org">ftp2.de.freebsd.org</a>
+            <br>
+            <h5>Homepage:</h5>
+            <a href="https://www.freebsd.org/">https://www.freebsd.org/</a>
+          </div>
+          <div class="distro" id="gentoo">
+            <h3>Gentoo</h3>
+            <h5>ISOs:</h5>
+            <a href="./gentoo/releases/">http://mirror.clarkson.edu/gentoo/releases/</a>
+            <br>
+            <h5>HTTP:</h5>
+            <a href="./gentoo/">http://mirror.clarkson.edu/gentoo/</a> &amp;
+            <a href="./gentoo-portage/">http://mirror.clarkson.edu/gentoo-portage/</a>
+            <h5>Rsync:</h5>rsync://mirror.clarkson.edu/gentoo
+            <br>
+            <h5>Rsync:</h5>rsync://mirror.clarkson.edu/gentoo-portage
+            <br>
+            <br>
+            <h5>Upstream Mirror:</h5>
+            <a href="http://mirrors.rit.edu">mirrors.rit.edu</a>
+            <br>
+            <h5>Homepage:</h5>
+            <a href="http://www.gentoo.org/">http://www.gentoo.org/</a>
+          </div>
+          <div class="distro" id="ipfire">
+            <h3>IPFire (Official Mirror)</h3>
+            <h5>HTTP:</h5>
+            <a href="./ipfire/">http://mirror.clarkson.edu/ipfire/</a>
+            <br>
+            <h5>Rsync:</h5>rsync://mirror.clarkson.edu/ipfire
+            <br>
+            <br>
+            <h5>Upstream Mirror:</h5>
+            <a href="http://rsync.ipfire.org">rsync.ipfire.org</a>
+            <br>
+            <h5>Frequency of Updates:</h5>Hourly
+            <br>
+            <h5>Homepage:</h5>
+            <a href="http://www.ipfire.org/">http://www.ipfire.org/</a>
+          </div>
+          <div class="distro" id="mint">
+            <h3>LinuxMint (Official Mirror)</h3>
+            <h5>ISOs:</h5>
+            <a href="./linuxmint/iso/">http://mirror.clarkson.edu/linuxmint/iso/</a>
+            <br>
+            <h5>HTTP:</h5>
+            <a href="./linuxmint/">http://mirror.clarkson.edu/linuxmint/</a>
+            <br>
+            <h5>Rsync:</h5>rsync://mirror.clarkson.edu/linuxmint-iso
+            <br>
+            <h5>Rsync:</h5>rsync://mirror.clarkson.edu/linuxmint-packages
+            <br>
+            <h5>Rsync:</h5>rsync://mirror.clarkson.edu/linuxmint-debian
+            <br>
+            <br>
+            <h5>Upstream Mirror:</h5>
+            <a href="http://mirror.umd.edu">mirror.umd.edu</a> &amp;
+            <a href="http://packages.linuxmint.com">packages.linuxmint.com</a> &amp;
+            <a href="http://debian.linuxmint.com">debian.linuxmint.com</a>
+            <br>
+            <h5>Homepage:</h5>
+            <a href="http://www.linuxmint.com/">http://www.linuxmint.com/</a>
+          </div>
+          <div class="distro" id="manjaro">
+            <h3>Manjaro Linux (Official Mirror)</h3>
+            <h5>HTTP:</h5>
+            <a href="./manjaro/">http://mirror.clarkson.edu/manjaro/</a>
+            <br>
+            <h5>Rsync:</h5>rsync://mirror.clarkson.edu/manjaro
+            <br>
+            <br>
+            <h5>Upstream Mirror</h5>
+            <a href="http://ftp.halifax.rwth-aachen.de">ftp.halifax.rwth-aachen.de</a>
+            <br>
+            <h5>Homepage:</h5>
+            <a href="https://manjaro.github.io/">https://manjaro.github.io/</a>
+          </div>
+          <div class="distro" id="openbsd">
+            <h3>OpenBSD</h3>
+            <h5>HTTP:</h5>
+            <a href="./openbsd/">http://mirror.clarkson.edu/openbsd/</a>
+            <br>
+            <h5>Rsync:</h5>rsync://mirror.clarkson.edu/openbsd
+            <br>
+            <br>
+            <h5>Upstream Mirror:</h5>
+            <a href="http://mirrors.nycbug.org">mirrors.nycbug.org</a>
+            <br>
+            <h5>Homepage:</h5>
+            <a href="http://www.openbsd.org/">http://www.openbsd.org/</a>
+          </div>
+          <div class="distro" id="opensuse">
+            <h3>OpenSUSE (Official Mirror)</h3>
+            <h5>HTTP:</h5>
+            <a href="./opensuse/">http://mirror.clarkson.edu/opensuse/</a>
+            <br>
+            <h5>Rsync:</h5>rsync://mirror.clarkson.edu/opensuse
+            <br>
+            <br>
+            <h5>Upstream Mirror:</h5>
+            <a href="http://stage.opensuse.org">stage.opensuse.org</a>
+            <br>
+            <h5>Homepage:</h5>
+            <a href="https://www.opensuse.org/">https://www.opensuse.org/</a>
+          </div>
+          <div class="distro" id="parrotsec">
+            <h3>Parrot Security OS (Official Mirror)</h3>
+            <h5>HTTP:</h5>
+            <a href="./parrot/">http://mirror.clarkson.edu/parrot/</a>
+            <br>
+            <h5>Rsync:</h5>rsync://mirror.clarkson.edu/parrot
+            <br>
+            <br>
+            <h5>Upstream Mirror:</h5>
+            <a href="http://archive.parrotsec.org">archive.parrotsec.org</a>
+            <br>
+            <h5>Homepage:</h5>
+            <a href="https://www.parrotsec.org/">https://www.parrotsec.org/</a>
+          </div>
+          <div class="distro" id="raspbian">
+            <h3>Raspbian</h3>
+            <h5>HTTP:</h5>
+            <a href="./raspbian/">http://mirror.clarkson.edu/raspbian/</a>
+            <br>
+            <h5>Rsync:</h5>rsync://mirror.clarkson.edu/raspbian
+            <br>
+            <br>
+            <h5>Upstream Mirror:</h5>
+            <br>
+            <h5>Homepage:</h5>
+            <a href="https://www.raspbian.org/">https://www.raspbian.org/</a>
+          </div>
+          <div class="distro" id="rebornos">
+            <h3>RebornOS (Official Mirror)</h3>
+            <h5>HTTP:</h5>
+            <a href="./RebornOS/">http://mirror.clarkson.edu/RebornOS/</a>
+            <br>
+            <h5>Rsync:</h5>rsync://mirror.clarkson.edu/RebornOS
+            <br>
+            <br>
+            <h5>Upstream Mirror:</h5>
+            <a href="http://mirrors.dotsrc.org/osdn/storage/g/r/re/rebornos/repo/RebornOS/">mirrors.dotsrc.org</a>
+            <br>
+            <h5>Homepage:</h5>
+            <a href="https://rebornos.org/">https://rebornos.org/</a>
+          </div>
+          <div class="distro" id="sabayon">
+            <h3>Sabayon (Official Mirror)</h3>
+            <h5>HTTP:</h5>
+            <a href="./sabayon/">http://mirror.clarkson.edu/sabayon/</a>
+            <br>
+            <h5>Rsync:</h5>rsync://mirror.clarkson.edu/sabayon
+            <br>
+            <br>
+            <h5>Upstream Mirror:</h5>
+            <a href="http://na.mirror.garr.it">na.mirror.garr.it</a>
+            <br>
+            <h5>Homepage:</h5>
+            <a href="http://sabayon.org/">http://sabayon.org/</a>
+          </div>
+          <div class="distro" id="serenity">
+            <h3>Serenity Linux (Main Mirror)</h3>
+            <h5>HTTP:</h5>
+            <a href="./serenity">http://mirror.clarkson.edu/serenity</a>
+            <br>
+            <h5>Rsync:</h5>rsync://mirror.clarkson.edu/serenity
+            <br>
+            <br>
+            <h5>Homepage:</h5>
+            <a href="http://serenitylinux.org/">http://serenitylinux.org/</a>
+          </div>
+          <div class="distro" id="slackware">
+            <h3>Slackware</h3>
+            <h5>HTTP:</h5>
+            <a href="./slackware/">http://mirror.clarkson.edu/slackware/</a>
+            <br>
+            <h5>Rsync:</h5>rsync://mirror.clarkson.edu/slackware
+            <br>
+            <br>
+            <h5>Upstream Mirror:</h5>
+            <a href="http://mirror.cs.princeton.edu/">mirror.cs.princeton.edu</a>
+            <br>
+            <h5>Homepage:</h5>
+            <a href="http://www.slackware.com/">http://www.slackware.com/</a>
+          </div>
+          <div class="distro" id="slitaz">
+            <h3>SliTaz Linux (Offical Mirror)</h3>
+            <h5>HTTP:</h5>
+            <a href="./slitaz/">http://mirror.clarkson.edu/slitaz</a>
+            <br>
+            <h5>Rsync:</h5>rsync://mirror.clarkson.edu/slitaz
+            <br>
+            <br>
+            <h5>Upstream Mirror:</h5>
+            <a href="http://mirror1.slitaz.org/">mirror1.slitaz.org</a>
+            <br>
+            <h5>Homepage:</h5>
+            <a href="http://www.slitaz.org/en/">http://www.slitaz.org/en/</a>
+          </div>
+          <div class="distro" id="ubuntu">
+            <h3>Ubuntu (Official Mirror)</h3>
+            <h5>ISOs:</h5>
+            <a href="./ubuntu-releases/">http://mirror.clarkson.edu/ubuntu-releases/</a>
+            <br>
+            <h5>Flavour ISOs: (Kubuntu, Xubuntu, Mate, etc.)</h5>
+            <a href="./ubuntu-cdimage/">http://mirror.clarkson.edu/ubuntu-cdimage/</a>
+            <h5>HTTP:</h5>
+            <a href="./ubuntu/">http://mirror.clarkson.edu/ubuntu/</a>
+            <br>
+            <h5>Rsync:</h5>rsync://mirror.clarkson.edu/ubuntu-releases
+            <br>
+            <h5>Rsync:</h5>rsync://mirror.clarkson.edu/ubuntu
+            <br>
+            <br>
+            <h5>Upstream Mirror:</h5>
+            <a href="http://us.releases.ubuntu.com">us.release.ubuntu.com</a> &amp;
+            <a href="http://us.archive.ubuntu.com">us.archive.ubuntu.com</a>
+            <br>
+            <h5>Homepage:</h5>
+            <a href="http://www.ubuntu.com/">http://www.ubuntu.com/</a>
+          </div>
+          <div class="distro" id="voidlinux">
+            <h3>Void Linux (Official Mirror)</h3>
+            <h5>HTTP:</h5>
+            <a href="./voidlinux/">http://mirror.clarkson.edu/voidlinux/</a>
+            <br>
+            <h5>Rsync:</h5>rsync://mirror.clarkson.edu/voidlinux
+            <br>
+            <br>
+            <h5>Homepage:</h5>
+            <a href="http://www.voidlinux.org/">http://www.voidlinux.org/</a>
+          </div>
+          <div class="zorinos" id="zorinos">
+            <h3>ZorinOS Images (Official Mirror)</h3>
+            <h5>HTTP:</h5>
+            <a href="./zorinos/isos">http://mirror.clarkson.edu/zorinos/isos/</a>
+            <br>
+            <h5>Rsync:</h5>rsync://mirror.clarkson.edu/zorinos/isos
+            <br>
+            <br>
+            <h5>Homepage:</h5>
+            <a href="https://zorinos.com/">https://zorinos.com/</a>
+          </div>
