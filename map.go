@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"sync"
 
+	"github.com/COSI_Lab/Mirror/mirrorErrors"
 	"github.com/gorilla/mux"
 	"github.com/gorilla/websocket"
 	"github.com/thanhpk/randstr"
@@ -52,10 +53,12 @@ func serve(clients map[string]chan []byte, entries chan *LogEntry) {
 			prevSkip = skip
 
 			if skip {
-				log.Printf("[INFO] MirrorMap no clients connected, skipping")
+				// log.Printf("[INFO] MirrorMap no clients connected, skipping")
+				mirrorErrors.Error("MirrorMap no clients connected, skipping", "info")
 				continue
 			} else {
-				log.Printf("[INFO] MirrorMap new clients connected, sending data")
+				// log.Printf("[INFO] MirrorMap new clients connected, sending data")
+				mirrorErrors.Error("MirrorMap new clients connected, sending data", "info")
 			}
 		}
 
@@ -98,11 +101,12 @@ func socketHandler(w http.ResponseWriter, r *http.Request) {
 	ch := clients[id]
 
 	log.Printf("[INFO] Websocket new client connected %s : %s ", id, r.RemoteAddr)
+	// mirrorErrors.Error("Websocket new client connected", "info")
 
 	// Upgrade our raw HTTP connection to a websocket based one
 	conn, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
-		log.Print("\x1B[33m[WARN]\x1B[0m Error during connection upgradate", err)
+		mirrorErrors.Error("Error during connection upgradate", "warn")
 		return
 	}
 
@@ -119,7 +123,7 @@ func socketHandler(w http.ResponseWriter, r *http.Request) {
 	// Close connection gracefully
 	conn.Close()
 	clients_lock.Lock()
-	log.Printf("\x1B[33m[WARN]\x1B[0m Error sending message %s : %s", id, err)
+	mirrorErrors.Error("Error sending message", "warn")
 	delete(clients, id)
 	clients_lock.Unlock()
 }

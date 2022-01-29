@@ -11,6 +11,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/COSI_Lab/Mirror/mirrorErrors"
 	"github.com/nxadm/tail"
 	"github.com/oschwald/geoip2-golang"
 )
@@ -39,7 +40,7 @@ var db *geoip2.Reader
 func InitDb() (err error) {
 	db, err = geoip2.Open("GeoLite2-City.mmdb")
 	if err != nil {
-		log.Panicln("\x1B[31m[Error]\x1B[0m could not open geolite city db")
+		mirrorErrors.Error("could not open geolite city db", "error")
 		return err
 	}
 
@@ -59,13 +60,13 @@ func InitRegex() (err error) {
 func ReadLogFile(logFile string, ch1 chan *LogEntry, ch2 chan *LogEntry) (err error) {
 	if reQuotes == nil {
 		if InitRegex() != nil {
-			log.Println("\x1B[31m[Error]\x1B[0m could not compile nginx log parsing regex")
+			mirrorErrors.Error("could not compile nginx log parsing regex", "error")
 		}
 	}
 
 	if db == nil {
 		if InitDb() != nil {
-			log.Println("\x1B[31m[Error]\x1B[0m could not initilze geolite city db")
+			mirrorErrors.Error("could not initilze geolite city db", "error")
 		}
 	}
 
@@ -98,13 +99,13 @@ func ReadLogFile(logFile string, ch1 chan *LogEntry, ch2 chan *LogEntry) (err er
 func ReadLogs(logFile string, ch1 chan *LogEntry, ch2 chan *LogEntry) (err error) {
 	if reQuotes == nil {
 		if InitRegex() != nil {
-			log.Println("\x1B[31m[Error]\x1B[0m could not compile nginx log parsing regex")
+			mirrorErrors.Error("could not compile nginx log parsing regex", "error")
 		}
 	}
 
 	if db == nil {
 		if InitDb() != nil {
-			log.Println("\x1B[31m[Error]\x1B[0m could not initilze geolite city db")
+			mirrorErrors.Error("could not initilze geolite city db", "error")
 		}
 	}
 
@@ -127,7 +128,7 @@ func ReadLogs(logFile string, ch1 chan *LogEntry, ch2 chan *LogEntry) (err error
 		}
 	}
 
-	log.Println("\x1B[31m[Error]\x1B[0m Closing ReadLogs *LogEntry channel for unknown reason. This should not happen!")
+	mirrorErrors.Error("Closing ReadLogs *LogEntry channel for unknown reason. This should not happen!", "error")
 	close(ch1)
 	close(ch2)
 
