@@ -5,7 +5,7 @@ import (
 	"os"
 	"time"
 
-	"github.com/COSI_Lab/Mirror/queue"
+	queue "github.com/COSI_Lab/Mirror/datarithms"
 	"github.com/joho/godotenv"
 )
 
@@ -36,12 +36,13 @@ func main() {
 	}
 
 	if InitWebserver() == nil {
+		webserverLoadConfig(config)
 		go HandleWebserver(map_entries)
 	}
 
 	// TODO should be moved into it's own area
-	var rsyncStatus map[string]*queue.CircularQueue
-	rsyncStatus = make(map[string]*queue.CircularQueue, len(config.Mirrors))
+	//
+	rsyncStatus := make(map[string]*queue.CircularQueue, len(config.Mirrors))
 
 	for _, mirror := range config.Mirrors {
 		if mirror.Rsync.SyncsPerDay > 0 {
