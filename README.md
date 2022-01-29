@@ -28,7 +28,7 @@ go install github.com/codegangsta/gin@latest
 gin --all -p 3002 -b mirror -i
 ```
 
-Enjoy!
+Enjoy!!
 
 ## Env File Formatting
 ```
