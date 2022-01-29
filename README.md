@@ -16,7 +16,7 @@ WIP monolithic software for [mirror](https://mirror.clarkson.edu) that handles
 - [ ] Periodically syncing projects
 - [ ] Exposing sync status
 - [x] Discord webhook integration
-- [ ] Notifies our discord server when things fail 
+- [x] Notifies our discord server when things fail
 
 ## Frontend
 
@@ -25,7 +25,7 @@ WIP monolithic software for [mirror](https://mirror.clarkson.edu) that handles
 
 ```
 go install github.com/codegangsta/gin@latest
-gin --all -p 3002 -b mirror -i
+gin --all -p 3002 -b mirror -i -x mirror
 ```
 
 Enjoy!! :) 
