@@ -2,58 +2,89 @@
     box-sizing: border-box;
 }*/
 
-/* For head/gohtml */
-head{
-    background-color: darkgreen;
-    padding: 1em;
-}
-
-/* For header.gohtml and footer.gohtml*/
-header, footer {
-    background: rgb(40, 104, 40);
-    padding: 1em;
-    /*height: 20vh;*/
-}
-
 /* For header.gohtml */
-#title {
-    color: grey;
-    font-size: 40px;
-}
-.head {
+header{
+    background: rgb(40, 104, 40);
     color: white;
     display: block;
-    text-align: center;
+    padding-bottom: 0;
+    text-align: left;
+}
+.title {
+    display: flex;
+    justify-content: left;
+    align-items: center;
+    padding-left: 20px;
+    max-height: 130px;
+    color: lightgrey;
+    font-size: 80px;
 }
 .topbar {
     /* Mobile Dropdown Main Bar */
-    /*New Tree*/
     background: rgb(40, 104, 40);
+    background-color: darkgreen;
     display: flex;
-    flex: 1;
     justify-content: center;
     align-items: center;
 }
 .topbar > a {
     background-color: darkgreen;
+    color: white;
     margin: 0px;
     padding: 20px;
     font-size: 15px;
 }
 
 /* For footer.gohtml */
-.foot {
+footer {
+    background: rgb(40, 104, 40);
     color: white;
+    padding: 25px;
     display: block;
     text-align: center;
 }
+footer > a {
+    color: white;
+}
 
 /* For index.gohtml */
-#Main_Layout{
+.Main_Layout {
+    padding-left:25%;
+    padding-right:25%;
+    /*max-width: 60%;*/
     display: flex;
     min-height: 10vh;
     flex-direction: column;
     margin: 0;
+}
+.main-layout > p {
+    font-size: 5px;
+}
+.horlist {
+    display: flex;
+    justify-content: center;
+    align-items:flex-start;
+}
+.vertlist {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: left;
+}
+.vertlist > img{
+    margin-left: 30px;
+}
+.vertlist > b{
+    padding-left: 30px;
+    padding-right: 30px;
+    text-align: left;
+    font-size: 30px;
+}
+.vertlist > p{
+    text-align: left;
+    padding-left: 30px;
+    padding-right: 30px;
+    max-width: 250px;
 }
 
 /* For disributions.gohtml */
@@ -69,9 +100,10 @@ header, footer {
 }
 
 /* General Use: CHANGE WITH CAUTION */
-p{
+p {
     color : black;
 }
-a{
-    color: white;
+a {
+    padding: 0;
+    /*color: green;*/
 }
