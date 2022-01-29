@@ -1,7 +1,6 @@
 <html>
-    <body>
-        {{template "header.gohtml" .}}
-        distributions.html {{.}}
-        {{template "footer.gohtml" .}}
-    </body>
+    {{template "head.gohtml" .}}
+    {{template "header.gohtml" .}}
+    {{template "distrotemplate.gohtml" .}}
+    {{template "footer.gohtml" .}}
 </html>
