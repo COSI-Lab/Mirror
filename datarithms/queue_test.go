@@ -9,7 +9,7 @@ import (
 // Test the queue
 func TestQueue(t *testing.T) {
 	// Create a new queue
-	q := queue.Init(5)
+	q := queue.CircularQueueInit(5)
 
 	if q.Capacity() != 5 {
 		t.Error("Capacity is not 5")

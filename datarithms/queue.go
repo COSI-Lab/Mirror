@@ -14,7 +14,7 @@ type CircularQueue struct {
 }
 
 // Creates a new circular queue of given capacity
-func Init(capacity int) *CircularQueue {
+func CircularQueueInit(capacity int) *CircularQueue {
 	q := new(CircularQueue)
 
 	q.queue = make([]interface{}, capacity)
@@ -22,6 +22,7 @@ func Init(capacity int) *CircularQueue {
 	q.start = 0
 	q.end = 0
 	q.length = 0
+	q.lock = sync.RWMutex{}
 
 	return q
 }
