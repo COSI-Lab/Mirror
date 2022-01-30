@@ -1,53 +1,109 @@
 /* {
     box-sizing: border-box;
 }*/
-head{
-    background-color: darkgreen;
-    padding: 1em;
-}
-a{
-    color: white;
-}
-header, footer {
-    background: rgb(40, 104, 40);
-    padding: 1em;
-    /*height: 20vh;*/
-  }
 
-#Main_Layout{
+/* For header.gohtml */
+header{
+    background: rgb(40, 104, 40);
+    color: white;
+    display: block;
+    padding-bottom: 0;
+    text-align: left;
+}
+.title {
     display: flex;
-    min-height: 10vh;
-    flex-direction: column;
-    margin: 0;
+    justify-content: left;
+    align-items: center;
+    padding-left: 20px;
+    max-height: 130px;
+    color: lightgrey;
+    font-size: 80px;
 }
 .topbar {
     /* Mobile Dropdown Main Bar */
     background: rgb(40, 104, 40);
+    background-color: darkgreen;
     display: flex;
-    flex: 1;
     justify-content: center;
     align-items: center;
 }
 .topbar > a {
     background-color: darkgreen;
+    color: white;
     margin: 0px;
     padding: 20px;
     font-size: 15px;
 }
-#title {
-    color: grey;
-    font-size: 40px;
-}
-.foot {
+
+/* For footer.gohtml */
+footer {
+    background: rgb(40, 104, 40);
     color: white;
+    padding: 25px;
     display: block;
     text-align: center;
 }
-.head {
+footer > a {
     color: white;
-    display: block;
-    text-align: center;
 }
-p{
+
+/* For index.gohtml */
+.Main_Layout {
+    padding-left:25%;
+    padding-right:25%;
+    /*max-width: 60%;*/
+    display: flex;
+    min-height: 10vh;
+    flex-direction: column;
+    margin: 0;
+}
+.main-layout > p {
+    font-size: 5px;
+}
+.horlist {
+    display: flex;
+    justify-content: center;
+    align-items:flex-start;
+}
+.vertlist {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: left;
+}
+.vertlist > img{
+    margin-left: 30px;
+}
+.vertlist > b{
+    padding-left: 30px;
+    padding-right: 30px;
+    text-align: left;
+    font-size: 30px;
+}
+.vertlist > p{
+    text-align: left;
+    padding-left: 30px;
+    padding-right: 30px;
+    max-width: 250px;
+}
+
+/* For disributions.gohtml */
+.distro {
+    border-bottom: 2px solid #cccccc;
+    padding-bottom: 1em;
+    width: 100%;
+    overflow: hidden;
+}
+
+.distro > a {
+    color:rgb(40, 104, 40)
+}
+
+/* General Use: CHANGE WITH CAUTION */
+p {
     color : black;
+}
+a {
+    padding: 0;
+    /*color: green;*/
 }
