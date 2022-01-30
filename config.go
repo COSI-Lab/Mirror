@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"log"
 
+	"github.com/COSI_Lab/Mirror/mirrorErrors"
 	"github.com/xeipuuv/gojsonschema"
 )
 
@@ -29,7 +30,7 @@ type Project struct {
 		SyncFile     string `json:"sync_file"`
 		SyncsPerDay  int    `json:"syncs_per_day"`
 		PasswordFile string `json:"password_file"`
-		Password     string `json:"password,omitempty"`
+		Password     string `json:"password"`
 	} `json:"rsync"`
 	Static struct {
 		Location string `json:"location"`
@@ -89,7 +90,7 @@ func getPassword(filename string) string {
 	bytes, err := ioutil.ReadFile(filename)
 
 	if err != nil {
-		log.Fatal("Could not read password file: ", err.Error())
+		mirrorErrors.Error("Could not read password file: "+filename, "WARN")
 	}
 
 	return string(bytes)
