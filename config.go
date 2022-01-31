@@ -36,9 +36,10 @@ type Project struct {
 		Location string `json:"location"`
 		Source   string `json:"source"`
 	} `json:"static"`
-	Official bool   `json:"official"`
-	IsDistro bool   `json:"isDistro"`
-	HomePage string `json:"homepage"`
+	Official    bool   `json:"official"`
+	IsDistro    bool   `json:"isDistro"`
+	HomePage    string `json:"homepage"`
+	PublicRsync bool   `json:"publicRsync"`
 }
 
 func ParseConfig(configFile, schemaFile string) (config ConfigFile) {
