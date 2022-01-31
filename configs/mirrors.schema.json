@@ -50,6 +50,11 @@
                                 "type": "string",
                                 "default": "-avzrH --numeric-ids --delete --delete-delay --delay-updates --ignore-errors --exclude \".~tmp~\""
                             },
+                            "second": {
+                                "description": "For projects that require a second rsync pass this is the second options",
+                                "type": "string",
+                                "default": ""
+                            },
                             "user": {
                                 "description": "Host username for the upstream mirror",
                                 "type": "string"
@@ -101,11 +106,11 @@
                                 "type": "string",
                                 "description": "Location that we originally cloned from"
                             }
-                        }
-                    },
-                    "color": {
-                        "type": "string",
-                        "description": "Color this repo is represented as on the Map"
+                        },
+                        "required": [
+                            "location",
+                            "source"
+                        ]
                     },
                     "official": {
                         "description": "Are we an official mirror for this software",
@@ -118,6 +123,14 @@
                     "homepage": {
                         "description": "URL to the homepage for the mirrored project",
                         "type": "string"
+                    },
+                    "color": {
+                        "type": "string",
+                        "description": "Color this repo is represented as on the Map"
+                    },
+                    "publicRsync": {
+                        "type": "boolean",
+                        "description": "true if we want rsyncd to serve this repo"
                     }
                 },
                 "required": [
@@ -125,7 +138,9 @@
                     "short",
                     "official",
                     "isDistro",
-                    "homepage"
+                    "homepage",
+                    "color",
+                    "publicRsync"
                 ],
                 "oneOf":[
                     {

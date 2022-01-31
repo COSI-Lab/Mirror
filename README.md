@@ -2,7 +2,9 @@
 
 WIP monolithic software for [mirror](https://mirror.clarkson.edu) that handles
 - [x] Defining what projects we host from a centralized config
-- [ ] Parsing passwords from config
+- [x] Parsing passwords from config
+- [ ] Generating rsyncd.conf from config
+- [ ] Manage torrents using config
 - [ ] Config reloading using SIGHUP
 - [x] Recording nginx bandwidth per repo
 - [ ] Recording rsync bandwidth
@@ -13,6 +15,7 @@ WIP monolithic software for [mirror](https://mirror.clarkson.edu) that handles
 - [ ] Exposing tranmission bittorrent bandwidth
 - [ ] Exposing total network bandwidth
 - [x] Mirror map of real time downloads
+- [ ] Mirror map generated from project config
 - [ ] Periodically syncing projects
 - [ ] Exposing sync status
 - [x] Discord webhook integration
@@ -21,14 +24,14 @@ WIP monolithic software for [mirror](https://mirror.clarkson.edu) that handles
 ## Frontend
 
 
-## Want live rebuilding?
+## Development
+
+First you need to install the latest version of [golang](https://golang.org/doc/install). Then make sure `~/go/bin` is in your `$PATH`. Now you build and run the project using [gin](https://github.com/codegangsta/gin).
 
 ```
 go install github.com/codegangsta/gin@latest
 gin --all -p 3002 -b mirror -i -x mirror
 ```
-
-Enjoy!! :) 
 
 ## Env File Formatting
 ```
