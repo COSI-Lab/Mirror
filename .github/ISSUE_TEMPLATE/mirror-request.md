@@ -1,7 +1,7 @@
 ---
 name: Mirror Request
 about: Suggest a project we should mirror
-title: ''
+title: '[mirror-request] <name of project>'
 labels: enhancement
 assignees: ''
 
@@ -11,6 +11,6 @@ assignees: ''
 
 **Are you an official maintainer of this project? Would we become an _Official_ mirror:**
 
-**If possible can you link us to documentation on how to mirror the project:**
+**Is there a link to documentation on how to mirror the project:**
 
 **(Optional) Around how much disk space is required to host the project:**
