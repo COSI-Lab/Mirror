@@ -1,6 +1,15 @@
 <html>
     {{template "head.gohtml" .}}
     {{template "header.gohtml" .}}
-    {{template "distrotemplate.gohtml" .}}
+    {{ range . }}
+    <div class="distro">
+    {{ .Name }}
+    {{if .Official }}
+        <b>
+        (Official Mirror)
+        </b>
+    {{ end }}
+    </div>
+    {{ end }}
     {{template "footer.gohtml" .}}
 </html>
