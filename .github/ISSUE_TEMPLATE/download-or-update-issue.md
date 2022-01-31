@@ -9,7 +9,7 @@ assignees: ''
 
 What project were you trying to use? (ie Blender, Arch Linux, Gentoo) : 
 
-What failed? (ie iso download failed, `apt upgrade` failed, blender installer failed) : 
+What failed? (ie iso download failed, `apt upgrade` failed, linux distro seems to be out of sync, blender download failed) : 
 
 When did you first have the issue :
 
