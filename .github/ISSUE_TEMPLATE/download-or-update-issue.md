@@ -7,9 +7,9 @@ assignees: ''
 
 ---
 
-**What project were you trying to use? (ie Blender, Arch Linux, Gentoo):**
+**What project were you trying to use? (e.g. Blender, Arch Linux, Gentoo):**
 
-**What failed? (ie iso download failed, `apt upgrade` failed, project is out of sync, blender download failed):**
+**What failed? (e.g. ISO download failed, `apt upgrade` failed, project is out of sync, Blender download failed):**
 
 **When did you first experience the issue:**
 
