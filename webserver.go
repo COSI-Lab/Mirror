@@ -69,8 +69,8 @@ func loggingMiddleware(next http.Handler) http.Handler {
 // Setup distributions and software arrays
 func webserverLoadConfig(config ConfigFile) {
 	dataLock.Lock()
-	distributions = make([]Project, len(config.Mirrors))
-	software = make([]Project, len(config.Mirrors))
+	distributions = make([]Project, 0, len(config.Mirrors))
+	software = make([]Project, 0, len(config.Mirrors))
 
 	for _, project := range config.Mirrors {
 		if project.IsDistro {
