@@ -1,7 +1,13 @@
+<!DOCTYPE html>
 <html>
-    <body>
-        {{template "header.gohtml" .}}
-        statisitics.html
-        {{template "footer.gohtml" .}}
-    </body>
+{{template "head.gohtml" .}}
+
+<body>
+    {{template "nav.gohtml" .}}
+    <main>
+        statistics.html
+    </main>
+    {{template "footer.gohtml" .}}
+</body>
+
 </html>

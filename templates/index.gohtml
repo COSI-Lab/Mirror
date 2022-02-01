@@ -1,34 +1,60 @@
 <html>
-    {{template "head.gohtml" . }}
-     {{template "header.gohtml" .}}
-    <div class = "Main_Layout">
-      <b> About Mirror </b>
+{{template "head.gohtml" .}}
 
-      <p > This site is a public repository of free and open source software. It is located at Clarkson University in Potsdam, NY, US. This site strives to provide exposure to open source software and various open source operating systems. Currently, this site mirrors several Linux distributions, some third party repositories, and even the Linux Kernel. You can find out more information about everything we mirror by choosing the category that you are interested in. </p>
-      <hr size = "1" width="80%" color= "black">
-      <div class = "horlist"> 
-        <div class = "vertlist">
-          <img src="img/Ubuntu.png" alt="Ubuntu Logo" style="width: 200px;height: 200px;">
-          <b> Linux Distros </b>
-          <p> We host around 20 distributions including Debian, Ubuntu, Arch Linux, Linux Mint, and many more. 
-            Many are official mirrors and the majority are updated 4 times a day from upstream mirrors. 
-            Learn more on the <a href = "/distributions">Distributions</a> page. 
-          </p>
+<body>
+    {{template "nav.gohtml" .}}
+    <main class="home">
+        <b> About Mirror </b>
+
+        <p>
+            This site is a public repository of free and open source software. It is
+            located at Clarkson University in Potsdam, NY, US. This site strives to
+            provide exposure to open source software and various open source
+            operating systems. Currently, this site mirrors several Linux
+            distributions, some third party repositories, and even the Linux Kernel.
+            You can find out more information about everything we mirror by choosing
+            the category that you are interested in.
+        </p>
+        <hr size="1" width="80%" color="black" />
+        <div class="horlist">
+            <div class="vertlist">
+                <img src="img/Ubuntu.png" alt="Ubuntu Logo" style="width: 200px; height: 200px" />
+                <b> Linux Distros </b>
+                <p>
+                    We host around 20 distributions including Debian, Ubuntu, Arch
+                    Linux, Linux Mint, and many more. Many are official mirrors and the
+                    majority are updated 4 times a day from upstream mirrors. Learn more
+                    on the <a href="/distributions">Distributions</a> page.
+                </p>
+            </div>
+            <div class="vertlist">
+                <img src="img/Blender.png" alt="Blender Logo" style="width: 200px; height: 200px" />
+                <b> Software </b>
+                <p>
+                    We also host a variety of software including Blender, Clonezilla,
+                    Cygwin, and many others. you can find out more on the
+                    <a href="/software">Software</a> page.
+                </p>
+            </div>
+            <div class="vertlist">
+                <img src="img/Tux.png" alt="Linux Logo" style="width: 200px; height: 200px" />
+                <b> Linux Kernel </b>
+                <p>
+                    Versions of the Linux Kernel can also be found on the
+                    <a href="/software">Software</a> page, found in the same place is
+                    documentation and souce for the kernel.
+                </p>
+            </div>
         </div>
-        <div class = "vertlist">
-          <img src="img/Blender.png" alt="Blender Logo" style="width: 200px;height: 200px;">
-          <b> Software </b>
-          <p> We also host a variety of software including Blender, Clonezilla, Cygwin, and many others. you can find out more on the <a href = "/software">Software</a> page. </p>
-        </div>
-        <div class = "vertlist">
-          <img src="img/Tux.png" alt="Linux Logo" style="width: 200px;height: 200px;">
-          <b> Linux Kernel </b>
-          <p> Versions of the Linux Kernel can also be found on the <a href = "/software">Software</a> page, found in the same place is documentation and souce for the kernel. </p>
-        </div>
-      </div>
-       <hr size = "1" width="80%" color= "black">
-      <b> History</b>
-      <p> The newest iteration was completed in April 2016, but we have had Mirror running since 2002. If you want to learn more about the newest iteration or the history behind the project, Visit the History page. </p>
-    </div>
+        <hr size="1" width="80%" color="black" />
+        <b> History</b>
+        <p>
+            The newest iteration was completed in April 2016, but we have had Mirror
+            running since 2002. If you want to learn more about the newest iteration
+            or the history behind the project, Visit the History page.
+        </p>
+    </main>
     {{template "footer.gohtml" .}}
+</body>
+
 </html>

@@ -1,20 +1,27 @@
+<!DOCTYPE html>
 <html>
-    {{template "head.gohtml" .}}
-    {{template "header.gohtml" .}}
-    {{ range . }}
-    <div class="distro">
-    {{ .Name }}
-    {{if .Official }}
-        <b>
-        (Official Mirror)
-        </b>
-    {{ end }}
-    <br>
-    HTTP: 
-    <a href=mirror.clarkson.edu/{{ .Short }}>
-    http://mirror.clarkson.edu/{{ .Short }}
-    </a>
-    </div>
-    {{ end }}
+{{template "head.gohtml" .}}
+
+<body>
+    {{template "nav.gohtml" .}}
+    <main>
+        {{ range . }}
+        <div class="distro">
+            {{ .Name }}
+            {{if .Official }}
+            <b>
+                (Official Mirror)
+            </b>
+            {{ end }}
+            <br>
+            HTTP:
+            <a href=mirror.clarkson.edu/{{ .Short }}>
+                http://mirror.clarkson.edu/{{ .Short }}
+            </a>
+        </div>
+        {{ end }}
+    </main>
     {{template "footer.gohtml" .}}
+</body>
+
 </html>

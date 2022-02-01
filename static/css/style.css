@@ -1,9 +1,9 @@
-/* {
-    box-sizing: border-box;
-}*/
+body {
+    margin: 0;
+}
 
 /* For header.gohtml */
-header{
+header {
     background: rgb(40, 104, 40);
     color: white;
     display: block;
@@ -48,7 +48,7 @@ footer > a {
 }
 
 /* For index.gohtml */
-.Main_Layout {
+.home {
     padding-left:25%;
     padding-right:25%;
     /*max-width: 60%;*/
@@ -56,9 +56,6 @@ footer > a {
     min-height: 10vh;
     flex-direction: column;
     margin: 0;
-}
-.main-layout > p {
-    font-size: 5px;
 }
 .horlist {
     display: flex;
