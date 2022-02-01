@@ -23,6 +23,19 @@ WIP monolithic software for [mirror](https://mirror.clarkson.edu) that handles
 
 ## Frontend
 
+- [ ] Highlight nav links on hover
+- [ ] "Welcome to Mirror" on home page
+- [ ] Mobile friendly navbar
+- [ ] Table of contents on distro and software pages
+- [ ] "Designed By: COSI", mirror contact "mirroradmin@clarkson.edu"
+- [ ] "Full screen" map mode
+- [ ] Somehow make the map look nice on mobile devices
+- [ ] Move the "longer mirror history" off of Meeting Minutes
+- [ ] Need new content about reporting errors and requesting new projects through github issues
+- [ ] please use a nicer font
+- [ ] software page should mostly mirror the distribuions page
+- [ ] On the stats page please put "construction tux" :)
+- [ ] Make better use of the header `h1, h2, h3, ...` tags
 
 ## Development
 
