@@ -15,7 +15,7 @@ WIP monolithic software for [mirror](https://mirror.clarkson.edu) that handles
 - [ ] Exposing tranmission bittorrent bandwidth
 - [ ] Exposing total network bandwidth
 - [x] Mirror map of real time downloads
-- [ ] Mirror map generated from project config
+- [x] Mirror map generated from project config
 - [ ] Periodically syncing projects
 - [ ] Exposing sync status
 - [x] Discord webhook integration

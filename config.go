@@ -36,6 +36,7 @@ type Project struct {
 		Location string `json:"location"`
 		Source   string `json:"source"`
 	} `json:"static"`
+	Color       string `json:"color"`
 	Official    bool   `json:"official"`
 	IsDistro    bool   `json:"isDistro"`
 	HomePage    string `json:"homepage"`

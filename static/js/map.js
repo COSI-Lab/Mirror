@@ -2,7 +2,7 @@
 const DISPLAY_TIME = 1000 * 30;
 var circles = [];
 
-// distroID, color, counter, isPresent
+// todo list of distros to add to config
 // const distros = [
 //   ["clonezilla", "#e08d3c", 0, 0],
 //   ["cygwin", "#746cc0", 0, 0],
@@ -24,83 +24,69 @@ var circles = [];
 //   ["serenity", "#5b92e5", 0, 0],
 // ];
 
-function WebSocketTest() {
-  let xhr = new XMLHttpRequest();
-  xhr.open("GET", "/map/register");
-  xhr.send();
-  xhr.onload = function () {
-    console.log("id:", xhr.response);
-    var id = xhr.response;
+// Connects to the websocket endpoint
+function connect() {
+  let ws_scheme = window.location.protocol == "https:" ? "wss://" : "ws://";
 
-    if ("WebSocket" in window) {
-      // Let us open a web socket
-      if (location.protocol.slice(-1) == "s") {
-        var url = "wss://" + location.host + "/map/socket/" + id;
-      } else {
-        var url = "ws://" + location.host + "/map/socket/" + id;
-      }
-      var ws = new WebSocket(url);
-
-      ws.onmessage = function (evt) {
-        var reader = new FileReader();
-
-        reader.readAsArrayBuffer(evt.data);
-        reader.addEventListener("loadend", function(e)
-        {
-          buffer = new Uint8Array(reader.result);
-
-          let distro = parseFloat(buffer[0], 2);
-
-          // Split the byte array into longByte and latByte
-          let longByte = buffer.slice(1, 9);
-          let latByte = buffer.slice(9, 17);
-
-          // Convert the bytes to floats
-          // Create new buffer
-          // apply buffer to dataview
-          let latBuf = new ArrayBuffer(8);
-          let latView = new DataView(latBuf);
-          latByte.forEach(function (b, i) {
-            latView.setUint8(i, b);
-          });
-          // Swap bytes around becuase little endian encoding
-          // Repeat for lat
-
-          let lat = latView.getFloat64(0, true);
-
-          let longBuf = new ArrayBuffer(8);
-          let longView = new DataView(longBuf);
-          longByte.forEach(function (b, i) {
-            longView.setUint8(i, b);
-          });
-
-          let long = longView.getFloat64(0, true);
-
-          // Convert into x and y coordinates and put them on scale of 0-1
-          let x = (lat + 180) / 360;
-          let y = (90 - long) / 180;
-          distros[distro][2] += 1;
-
-          // Add new data points to the front of the list
-          circles.unshift([x, y, distro, new Date().getTime()]);
-        });
-      };
-
-      ws.onclose = function () {
-        // websocket is closed.
-        alert("Connection is closed\nrefresh to connect");
-      };
-    } else {
-      // The browser doesn't support WebSocket
-      alert(
-        "This site will not work since\nyour browser does not support websockets"
-      );
-    }
+  let socket = new WebSocket(ws_scheme + window.location.host + "/map/ws");
+  socket.onopen = function (e) {
+    console.log("Connected!", e);
   };
+  socket.onmessage = function (evt) {
+    var reader = new FileReader();
+
+    reader.readAsArrayBuffer(evt.data);
+    reader.addEventListener("loadend", function (e) {
+      buffer = new Uint8Array(reader.result);
+
+      let distro = parseFloat(buffer[0], 2);
+
+      // Split the byte array into longByte and latByte
+      let longByte = buffer.slice(1, 9);
+      let latByte = buffer.slice(9, 17);
+
+      // Convert the bytes to floats
+      // Create new buffer
+      // apply buffer to dataview
+      let latBuf = new ArrayBuffer(8);
+      let latView = new DataView(latBuf);
+      latByte.forEach(function (b, i) {
+        latView.setUint8(i, b);
+      });
+      // Swap bytes around becuase little endian encoding
+      // Repeat for lat
+
+      let lat = latView.getFloat64(0, true);
+
+      let longBuf = new ArrayBuffer(8);
+      let longView = new DataView(longBuf);
+      longByte.forEach(function (b, i) {
+        longView.setUint8(i, b);
+      });
+
+      let long = longView.getFloat64(0, true);
+
+      // Convert into x and y coordinates and put them on scale of 0-1
+      let x = (lat + 180) / 360;
+      let y = (90 - long) / 180;
+      distros[distro][2] += 1;
+
+      // Add new data points to the front of the list
+      circles.unshift([x, y, distro, new Date().getTime()]);
+    });
+  };
+  socket.onclose = function (e) {
+    console.log("Disconnected!", e);
+  };
+  socket.onerror = function (e) {
+    console.log("Error!", e);
+  };
+
+  return socket;
 }
 
 window.onload = async function () {
-  WebSocketTest();
+  var websocket = connect();
 
   const canvas = document.getElementById("myCanvas");
   const ctx = canvas.getContext("2d");
@@ -108,7 +94,7 @@ window.onload = async function () {
 
   window.onresize = function () {
     canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight * 0.90;
+    canvas.height = window.innerHeight * 0.9;
   };
 
   window.onresize();
@@ -194,10 +180,6 @@ window.onload = async function () {
     }
 
     // Run around 60 fps
-    await new Promise((r) => setTimeout(r, 15));
+    await new Promise((r) => setTimeout(r, 1000/60));
   }
 };
-
-window.onbeforeunload = function() {
-  ws.close()
-}

@@ -20,9 +20,9 @@ func main() {
 	// Load config file and check schema
 	config := ParseConfig("configs/mirrors.json", "configs/mirrors.schema.json")
 
-	shorts := make([]string, len(config.Mirrors))
+	shorts := make([]string, 0, len(config.Mirrors))
 	for _, mirror := range config.Mirrors {
-		shorts = append(shorts, mirror.Name)
+		shorts = append(shorts, mirror.Short)
 	}
 
 	InfluxClients(os.Getenv("INFLUX_TOKEN"))
@@ -43,7 +43,7 @@ func main() {
 
 	if InitWebserver() == nil {
 		webserverLoadConfig(config)
-		go HandleWebserver(map_entries)
+		go HandleWebserver(shorts, map_entries)
 	}
 
 	// Wait for all goroutines to finish

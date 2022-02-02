@@ -5,6 +5,13 @@
 <head>
     <link rel="stylesheet" href="/css/map.css" />
     <title>Mirror Map</title>
+    <script>
+      const distros = [
+        {{ range . }}
+        ["{{.Short}}", "{{.Color}}", 0, 0],
+        {{ end }}
+      ]
+    </script>
     <script src="/js/map.js"> </script>
 </head>
 

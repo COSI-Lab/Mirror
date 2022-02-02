@@ -16,6 +16,9 @@ import (
 	"github.com/oschwald/geoip2-golang"
 )
 
+// It is critical that NGINX uses the following log format:
+// "$remote_addr" "$time_local" "$request" "$status" "$body_bytes_sent" "$request_length" "$http_user_agent";
+
 type LogEntry struct {
 	IP        net.IP
 	Country   string
@@ -30,9 +33,6 @@ type LogEntry struct {
 	BytesRecv int
 	Agent     string
 }
-
-// It is critical that NGINX uses the following log format:
-// "$remote_addr" "$time_local" "$request" "$status" "$body_bytes_sent" "$request_length" "$http_user_agent";
 
 var reQuotes *regexp.Regexp
 var db *geoip2.Reader
