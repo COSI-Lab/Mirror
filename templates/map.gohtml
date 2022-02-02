@@ -3,6 +3,7 @@
 <html>
 
 <head>
+    {{template "head.gohtml" .}}
     <link rel="stylesheet" href="/css/map.css" />
     <title>Mirror Map</title>
     <script>
@@ -14,16 +15,25 @@
     </script>
     <script src="/js/map.js"> </script>
 </head>
-
 <body>
     <img id="map" src="/img/map.jpg" alt="" style="display: none" />
+    <nav class = "topbar">
+            <a href="/">Mirror Home</a>
+            <a href="/distributions">Distributions</a>
+            <a href="/software">Software</a>
+            <a href="/stats">Statistics</a>
+            <a href="/map">Map</a>
+            <a href="/history">History & Sponsors</a>
+    </nav>
     <div>
-        <h2><a href="https://mirror.clarkson.edu">mirror.clarkson.edu</a> live downloads <a
-                href="https://github.com/COSI-Lab/Mirror" style="float: right;">source</a></h2>
+        <p>
+          <a href="https://mirror.clarkson.edu">mirror.clarkson.edu</a> 
+          live downloads 
+          <a href="https://github.com/COSI-Lab/Mirror" style="float: right;">source</a>
+        </p>
     </div>
     <div>
         <canvas id="myCanvas"></canvas>
     </div>
 </body>
-
 </html>
