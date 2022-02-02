@@ -1,27 +1,40 @@
-package mirrorErrors
+package logging
 
 import (
-	"bytes"
-	"encoding/json"
 	"errors"
-	"log"
-	"net/http"
+	"fmt"
 	"os"
+	"sync"
+	"time"
 )
 
 var rysncErrorCodes map[int]string
 var hookURL string
-var hookUnset = false
+
+var loggingLock sync.Mutex
+
+type MessageType int
+
+const (
+	// Info is the type for informational messages
+	Info MessageType = iota
+	// Warn is the type for warning messages
+	Warn
+	// Error is for when we lose funcitonality but it's fairly understood what went wrong
+	Error
+	// Panic is the type for fatal error messages and will print the stack trace
+	Panic
+	// Success is the type for successful messages
+	Success
+)
 
 func Setup() error {
 	hookURL = os.Getenv("HOOK_URL")
 	if hookURL == "" {
-		hookUnset = true
 		return errors.New("missing .env envirnment variable HOOK_URL, not interfacing with discord")
 	}
 
 	rysncErrorCodes = make(map[int]string)
-
 	rysncErrorCodes[0] = "Success"
 	rysncErrorCodes[1] = "Syntax or usage error"
 	rysncErrorCodes[2] = "Protocol incompatibility"
@@ -46,47 +59,24 @@ func Setup() error {
 	return nil
 }
 
-func sendHook(content string, url string) {
-	if !hookUnset {
-		values := map[string]string{"content": content}
-		json_data, err := json.Marshal(values)
+func Log(messageType MessageType, v ...interface{}) {
+	loggingLock.Lock()
+	defer loggingLock.Unlock()
 
-		if err != nil {
-			log.Fatal(err)
-		}
+	fmt.Print(time.Now().Format("2006/01/02 15:04:05 "))
 
-		resp, err := http.Post(url, "application/json",
-			bytes.NewBuffer(json_data))
-
-		if err != nil {
-			log.Fatal(err)
-		}
-
-		var res map[string]interface{}
-
-		json.NewDecoder(resp.Body).Decode(&res)
+	switch messageType {
+	case Info:
+		fmt.Print("\033[1m[INFO]    \033[0m| ")
+	case Warn:
+		fmt.Print("\033[1m\033[33m[WARN]   \033[0m| ")
+	case Error:
+		fmt.Print("\033[1m\033[31m[ERROR]   \033[0m| ")
+	case Panic:
+		fmt.Print("\033[1m\033[34m[PANIC]  \033[0m| ")
+	case Success:
+		fmt.Print("\033[1m\033[32m[SUCCESS] \033[0m| ")
 	}
 
-	// fmt.Println(res["json"])
-}
-
-func Error(message string, errorType string) {
-	// TODO: Have this handle logging to console and send hook
-	if errorType == "info" {
-		log.Printf("[INFO] %s", message)
-	} else if errorType == "warn" {
-		log.Printf("\033[33m[WARN]\033[0m %s", message)
-	} else if errorType == "error" {
-		log.Printf("\033[31m[ERROR]\033[0m %s", message)
-		sendHook(message, hookURL)
-	} else if errorType == "panic" {
-		log.Printf("[PANIC] %s", message)
-		sendHook(message, hookURL)
-	} else if errorType == "startup" {
-		log.Printf("[STARTUP] %s", message)
-		sendHook(message, hookURL)
-	} else {
-		log.Printf("\033[34m[DEBUG]\033[0m %s", message)
-		sendHook(message, hookURL)
-	}
+	fmt.Println(v...)
 }
