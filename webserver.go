@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"sync"
 
-	"github.com/COSI_Lab/Mirror/mirrorErrors"
+	"github.com/COSI_Lab/Mirror/logging"
 	"github.com/gorilla/mux"
 )
 
@@ -48,11 +48,10 @@ func InitWebserver() error {
 	tmpls, err = template.ParseGlob("templates/*")
 
 	if err == nil {
-		// log.Println("[INFO] Webserver", tmpls.DefinedTemplates())
-		mirrorErrors.Error("Webserver"+tmpls.DefinedTemplates(), "info")
+		logging.Log(logging.Info, tmpls.DefinedTemplates())
 		return err
 	} else {
-		mirrorErrors.Error("InitWebserver; "+err.Error(), "error")
+		logging.Log(logging.Error, "InitWebserver;", err)
 		tmpls = nil
 	}
 
@@ -62,8 +61,7 @@ func InitWebserver() error {
 // Logs request Method and request URI
 func loggingMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		// log.Println("[INFO]", r.Method, r.RequestURI)
-		mirrorErrors.Error("[INFO]"+r.Method+r.RequestURI, "info")
+		logging.Log(logging.Info, r.Method, r.RequestURI)
 		next.ServeHTTP(w, r)
 	})
 }
@@ -104,7 +102,6 @@ func HandleWebserver(entries chan *LogEntry) {
 		Handler: r,
 	}
 
-	// log.Printf("[INFO] Serving on http://localhost:%d", 8001)
-	mirrorErrors.Error("Serving on http://localhost:8001", "info")
+	logging.Log(logging.Success, "Serving on http://localhost:8001")
 	log.Fatalf("%s", l.ListenAndServe())
 }

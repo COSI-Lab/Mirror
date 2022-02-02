@@ -4,7 +4,7 @@ import (
 	"os"
 	"time"
 
-	"github.com/COSI_Lab/Mirror/mirrorErrors"
+	"github.com/COSI_Lab/Mirror/logging"
 	"github.com/joho/godotenv"
 )
 
@@ -12,12 +12,10 @@ func main() {
 	godotenv.Load()
 
 	// Setup error logger
-	err := mirrorErrors.Setup()
+	err := logging.Setup()
 	if err != nil {
-		mirrorErrors.Error(err.Error(), "error")
+		logging.Log(logging.Error, "Setting up logging", err)
 	}
-
-	mirrorErrors.Error("Starting Mirror", "startup")
 
 	// Load config file and check schema
 	config := ParseConfig("configs/mirrors.json", "configs/mirrors.schema.json")
@@ -27,8 +25,8 @@ func main() {
 		shorts = append(shorts, mirror.Name)
 	}
 
-	writer, reader := InfluxClients(os.Getenv("INFLUX_TOKEN"))
-	mirrorErrors.Error("Connected to InfluxDB", "startup")
+	InfluxClients(os.Getenv("INFLUX_TOKEN"))
+	logging.Log(logging.Success, "Connected to InfluxDB")
 
 	nginx_entries := make(chan *LogEntry, 100)
 	map_entries := make(chan *LogEntry, 100)
@@ -37,10 +35,10 @@ func main() {
 	// ReadLogs("/var/log/nginx/access.log", channels)
 
 	if os.Getenv("INFLUX_TOKEN") == "" {
-		mirrorErrors.Error("Missing .env envirnment variable INFLUX_TOKEN, not using database", "error")
+		logging.Log(logging.Error, "Missing .env envirnment variable INFLUX_TOKEN, not using database")
 	} else {
-		InitNGINXStats(shorts, reader)
-		go HandleNGINXStats(nginx_entries, writer)
+		InitNGINXStats(shorts)
+		go HandleNGINXStats(nginx_entries)
 	}
 
 	if InitWebserver() == nil {

@@ -3,13 +3,12 @@ package main
 import (
 	"encoding/binary"
 	"fmt"
-	"log"
 	"math"
 	"net"
 	"net/http"
 	"sync"
 
-	"github.com/COSI_Lab/Mirror/mirrorErrors"
+	"github.com/COSI_Lab/Mirror/logging"
 	"github.com/gorilla/mux"
 	"github.com/gorilla/websocket"
 	"github.com/thanhpk/randstr"
@@ -53,12 +52,10 @@ func serve(clients map[string]chan []byte, entries chan *LogEntry) {
 			prevSkip = skip
 
 			if skip {
-				// log.Printf("[INFO] MirrorMap no clients connected, skipping")
-				mirrorErrors.Error("MirrorMap no clients connected, skipping", "info")
+				logging.Log(logging.Info, "MirrorMap no clients connected, skipping")
 				continue
 			} else {
-				// log.Printf("[INFO] MirrorMap new clients connected, sending data")
-				mirrorErrors.Error("MirrorMap new clients connected, sending data", "info")
+				logging.Log(logging.Info, "MirrorMap new clients connected, sending data")
 			}
 		}
 
@@ -100,13 +97,12 @@ func socketHandler(w http.ResponseWriter, r *http.Request) {
 	// get the channel
 	ch := clients[id]
 
-	log.Printf("[INFO] Websocket new client connected %s : %s ", id, r.RemoteAddr)
-	// mirrorErrors.Error("Websocket new client connected", "info")
+	logging.Log(logging.Info, "Websocket new client connected", id, r.RemoteAddr)
 
 	// Upgrade our raw HTTP connection to a websocket based one
 	conn, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
-		mirrorErrors.Error("Error during connection upgradate", "warn")
+		logging.Log(logging.Warn, "Websocket upgrade failed", err)
 		return
 	}
 
@@ -123,7 +119,7 @@ func socketHandler(w http.ResponseWriter, r *http.Request) {
 	// Close connection gracefully
 	conn.Close()
 	clients_lock.Lock()
-	mirrorErrors.Error("Error sending message", "warn")
+	logging.Log(logging.Warn, "Error sending message", err, "disconnecting", id)
 	delete(clients, id)
 	clients_lock.Unlock()
 }
@@ -136,7 +132,8 @@ func registerHandler(w http.ResponseWriter, r *http.Request) {
 	clients_lock.Lock()
 	clients[id] = make(chan []byte, 10)
 	clients_lock.Unlock()
-	log.Printf("[INFO] Map new connection registered: %s\n", id)
+
+	logging.Log(logging.Info, "Map new connection registered", id)
 
 	// Send id to client
 	w.WriteHeader(200)

@@ -6,7 +6,7 @@ import (
 	"io/ioutil"
 	"log"
 
-	"github.com/COSI_Lab/Mirror/mirrorErrors"
+	"github.com/COSI_Lab/Mirror/logging"
 	"github.com/xeipuuv/gojsonschema"
 )
 
@@ -90,7 +90,7 @@ func getPassword(filename string) string {
 	bytes, err := ioutil.ReadFile(filename)
 
 	if err != nil {
-		mirrorErrors.Error("Could not read password file: "+filename, "WARN")
+		logging.Log(logging.Warn, "Could not read password file: ", filename, err.Error())
 	}
 
 	return string(bytes)
