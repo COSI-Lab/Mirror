@@ -52,6 +52,7 @@ footer a {
 
 /* For index.gohtml */
 .home {
+    padding-top: 20px;
     padding-left:25%;
     padding-right:25%;
     /*max-width: 60%;*/
@@ -64,6 +65,7 @@ body > h1{
     font-size: 50px;
     padding: 100px;
     margin-top: 0;
+    margin-bottom: 0;
     background-image: url("/img/mainback.jpeg");
     display: flex;
     justify-content: center;
@@ -96,7 +98,7 @@ body > h1{
     max-width: 250px;
 }
 
-/* For disributions.gohtml */
+/* For distributions.gohtml */
 .distro {
     border-bottom: 2px solid #cccccc;
     padding-bottom: 1em;
@@ -107,8 +109,21 @@ body > h1{
 .distro > a {
     color:rgb(40, 104, 40)
 }
-
+/* For statistics.gohtml */
+.statpage {
+    display:flex;
+    padding: 50px;
+    flex-direction: column;
+    align-items: center;
+    justify-content:center;
+}
+.statpage b {
+    font-size: 30px;
+}
 /* General Use: CHANGE WITH CAUTION */
+main{
+    background-color: white;
+}
 p {
     color : black;
 }
