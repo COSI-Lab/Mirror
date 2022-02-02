@@ -2,8 +2,10 @@ dist/
 node_modules/
 scripts
 .env
+
 mirror
 Mirror
+gin-bin
 
 access.log
 GeoLite2-City.mmdb
