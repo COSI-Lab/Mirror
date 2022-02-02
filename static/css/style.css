@@ -15,8 +15,10 @@ header {
     display: flex;
     justify-content: left;
     align-items: center;
-    padding-left: 20px;
+    margin-left: 25%;
     max-height: 130px;
+}
+.title p{
     color: lightgrey;
     font-size: 80px;
 }
@@ -44,7 +46,7 @@ footer {
     display: block;
     text-align: center;
 }
-footer > a {
+footer a {
     color: white;
 }
 
@@ -57,6 +59,15 @@ footer > a {
     min-height: 10vh;
     flex-direction: column;
     margin: 0;
+}
+body > h1{
+    font-size: 50px;
+    padding: 100px;
+    margin-top: 0;
+    background-image: url("/img/mainback.jpeg");
+    display: flex;
+    justify-content: center;
+    color: white;
 }
 .horlist {
     display: flex;
@@ -103,5 +114,5 @@ p {
 }
 a {
     padding: 0;
-    /*color: green;*/
+    color: green;
 }
