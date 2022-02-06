@@ -69,7 +69,7 @@ func BuildSchedule(tasks []Task) *Schedule {
 	c := 0
 	for i := 0; i < lcm; i++ {
 		for _, task := range tasks {
-			if lcm % task.syncs == 0 {
+			if lcm%task.syncs == 0 {
 				// emit a job
 				jobs[c].short = task.short
 				jobs[c].target_time = interval * float32(c)
