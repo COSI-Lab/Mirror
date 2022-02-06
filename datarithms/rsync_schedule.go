@@ -2,11 +2,10 @@ package datarithms
 
 import (
 	"fmt"
-	"time"
 )
 
-// Schedule is a struct that holds a list of tasks and their corresponding sleeps
-// The invariant is that the total number of sleeps is equal to 24 * time.Hour
+// Schedule is a struct that holds a list of tasks and their corresponding target time to run
+// The invariant is that the target time must be increasing in the jobs list.
 // So the excutation algorithm is trivial. Run a task, sleep, repeat.
 type Schedule struct {
 	jobs     []Job
@@ -14,8 +13,8 @@ type Schedule struct {
 }
 
 type Job struct {
-	short string
-	sleep time.Duration
+	short       string
+	target_time float32
 }
 
 // Returns the next job to run
@@ -38,26 +37,22 @@ func BuildSchedule(task []Task) *Schedule {
 	return &Schedule{iterator: 0}
 }
 
-// Verifies that the schedule has 24 * time.Hour worth of sleeps
-// and that each task will be synced the correct number of times
+// Verifies that the schedule has increasing target times, all of them are
+// within the cycle (0.0 <= t <= 1.0), and that each task will be synced the
+// correct number of times
 func Verify(s *Schedule, tasks []Task) bool {
-	// Setup trackers
-	var total time.Duration
-	total = 0
-
 	syncs := make(map[string]int)
 	for _, task := range tasks {
 		syncs[task.short] = 0
 	}
 
+	var last_time float32 = 0.0
 	for _, job := range s.jobs {
-		total += job.sleep
+		if job.target_time < last_time || job.target_time > 1.0 {
+			return false
+		}
+		last_time = job.target_time
 		syncs[job.short]++
-	}
-
-	// Check
-	if total != 24*time.Hour {
-		return false
 	}
 
 	for _, task := range tasks {
