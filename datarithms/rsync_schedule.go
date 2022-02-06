@@ -33,8 +33,52 @@ type Task struct {
 }
 
 // Scheduling algorithm
-func BuildSchedule(task []Task) *Schedule {
-	return &Schedule{iterator: 0}
+func BuildSchedule(tasks []Task) *Schedule {
+	total_jobs := 0
+	for _, task := range tasks {
+		total_jobs += task.syncs
+	}
+
+	// compute least common multiple of all sync frequencies
+	lcm := 1
+	for _, task := range tasks {
+		// compute the greatest common divisor of best known LCM and sync frequency of the current task
+		var (
+			a int
+			b int
+		)
+		if lcm > task.syncs {
+			a = lcm
+			b = task.syncs
+		} else {
+			a = task.syncs
+			b = lcm
+		}
+		for b != 0 {
+			rem := a % b
+			a = b
+			b = rem
+		}
+		// now a is the GCD; we can compute the next LCM
+		// FIXME: check for overflow in multiplication
+		lcm = lcm * task.syncs / a
+	}
+
+	jobs := make([]Job, total_jobs)
+	var interval float32 = 1.0 / float32(total_jobs)
+	c := 0
+	for i := 0; i < lcm; i++ {
+		for _, task := range tasks {
+			if lcm % task.syncs == 0 {
+				// emit a job
+				jobs[c].short = task.short
+				jobs[c].target_time = interval * float32(c)
+				c += 1
+			}
+		}
+	}
+
+	return &Schedule{iterator: 0, jobs: jobs}
 }
 
 // Verifies that the schedule has increasing target times, all of them are
