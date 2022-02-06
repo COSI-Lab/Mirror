@@ -69,8 +69,9 @@ func BuildSchedule(tasks []Task) *Schedule {
 	c := 0
 	for i := 0; i < lcm; i++ {
 		for _, task := range tasks {
-			if lcm%(lcm/task.syncs) == 0 {
+			if i%(lcm/task.syncs) == 0 {
 				// emit a job
+				fmt.Println("scheduling task ", task.short)
 				jobs[c].short = task.short
 				jobs[c].target_time = interval * float32(c)
 				c += 1
@@ -107,4 +108,11 @@ func Verify(s *Schedule, tasks []Task) bool {
 	}
 
 	return true
+}
+
+func main() {
+	tasks := [4]Task{Task{"a3", 3}, Task{"b1", 1}, Task{"c2", 2}, Task{"d4", 4}}
+	sched := BuildSchedule(tasks[:])
+	fmt.Println(sched)
+	fmt.Println(Verify(sched, tasks[:]))
 }
