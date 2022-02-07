@@ -104,3 +104,12 @@ a {
     padding: 0;
     /*color: green;*/
 }
+/* For history.gohtml */
+.history {
+    padding-left:5%;
+    padding-right:5%;
+    display: flex;
+    min-height: 150px;
+    flex-direction: column;
+    margin: 50;
+}

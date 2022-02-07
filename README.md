@@ -43,7 +43,7 @@ First you need to install the latest version of [golang](https://golang.org/doc/
 
 ```
 go install github.com/codegangsta/gin@latest
-gin --all -p 3002 -b mirror -i -x mirror
+gin --all -p 3002 -b mirror -i
 ```
 
 ## Env File Formatting
