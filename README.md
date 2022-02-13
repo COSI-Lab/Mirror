@@ -8,6 +8,7 @@ WIP monolithic software for [mirror](https://mirror.clarkson.edu) that handles
 - [ ] Config reloading using SIGHUP
 - [x] Recording nginx bandwidth per repo
 - [ ] Recording rsync bandwidth
+- [ ] Recording rsyncd bandwidth
 - [ ] Recording tranmission bittorrent bandwidth
 - [ ] Recording total network bandwidth
 - [ ] Exposing nginx bandwidth per repo

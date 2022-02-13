@@ -42,8 +42,7 @@ func BuildSchedule(task []Task) *Schedule {
 // and that each task will be synced the correct number of times
 func Verify(s *Schedule, tasks []Task) bool {
 	// Setup trackers
-	var total time.Duration
-	total = 0
+	var total time.Duration = 0
 
 	syncs := make(map[string]int)
 	for _, task := range tasks {
