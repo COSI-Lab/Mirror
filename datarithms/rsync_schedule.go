@@ -2,11 +2,12 @@ package datarithms
 
 import (
 	"fmt"
+	"time"
 )
 
 // Schedule is a struct that holds a list of tasks and their corresponding target time to run
 // The invariant is that the target time must be increasing in the jobs list.
-// So the excutation algorithm is trivial. Run a task, sleep, repeat.
+// So the excutation algorithm is trivial. Run the task, sleep until the next target time, repeat.
 type Schedule struct {
 	jobs     []Job
 	iterator int
@@ -17,26 +18,52 @@ type Job struct {
 	target_time float32
 }
 
-// Returns the next job to run
-func (s *Schedule) NextJob() *Job {
-	s.iterator = (s.iterator + 1) % len(s.jobs)
-	return &s.jobs[s.iterator]
+// Returns the next job to run and how long to sleep until the next job
+func (s *Schedule) NextJob() (short string, dt time.Duration) {
+	//                v
+	// [ ] -> [ ] -> [ ]
+	// run this job and sleep until midnight
+	if s.iterator == len(s.jobs)-1 {
+		// we're at the end of the schedule
+		defer s.Reset()
+
+		now := time.Now()
+		dt = time.Until(time.Date(now.Year(), now.Month(), now.Day()+1, 0, 0, 0, 0, time.UTC))
+		return s.jobs[s.iterator].short, dt
+	}
+
+	//         v current job
+	// [ ] -> [ ] -> [ ]
+	//                ^ next job (will never overflow)
+	// run this job sleep until the next job and change to the next job
+	current := s.jobs[s.iterator]
+	s.iterator++
+	next := s.jobs[s.iterator]
+
+	// compute the time until the next job
+	dt = time.Duration((next.target_time - current.target_time) * float32(24*time.Hour))
+	return current.short, dt
+}
+
+// Resets the iterator to the beginning of the schedule
+func (s *Schedule) Reset() {
+	s.iterator = 0
 }
 
 // fed as input to the scheduling algorithm
 type Task struct {
-	// short name of the project
-	short string
+	// Short name of the project
+	Short string
 
 	// How many times does the project sync per day
-	syncs int
+	Syncs int
 }
 
 // Scheduling algorithm
 func BuildSchedule(tasks []Task) *Schedule {
 	total_jobs := 0
 	for _, task := range tasks {
-		total_jobs += task.syncs
+		total_jobs += task.Syncs
 	}
 
 	// compute least common multiple of all sync frequencies
@@ -47,11 +74,11 @@ func BuildSchedule(tasks []Task) *Schedule {
 			a int
 			b int
 		)
-		if lcm > task.syncs {
+		if lcm > task.Syncs {
 			a = lcm
-			b = task.syncs
+			b = task.Syncs
 		} else {
-			a = task.syncs
+			a = task.Syncs
 			b = lcm
 		}
 		for b != 0 {
@@ -61,7 +88,7 @@ func BuildSchedule(tasks []Task) *Schedule {
 		}
 		// now a is the GCD; we can compute the next LCM
 		// FIXME: check for overflow in multiplication
-		lcm = lcm * task.syncs / a
+		lcm = lcm * task.Syncs / a
 	}
 
 	jobs := make([]Job, total_jobs)
@@ -69,10 +96,9 @@ func BuildSchedule(tasks []Task) *Schedule {
 	c := 0
 	for i := 0; i < lcm; i++ {
 		for _, task := range tasks {
-			if i%(lcm/task.syncs) == 0 {
+			if i%(lcm/task.Syncs) == 0 {
 				// emit a job
-				fmt.Println("scheduling task ", task.short)
-				jobs[c].short = task.short
+				jobs[c].short = task.Short
 				jobs[c].target_time = interval * float32(c)
 				c += 1
 			}
@@ -86,12 +112,9 @@ func BuildSchedule(tasks []Task) *Schedule {
 // within the cycle (0.0 <= t <= 1.0), and that each task will be synced the
 // correct number of times
 func Verify(s *Schedule, tasks []Task) bool {
-	// Setup trackers
-	var total time.Duration = 0
-
 	syncs := make(map[string]int)
 	for _, task := range tasks {
-		syncs[task.short] = 0
+		syncs[task.Short] = 0
 	}
 
 	var last_time float32 = 0.0
@@ -104,18 +127,11 @@ func Verify(s *Schedule, tasks []Task) bool {
 	}
 
 	for _, task := range tasks {
-		if syncs[task.short] != task.syncs {
-			fmt.Println(task.short, "was expecting", task.syncs, "syncs but found", syncs[task.short])
+		if syncs[task.Short] != task.Syncs {
+			fmt.Println(task.Short, "was expecting", task.Syncs, "syncs but found", syncs[task.Short])
 			return false
 		}
 	}
 
 	return true
-}
-
-func main() {
-	tasks := [4]Task{Task{"a3", 3}, Task{"b1", 1}, Task{"c2", 2}, Task{"d4", 4}}
-	sched := BuildSchedule(tasks[:])
-	fmt.Println(sched)
-	fmt.Println(Verify(sched, tasks[:]))
 }

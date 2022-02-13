@@ -60,6 +60,9 @@ func main() {
 		go HandleWebserver(shorts, map_entries)
 	}
 
+	// RSYNC
+	go handleRSYNC(config)
+
 	// Wait for all goroutines to finish
 	for {
 		time.Sleep(time.Hour)
