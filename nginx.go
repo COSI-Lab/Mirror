@@ -17,8 +17,10 @@ import (
 )
 
 // It is critical that NGINX uses the following log format:
-// "$remote_addr" "$time_local" "$request" "$status" "$body_bytes_sent" "$request_length" "$http_user_agent";
-
+/*
+ * log_format config '"$remote_addr" "$time_local" "$request" "$status" "$body_bytes_sent" "$request_length" "$http_user_agent"';
+ * access_log /var/log/nginx/access.log config;
+ */
 type LogEntry struct {
 	IP        net.IP
 	Country   string
@@ -57,7 +59,7 @@ func InitRegex() (err error) {
 	return nil
 }
 
-func ReadLogFile(logFile string, ch1 chan *LogEntry, ch2 chan *LogEntry) (err error) {
+func ReadLogFile(logFile string, channels ...chan *LogEntry) (err error) {
 	if reQuotes == nil {
 		if InitRegex() != nil {
 			logging.Log(logging.Error, "could not compile nginx log parsing regex")
@@ -82,11 +84,11 @@ func ReadLogFile(logFile string, ch1 chan *LogEntry, ch2 chan *LogEntry) (err er
 		entry, err := ParseLine(scanner.Text())
 		if err == nil {
 			// Send a pointer to the entry down each channel
-			select {
-			case ch1 <- entry:
-			case ch2 <- entry:
-			default:
-				// TODO: Warn that a channel is starting to hang and remove sleep
+			for ch := range channels {
+				select {
+				case channels[ch] <- entry:
+				default:
+				}
 			}
 		}
 
@@ -96,7 +98,7 @@ func ReadLogFile(logFile string, ch1 chan *LogEntry, ch2 chan *LogEntry) (err er
 	return nil
 }
 
-func ReadLogs(logFile string, ch1 chan *LogEntry, ch2 chan *LogEntry) (err error) {
+func ReadLogs(logFile string, channels ...chan *LogEntry) {
 	if reQuotes == nil {
 		if InitRegex() != nil {
 			logging.Log(logging.Error, "could not compile nginx log parsing regex")
@@ -110,29 +112,28 @@ func ReadLogs(logFile string, ch1 chan *LogEntry, ch2 chan *LogEntry) (err error
 	}
 
 	// Tail the log file `tail -F`
-	tail, err := tail.TailFile(logFile, tail.Config{Follow: true, ReOpen: true})
+	tail, err := tail.TailFile(logFile, tail.Config{Follow: true, ReOpen: true, MustExist: true})
 	if err != nil {
-		return err
+		logging.Log(logging.Error, "TailFile failed to start", err)
+		return
 	}
+
+	logging.Log(logging.Success, "Tailing nginx log file")
 
 	for line := range tail.Lines {
 		entry, err := ParseLine(line.Text)
 		if err == nil {
 			// Send a pointer to the entry down each channel
-			select {
-			case ch1 <- entry:
-			case ch2 <- entry:
-			default:
-				// TODO: Warn that a channel is starting to hang
+			for _, ch := range channels {
+				select {
+				case ch <- entry:
+				default:
+				}
 			}
 		}
 	}
 
-	logging.Log(logging.Panic, "Closing ReadLogs for unknown reason.")
-	close(ch1)
-	close(ch2)
-
-	return nil
+	logging.Log(logging.Panic, "No longer reading log file", tail.Err())
 }
 
 func ParseLine(line string) (*LogEntry, error) {
@@ -182,7 +183,13 @@ func ParseLine(line string) (*LogEntry, error) {
 	entry.Version = split[2]
 
 	// Distro is the top level of the URL path
-	entry.Distro = strings.Split(entry.Url, "/")[1]
+	split = strings.Split(entry.Url, "/")
+
+	if len(split) >= 2 {
+		entry.Distro = split[1]
+	} else {
+		return nil, errors.New("invalid number of parts in url")
+	}
 
 	// HTTP response status
 	status, err := strconv.Atoi(quoteList[3])

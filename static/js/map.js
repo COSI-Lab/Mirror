@@ -2,7 +2,7 @@
 const DISPLAY_TIME = 1000 * 30;
 var circles = [];
 
-// todo list of distros to add to config
+// TODO list of distros to add to config
 // const distros = [
 //   ["clonezilla", "#e08d3c", 0, 0],
 //   ["cygwin", "#746cc0", 0, 0],
