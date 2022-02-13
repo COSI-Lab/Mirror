@@ -2,7 +2,6 @@ package main
 
 import (
 	"encoding/binary"
-	"fmt"
 	"html/template"
 	"log"
 	"math"
@@ -126,7 +125,6 @@ func entriesToMessages(shorts []string, entries chan *LogEntry, messages chan []
 	for i, dist := range shorts {
 		distMap[dist] = byte(i)
 	}
-	fmt.Println(distMap)
 
 	// Track the previous IP to avoid sending duplicate data
 	prevIP := net.IPv4(0, 0, 0, 0)
@@ -136,7 +134,7 @@ func entriesToMessages(shorts []string, entries chan *LogEntry, messages chan []
 		entry := <-entries
 
 		// If the lookup failed, skip this entry
-		if entry.City == nil {
+		if entry == nil || entry.City == nil {
 			continue
 		}
 
@@ -182,6 +180,7 @@ func HandleWebserver(shorts []string, entries chan *LogEntry) {
 	go entriesToMessages(shorts, entries, mapMessages)
 	mirrormap.MapRouter(r.PathPrefix("/map").Subrouter(), mapMessages)
 
+	// Handlers for the other pages
 	r.HandleFunc("/", handleIndex)
 	r.HandleFunc("/distributions", handleDistributions)
 	r.HandleFunc("/software", handleSoftware)
@@ -192,10 +191,10 @@ func HandleWebserver(shorts []string, entries chan *LogEntry) {
 
 	// Serve on 8080
 	l := &http.Server{
-		Addr:    ":8001",
+		Addr:    ":8010",
 		Handler: r,
 	}
 
-	logging.Log(logging.Success, "Serving on http://localhost:8001")
+	logging.Log(logging.Success, "Serving on http://localhost:8010")
 	log.Fatalf("%s", l.ListenAndServe())
 }
