@@ -8,6 +8,7 @@ WIP monolithic software for [mirror](https://mirror.clarkson.edu) that handles
 - [ ] Config reloading using SIGHUP
 - [x] Recording nginx bandwidth per repo
 - [ ] Recording rsync bandwidth
+- [ ] Recording rsyncd bandwidth
 - [ ] Recording tranmission bittorrent bandwidth
 - [ ] Recording total network bandwidth
 - [ ] Exposing nginx bandwidth per repo
@@ -43,7 +44,7 @@ First you need to install the latest version of [golang](https://golang.org/doc/
 
 ```
 go install github.com/codegangsta/gin@latest
-gin --all -p 3002 -b mirror -i -x mirror
+gin --all -p 3002 -b mirror -i
 ```
 
 ## Env File Formatting

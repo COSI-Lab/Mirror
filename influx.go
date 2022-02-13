@@ -15,7 +15,7 @@ type DataPoint *write.Point
 var writer api.WriteAPI
 var reader api.QueryAPI
 
-func InfluxClients(token string) {
+func SetupInfluxClients(token string) {
 	// create new client with default option for server url authenticate by token
 	client := influxdb2.NewClient("https://mirror.clarkson.edu:8086", token)
 

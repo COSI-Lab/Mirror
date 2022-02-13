@@ -86,6 +86,9 @@ func BuildSchedule(tasks []Task) *Schedule {
 // within the cycle (0.0 <= t <= 1.0), and that each task will be synced the
 // correct number of times
 func Verify(s *Schedule, tasks []Task) bool {
+	// Setup trackers
+	var total time.Duration = 0
+
 	syncs := make(map[string]int)
 	for _, task := range tasks {
 		syncs[task.short] = 0
