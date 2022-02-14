@@ -54,7 +54,7 @@ func QueryTotalBytesByDistro(shorts []string) (map[string]int, int) {
 	result, err := reader.Query(context.Background(), "from(bucket: \"test\") |> range(start: -7d) |> filter(fn: (r) => r[\"_measurement\"] == \"mirror\" and  r[\"_field\"] == \"bytes_sent\") |> last()")
 
 	if err != nil {
-		logging.Log(logging.Error, "Error querying influxdb", err)
+		logging.Error("Error querying influxdb", err)
 	}
 
 	total := 0
@@ -62,13 +62,13 @@ func QueryTotalBytesByDistro(shorts []string) (map[string]int, int) {
 		if result.Err() == nil {
 			distro, ok := result.Record().ValueByKey("distro").(string)
 			if !ok {
-				logging.Log(logging.Warn, "InitNGINXStats can not parse distro to string: ", distro)
+				logging.Warn("InitNGINXStats can not parse distro to string: ", distro)
 				continue
 			}
 
 			bytes, ok := result.Record().Value().(int64)
 			if !ok {
-				logging.Log(logging.Warn, "InitNGINXStats can not parse ", distro, " bytes to int ", distro+result.Record().String())
+				logging.Warn("InitNGINXStats can not parse ", distro, " bytes to int ", distro+result.Record().String())
 				continue
 			}
 
@@ -77,7 +77,7 @@ func QueryTotalBytesByDistro(shorts []string) (map[string]int, int) {
 				total += int(bytes)
 			}
 		} else {
-			logging.Log(logging.Warn, "InitNGINXStats Flux Query Error", result.Err())
+			logging.Warn("InitNGINXStats Flux Query Error", result.Err())
 		}
 	}
 

@@ -79,3 +79,14 @@ func (q *CircularQueue) Capacity() int {
 	q.lock.RUnlock()
 	return result
 }
+
+// Returns all the elements of the queue
+func (q *CircularQueue) All() []interface{} {
+	q.lock.RLock()
+	result := make([]interface{}, q.length)
+	for i := 0; i < q.length; i++ {
+		result[i] = q.queue[(q.start+i)%q.capacity]
+	}
+	q.lock.RUnlock()
+	return result
+}
