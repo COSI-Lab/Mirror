@@ -18,36 +18,40 @@ type Job struct {
 	target_time float32
 }
 
-// Returns the next job to run and how long to sleep until the next job
+// Returns the job to run and how long to sleep until the next job
+//  v iterator
+// [ ] -> [ ] -> [ ] -> [ ]
+//     current time ^    ^ new iterator
+//                  |----|
+//                    dt
+// run this job sleep until the next job and change to the next job
 func (s *Schedule) NextJob() (short string, dt time.Duration) {
-	//                v
-	// [ ] -> [ ] -> [ ]
-	// run this job and sleep until midnight
-	if s.iterator == len(s.jobs)-1 {
-		// we're at the end of the schedule
-		defer s.Reset()
+	// Calculate the time since midnight
+	now := time.Now().UTC()
+	pos := time.Since(time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, time.UTC))
 
-		now := time.Now()
-		dt = time.Until(time.Date(now.Year(), now.Month(), now.Day()+1, 0, 0, 0, 0, time.UTC))
-		return s.jobs[s.iterator].short, dt
+	// Convert time to position in the schedule	(0.0 <= t <= 1.0)
+	t := float32(pos) / float32(24*time.Hour)
+
+	// Find the first job that is greater than the current time
+	for s.iterator < len(s.jobs) && s.jobs[s.iterator].target_time <= t {
+		s.iterator++
 	}
 
-	//         v current job
-	// [ ] -> [ ] -> [ ]
-	//                ^ next job (will never overflow)
-	// run this job sleep until the next job and change to the next job
-	current := s.jobs[s.iterator]
-	s.iterator++
-	next := s.jobs[s.iterator]
+	// If we are at the end of the schedule, sleep until midnight
+	if s.iterator == len(s.jobs) {
+		defer func() {
+			s.iterator = 0
+		}()
 
-	// compute the time until the next job
-	dt = time.Duration((next.target_time - current.target_time) * float32(24*time.Hour))
-	return current.short, dt
-}
+		dt = time.Until(time.Date(now.Year(), now.Month(), now.Day()+1, 0, 0, 0, 0, time.UTC))
+		return s.jobs[len(s.jobs)-1].short, dt
+	}
 
-// Resets the iterator to the beginning of the schedule
-func (s *Schedule) Reset() {
-	s.iterator = 0
+	// Time to sleep until the next job
+	dt = time.Duration((s.jobs[s.iterator].target_time - t) * float32(24*time.Hour))
+
+	return s.jobs[s.iterator-1].short, dt
 }
 
 // fed as input to the scheduling algorithm

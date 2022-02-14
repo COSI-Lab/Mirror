@@ -92,7 +92,7 @@ func getPassword(filename string) string {
 	bytes, err := ioutil.ReadFile(filename)
 
 	if err != nil {
-		logging.Log(logging.Warn, "Could not read password file: ", filename, err.Error())
+		logging.Warn("Could not read password file: ", filename, err.Error())
 	}
 
 	return string(bytes)

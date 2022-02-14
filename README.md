@@ -17,8 +17,8 @@ WIP monolithic software for [mirror](https://mirror.clarkson.edu) that handles
 - [ ] Exposing total network bandwidth
 - [x] Mirror map of real time downloads
 - [x] Mirror map generated from project config
-- [ ] Periodically syncing projects
-- [ ] Exposing sync status
+- [x] Periodically syncing projects
+- [ ] Exposing sync status per project
 - [x] Discord webhook integration
 - [x] Notifies our discord server when things fail
 
@@ -44,7 +44,7 @@ First you need to install the latest version of [golang](https://golang.org/doc/
 
 ```
 go install github.com/codegangsta/gin@latest
-gin --all -p 3002 -b mirror -i
+gin --all -p 3002 -b Mirror -i
 ```
 
 ## Env File Formatting

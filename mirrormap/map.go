@@ -17,7 +17,7 @@ func handleWebsocket(w http.ResponseWriter, r *http.Request) {
 	// Upgrade the connection to a websocket
 	conn, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
-		logging.Log(logging.Warn, err)
+		logging.Warn(err)
 		return
 	}
 

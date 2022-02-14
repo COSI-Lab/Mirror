@@ -144,4 +144,11 @@ func TestSchedule(t *testing.T) {
 	if !verify {
 		t.Error("Schedule is invalid")
 	}
+
+	// Next task is in the future
+	_, dt := sched.NextJob()
+
+	if dt < 0 {
+		t.Error("Next task is in the past")
+	}
 }

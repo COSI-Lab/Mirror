@@ -42,7 +42,7 @@ var db *geoip2.Reader
 func InitDb() (err error) {
 	db, err = geoip2.Open("GeoLite2-City.mmdb")
 	if err != nil {
-		logging.Log(logging.Error, "Could not open geolite city db")
+		logging.Error("Could not open geolite city db")
 		return err
 	}
 
@@ -62,13 +62,13 @@ func InitRegex() (err error) {
 func ReadLogFile(logFile string, channels ...chan *LogEntry) (err error) {
 	if reQuotes == nil {
 		if InitRegex() != nil {
-			logging.Log(logging.Error, "could not compile nginx log parsing regex")
+			logging.Error("could not compile nginx log parsing regex")
 		}
 	}
 
 	if db == nil {
 		if InitDb() != nil {
-			logging.Log(logging.Error, "could not initilze geolite city db")
+			logging.Error("could not initilze geolite city db")
 		}
 	}
 
@@ -101,24 +101,24 @@ func ReadLogFile(logFile string, channels ...chan *LogEntry) (err error) {
 func ReadLogs(logFile string, channels ...chan *LogEntry) {
 	if reQuotes == nil {
 		if InitRegex() != nil {
-			logging.Log(logging.Error, "could not compile nginx log parsing regex")
+			logging.Error("could not compile nginx log parsing regex")
 		}
 	}
 
 	if db == nil {
 		if InitDb() != nil {
-			logging.Log(logging.Error, "could not initilze geolite city db")
+			logging.Error("could not initilze geolite city db")
 		}
 	}
 
 	// Tail the log file `tail -F`
 	tail, err := tail.TailFile(logFile, tail.Config{Follow: true, ReOpen: true, MustExist: true})
 	if err != nil {
-		logging.Log(logging.Error, "TailFile failed to start", err)
+		logging.Error("TailFile failed to start", err)
 		return
 	}
 
-	logging.Log(logging.Success, "Tailing nginx log file")
+	logging.Success("Tailing nginx log file")
 
 	for line := range tail.Lines {
 		entry, err := ParseLine(line.Text)
@@ -133,7 +133,7 @@ func ReadLogs(logFile string, channels ...chan *LogEntry) {
 		}
 	}
 
-	logging.Log(logging.Panic, "No longer reading log file", tail.Err())
+	logging.Panic("No longer reading log file", tail.Err())
 }
 
 func ParseLine(line string) (*LogEntry, error) {

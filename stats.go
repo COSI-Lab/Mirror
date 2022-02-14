@@ -14,7 +14,7 @@ func InitNGINXStats(shorts []string) {
 	var total int
 	BytesByDistro, total = QueryTotalBytesByDistro(shorts)
 
-	logging.Log(logging.Info, "Loaded", total, "bytes from influxdb")
+	logging.Info("Loaded", total, "bytes from influxdb")
 }
 
 // NGINX statisitcs
@@ -45,5 +45,5 @@ LOOP:
 	}
 
 	// This loop should never break out to here, if we hit this state then we're no longer sending distro usage stats
-	logging.Log(logging.Panic, "HandleNGINXStats stop sending distro bytes")
+	logging.Panic("HandleNGINXStats stop sending distro bytes")
 }

@@ -28,12 +28,12 @@ func (hub *hub) run() {
 		case client := <-hub.register:
 			// registers a client
 			hub.clients[client] = true
-			logging.Log(logging.Info, "Registered client", client.conn.RemoteAddr())
+			logging.Info("Registered client", client.conn.RemoteAddr())
 		case client := <-hub.unregister:
 			// unregister a client
 			delete(hub.clients, client)
 			close(client.send)
-			logging.Log(logging.Info, "Unregistered client", client.conn.RemoteAddr())
+			logging.Info("Unregistered client", client.conn.RemoteAddr())
 		case message := <-hub.broadcast:
 			// broadcasts the message to all clients
 			for client := range hub.clients {
@@ -43,7 +43,7 @@ func (hub *hub) run() {
 					// if sending to a client blocks we drop the client
 					close(client.send)
 					delete(hub.clients, client)
-					logging.Log(logging.Warn, "Dropped client", client.conn.RemoteAddr())
+					logging.Warn("Dropped client", client.conn.RemoteAddr())
 				}
 			}
 		}

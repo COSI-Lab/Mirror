@@ -4,6 +4,7 @@ import (
 	"os"
 	"time"
 
+	"github.com/COSI_Lab/Mirror/datarithms"
 	"github.com/COSI_Lab/Mirror/logging"
 	"github.com/joho/godotenv"
 )
@@ -14,7 +15,7 @@ func main() {
 	// Setup error logger
 	err := logging.Setup()
 	if err != nil {
-		logging.Log(logging.Error, "Setting up logging", err)
+		logging.Error("Setting up logging", err)
 	}
 
 	// Load config file and check schema
@@ -30,7 +31,7 @@ func main() {
 	// Connect to the database
 	influxToken := os.Getenv("INFLUX_TOKEN")
 	if influxToken == "" {
-		logging.Log(logging.Error, "Missing .env envirnment variable INFLUX_TOKEN, not using database")
+		logging.Error("Missing .env envirnment variable INFLUX_TOKEN, not using database")
 
 		if os.Getenv("TAIL") != "" {
 			go ReadLogs("/var/log/nginx/access.log", map_entries)
@@ -39,7 +40,7 @@ func main() {
 		}
 	} else {
 		SetupInfluxClients(influxToken)
-		logging.Log(logging.Success, "Connected to InfluxDB")
+		logging.Success("Connected to InfluxDB")
 
 		// Stats handling
 		nginx_entries := make(chan *LogEntry, 100)
@@ -54,14 +55,18 @@ func main() {
 		}
 	}
 
+	// RSYNC
+	rsyncStatus := &RSYNCStatus{
+		Status: make(map[string]*datarithms.CircularQueue),
+	}
+	initRSYNC(config)
+	go handleRSYNC(config, rsyncStatus)
+
 	// Webserver
 	if InitWebserver() == nil {
 		webserverLoadConfig(config)
-		go HandleWebserver(shorts, map_entries)
+		go HandleWebserver(shorts, map_entries, rsyncStatus)
 	}
-
-	// RSYNC
-	go handleRSYNC(config)
 
 	// Wait for all goroutines to finish
 	for {
