@@ -49,8 +49,21 @@ gin --all -p 3002 -b Mirror -i
 
 ## Env File Formatting
 ```
-HOOK_URL = url
-INFLUX_TOKEN = token
+# Discord Webhook URL
+HOOK_URL=url
+
+# InfluxDB RW Token
+INFLUX_TOKEN=token
+
+# File to tail NGINX access logs, if empty then we read the static ./access.log file
+NGINX_TAIL=/var/log/nginx/access.log
+
+# Set to _anything_ to add the --dry-run flag to the rsync jobs
+RSYNC_DRY_RUN=1
+
+# Directory to store the rsync log files, if empty then we don't keep logs
+# RSYNC_LOGS will be created if it doesn't exist
+RSYNC_LOGS=/var/log/mirror/rsync
 ```
 
 ## GeoLite2 Attribution

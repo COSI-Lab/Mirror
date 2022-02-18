@@ -1,54 +1,52 @@
 {
-    "$schema": "./mirrors.schema.json",
-    "mirrors": [
-        {
-            "name": "AlmaLinux",
-            "short": "almalinux",
-            "isDistro": true,
-            "rsync": {
-                "host": "mirror.clarkson.edu",
-                "src": "alma",
-                "dest": "/usr/data/storage/almalinux",
-                "options": "-avzrH --numeric-ids --delete --delete-delay --delay-updates --ignore-errors --exclude \".~tmp~\"",
-                "syncs_per_day": 8
-            },
-            "official": false,
-            "homepage": "https://almalinux.org",
-            "color": "#7851a9",
-            "publicRsync": true
-        },
-        {
-            "name": "Alpine Linux",
-            "short": "alpine",
-            "isDistro": true,
-            "rsync": {
-                "host": "mirror.clarkson.edu",
-                "src": "alpine",
-                "dest": "/usr/data/storage/alpine",
-                "options": "-avzrH --numeric-ids --delete --delete-delay --delay-updates --ignore-errors --exclude \".~tmp~\"",
-                "sync_file": "last-updated",
-                "syncs_per_day": 4
-            },
-            "official": false,
-            "homepage": "https://www.alpinelinux.org/",
-            "color": "#cd5700",
-            "publicRsync": true
-        },
-        {
-            "name": "Arch Linux",
-            "short": "archlinux",
-            "isDistro": true,
-            "rsync":{
-                "host": "mirror.clarkson.edu",
-                "src": "archlinux",
-                "dest": "/usr/data/storage/archlinux",
-                "options": "-vrlptH --safe-links --delete-delay --delay-updates",
-                "syncs_per_day": 12
-            },
-            "official": true,
-            "homepage": "http://www.archlinux.org/",
-            "color": "#f0d4f0",
-            "publicRsync": true
-        }
-    ]
+  "$schema": "./mirrors.schema.json",
+  "mirrors": {
+    "almalinux": {
+      "name": "AlmaLinux",
+      "short": "",
+      "isDistro": true,
+      "rsync": {
+        "host": "mirror.clarkson.edu",
+        "src": "alma",
+        "dest": "/usr/data/storage/almalinux",
+        "options": "-avzrH --numeric-ids --delete --delete-delay --delay-updates --ignore-errors --exclude \".~tmp~\"",
+        "syncs_per_day": 8
+      },
+      "official": false,
+      "homepage": "https://almalinux.org",
+      "color": "#7851a9",
+      "publicRsync": true
+    },
+    "alpine": {
+      "name": "Alpine Linux",
+      "isDistro": true,
+      "rsync": {
+        "host": "mirror.clarkson.edu",
+        "src": "alpine",
+        "dest": "/usr/data/storage/alpine",
+        "options": "-avzrH --numeric-ids --delete --delete-delay --delay-updates --ignore-errors --exclude \".~tmp~\"",
+        "sync_file": "last-updated",
+        "syncs_per_day": 4
+      },
+      "official": false,
+      "homepage": "https://www.alpinelinux.org/",
+      "color": "#cd5700",
+      "publicRsync": true
+    },
+    "archlinux": {
+      "name": "Arch Linux",
+      "isDistro": true,
+      "rsync": {
+        "host": "mirror.clarkson.edu",
+        "src": "archlinux",
+        "dest": "/usr/data/storage/archlinux",
+        "options": "-vrlptH --safe-links --delete-delay --delay-updates",
+        "syncs_per_day": 12
+      },
+      "official": true,
+      "homepage": "http://www.archlinux.org/",
+      "color": "#f0d4f0",
+      "publicRsync": true
+    }
+  }
 }

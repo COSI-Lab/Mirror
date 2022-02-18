@@ -29,7 +29,7 @@ const (
 func Setup() error {
 	hookURL = os.Getenv("HOOK_URL")
 	if hookURL == "" {
-		return errors.New("missing .env envirnment variable HOOK_URL, not interfacing with discord")
+		return errors.New("missing .env variable HOOK_URL, not interfacing with discord")
 	}
 
 	return nil
