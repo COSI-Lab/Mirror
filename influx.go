@@ -33,17 +33,20 @@ func SendTotalBytesByDistro(bytesByDistro map[string]int) {
 		p := influxdb2.NewPoint("mirror", map[string]string{"distro": short}, map[string]interface{}{"bytes_sent": bytes}, t)
 		writer.WritePoint(p)
 	}
+
+	logging.Info("Sent nginx stats")
 }
 
 // Loads the latest NGINX stats from the database
 // Returns a map of distro short names to total bytes sent and total in the map
-func QueryTotalBytesByDistro(shorts []string) (map[string]int, int) {
+func QueryTotalBytesByDistro(projects map[string]*Project) (map[string]int, int) {
 	// Map from short names to bytes sent
 	bytesByDistro := make(map[string]int)
 
-	for i := 0; i < len(shorts); i++ {
-		bytesByDistro[shorts[i]] = 0
+	for short := range projects {
+		bytesByDistro[short] = 0
 	}
+	bytesByDistro["other"] = 0
 
 	/*
 		from(bucket: \"test\")

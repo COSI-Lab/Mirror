@@ -9,24 +9,23 @@ import (
 var BytesByDistro map[string]int
 
 // Loads the latest NGINX stats from the database
-func InitNGINXStats(shorts []string) {
+func InitNGINXStats(projects map[string]*Project) {
 	// Query influxdb for the latest stats
 	var total int
-	BytesByDistro, total = QueryTotalBytesByDistro(shorts)
+	BytesByDistro, total = QueryTotalBytesByDistro(projects)
 
 	logging.Info("Loaded", total, "bytes from influxdb")
 }
 
 // NGINX statisitcs
 func HandleNGINXStats(entries chan *LogEntry) {
-	timer := time.NewTimer(10 * time.Second)
+	timer := time.NewTimer(1 * time.Minute)
 
 LOOP:
 	for {
 		select {
 		case <-timer.C:
 			SendTotalBytesByDistro(BytesByDistro)
-			timer.Reset(10 * time.Second)
 		case entry, ok := <-entries:
 			// TODO this shouldn't ever happen, but I'm keeping this in while we're testing
 			if !ok {
