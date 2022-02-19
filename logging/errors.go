@@ -1,8 +1,11 @@
 package logging
 
 import (
+	"bytes"
+	"encoding/json"
 	"errors"
 	"fmt"
+	"net/http"
 	"os"
 	"sync"
 	"time"
@@ -10,6 +13,7 @@ import (
 
 var hookURL string
 var loggingLock sync.Mutex
+var PING_ID string
 
 type MessageType int
 
@@ -26,10 +30,37 @@ const (
 	SUCCESS
 )
 
+func sendHook(ping bool, content string) {
+	if hookURL != "" {
+		var values map[string]string
+		if ping {
+			values = map[string]string{"content": fmt.Sprintf("<@%s> %s", PING_ID, content)}
+		} else {
+			values = map[string]string{"content": content}
+		}
+		json_data, err := json.Marshal(values)
+
+		if err != nil {
+			fmt.Print(err)
+		}
+
+		resp, err := http.Post(hookURL, "application/json", bytes.NewBuffer(json_data))
+
+		if err != nil {
+			fmt.Print(err)
+		}
+
+		var res map[string]interface{}
+
+		json.NewDecoder(resp.Body).Decode((&res))
+	}
+}
+
 func Setup() error {
 	hookURL = os.Getenv("HOOK_URL")
-	if hookURL == "" {
-		return errors.New("missing .env variable HOOK_URL, not interfacing with discord")
+	PING_ID = os.Getenv("PING_ID")
+	if hookURL == "" || PING_ID == "" {
+		return errors.New("missing .env variable HOOK_URL or PING_ID, not interfacing with discord")
 	}
 
 	return nil
@@ -46,8 +77,10 @@ func log(messageType MessageType, v ...interface{}) {
 		fmt.Print("\033[1m\033[33m[WARN]    \033[0m| ")
 	case ERROR:
 		fmt.Print("\033[1m\033[31m[ERROR]   \033[0m| ")
+		sendHook(false, fmt.Sprintf("ERROR: %s", v...))
 	case PANIC:
 		fmt.Print("\033[1m\033[34m[PANIC]  \033[0m| ")
+		sendHook(true, fmt.Sprintf("PANIC: %s", v...))
 	case SUCCESS:
 		fmt.Print("\033[1m\033[32m[SUCCESS] \033[0m| ")
 	}
