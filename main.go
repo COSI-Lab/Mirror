@@ -8,6 +8,8 @@ import (
 	"github.com/joho/godotenv"
 )
 
+var geoip *GeoIPHandler
+
 func main() {
 	godotenv.Load()
 
@@ -22,6 +24,14 @@ func main() {
 
 	// We always do the map parsing
 	map_entries := make(chan *LogEntry, 100)
+
+	// GeoIP lookup
+	geoip, err = NewGeoIPHandler(os.Getenv("MAXMIND_LICENSE_KEY"))
+	if err != nil {
+		logging.Error("Failed to use MaxMind GeoIP data", err)
+	} else {
+		logging.Success("Using MaxMind GeoIP data")
+	}
 
 	// Connect to the database
 	influxToken := os.Getenv("INFLUX_TOKEN")

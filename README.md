@@ -59,6 +59,9 @@ INFLUX_TOKEN=token
 # File to tail NGINX access logs, if empty then we read the static ./access.log file
 NGINX_TAIL=/var/log/nginx/access.log
 
+# Maxmind DB token
+MAXMIND_LICENSE_KEY=key
+
 # Set to _anything_ to completely disable rsync
 RSYNC_DISABLE=1
 
