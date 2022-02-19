@@ -153,6 +153,21 @@
       "color": "#ff6347",
       "publicRsync": true
     },
+    "cygwin": {
+      "name": "Cygwin",
+      "isDistro": false,
+      "rsync": {
+        "host": "cygwin.org",
+        "src": "cygwin-ftp",
+        "dest": "/storage/cygwin",
+        "options": "-avzrH --numeric-ids --delete --delete-delay --delay-updates --ignore-errors --exclude \".~tmp~\"",
+        "syncs_per_day": 2
+      },
+      "official": true,
+      "homepage": "https://www.cygwin.com/",
+      "color": "#746cc0",
+      "publicRsync": true
+    },
     "debian": {
       "name": "Debian",
       "isDistro": true,
@@ -182,6 +197,174 @@
       "official": false,
       "homepage": "https://www.debian.org/CD/",
       "color": "#ffc87c",
+      "publicRsync": true
+    },
+    "eclipse": {
+      "name": "Eclipse",
+      "isDistro": false,
+      "rsync": {
+        "host": "download.eclipse.org",
+        "src": "eclipse",
+        "dest": "/storage/eclipse",
+        "options": "-rtvp --delete --include='TIME' --exclude='*'",
+        "second": "-rtvp --delete",
+        "third": "-rtvp --delete --include='ztime' --include='ztime/*' --exclude='*'",
+        "syncs_per_day": 1
+      },
+      "official": true,
+      "homepage": "https://www.eclipse.org/",
+      "color": "#00755e",
+      "publicRsync": true
+    },
+    "gentoo": {
+      "name": "Gentoo",
+      "isDistro": true,
+      "rsync": {
+        "host": "masterdistfiles.gentoo.org",
+        "src": "gentoo",
+        "dest": "/storage/gentoo",
+        "options": "-avzrH --numeric-ids --delete --delete-delay --delay-updates --ignore-errors --exclude \".~tmp~\" --exclude \"/releases/historical\"",
+        "syncs_per_day": 6
+      },
+      "official": false,
+      "homepage": "https://www.gentoo.org/",
+      "color": "#30d5c8",
+      "publicRsync": true
+    },
+    "gentoo-portage": {
+      "name": "Gentoo Portage",
+      "isDistro": true,
+      "rsync": {
+        "host": "rsync11.us.gentoo.org",
+        "src": "gentoo-portage",
+        "dest": "/storage/gentoo-portage",
+        "options": "-avzrH --numeric-ids --delete --delete-delay --delay-updates --ignore-errors --exclude \".~tmp~\"",
+        "syncs_per_day": 24
+      },
+      "official": false,
+      "homepage": "https://www.gentoo.org/",
+      "color": "#30d5c8",
+      "publicRsync": true
+    },
+    "ipfire": {
+      "name": "IPFire",
+      "isDistro": true,
+      "rsync": {
+        "host": "rsync.ipfire.org",
+        "src": "full",
+        "dest": "/storage/ipfire",
+        "options": "-avzrH --numeric-ids --delete --delete-delay --delay-updates --ignore-errors --exclude \".~tmp~\"",
+        "syncs_per_day": 24
+      },
+      "official": true,
+      "homepage": "https://www.ipfire.org/",
+      "color": "#7c4848",
+      "publicRsync": true
+    },
+    "isabelle": {
+      "name": "Isabelle",
+      "isDistro": false,
+      "rsync": {
+        "host": "isabelle.in.tum.de",
+        "src": "isabelle-website",
+        "dest": "/storage/isabelle",
+        "options": "-avzrH --numeric-ids --delete --delete-delay --delay-updates --ignore-errors --exclude \".~tmp~\"",
+        "syncs_per_day": 2
+      },
+      "official": true,
+      "homepage": "https://isabelle.in.tum.de/",
+      "color": "#8a496b",
+      "publicRsync": true
+    },
+    "linux": {
+      "name": "Linux (including source)",
+      "isDistro": false,
+      "rsync": {
+        "host": "rsync.kernel.org",
+        "src": "pub/linux",
+        "dest": "/storage/linux",
+        "options": "-avzrH --numeric-ids --delete --delete-delay --delay-updates --ignore-errors --exclude \".~tmp~\"",
+        "syncs_per_day": 4
+      },
+      "official": true,
+      "homepage": "http://kernel.org",
+      "color": "#930056",
+      "publicRsync": true
+    },
+    "linuxmint-isos": {
+      "name": "LinuxMint (images)",
+      "isDistro": true,
+      "rsync": {
+        "host": "pub.linuxmint.com",
+        "src": "pub",
+        "dest": "/storage/linuxmint-iso/images",
+        "options": "-avzrH --numeric-ids --delete --delete-delay --delay-updates --ignore-errors --exclude \".~tmp~\"",
+        "syncs_per_day": 1
+      },
+      "official": true,
+      "homepage": "https://linuxmint.com/",
+      "color": "#62b858",
+      "publicRsync": true
+    },
+    "linuxmint-packages": {
+      "name": "LinuxMint (packages)",
+      "isDistro": true,
+      "rsync": {
+        "host": "rsync-packages.linuxmint.com",
+        "src": "packages",
+        "dest": "/storage/linuxmint-packages",
+        "options": "--verbose --recursive --times --links --safe-links --hard-links --stats --exclude 'Packages*' --exclude 'Sources*' --exclude 'Release*' --exclude 'InRelease'",
+        "second": "--verbose --recursive --times --links --safe-links --hard-links --stats --delete",
+        "syncs_per_day": 4
+      },
+      "official": true,
+      "homepage": "https://linuxmint.com/",
+      "color": "#62b858",
+      "publicRsync": true
+    },
+    "manjaro": {
+      "name": "Manjaro",
+      "isDistro": true,
+      "rsync": {
+        "host": "mirror.netcologne.de",
+        "src": "manjaro",
+        "dest": "/storage/manjaro",
+        "options": "-avzrH --numeric-ids --delete --delete-delay --delay-updates --ignore-errors --exclude \".~tmp~\"",
+        "syncs_per_day": 6
+      },
+      "official": true,
+      "homepage": "https://manjaro.org/",
+      "color": "#d9004c",
+      "publicRsync": true
+    },
+    "msys2": {
+      "name": "msys2",
+      "isDistro": false,
+      "rsync": {
+        "host": "repo.msys2.org",
+        "src": "builds",
+        "dest": "/storage/msys2",
+        "options": "-avzrH --numeric-ids --delete --delete-delay --delay-updates --ignore-errors --exclude \".~tmp~\"",
+        "syncs_per_day": 1
+      },
+      "official": true,
+      "homepage": "https://www.msys2.org/",
+      "color": "#8878c3",
+      "publicRsync": true
+    },
+    "opensuse": {
+      "name": "OpenSUSE",
+      "isDistro": true,
+      "rsync": {
+        "host": "stage.opensuse.org",
+        "src": "opensuse-full-with-factory",
+        "dest": "/storage/opensuse",
+        "options": "-4 -avzrH --numeric-ids --delete --delete-delay --delay-updates --ignore-errors --exclude \".~tmp~\"",
+        "syncs_per_day": 4
+      },
+      "official": true,
+      "homepage": "https://www.opensuse.org/",
+      "color": "#35b9ab",
       "publicRsync": true
     },
     "parrot": {
@@ -334,7 +517,7 @@
       },
       "official": true,
       "homepage": "http://www.slitaz.org/en/",
-      "color": "#ff6",
+      "color": "#ffff60",
       "publicRsync": true
     },
     "tdf": {
