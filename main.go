@@ -52,13 +52,17 @@ func main() {
 	}
 
 	// RSYNC
-	if os.Getenv("RSYNC_LOGS") == "" {
-		logging.Error("missing .env variable RSYNC_LOGS, not saving rsync logs")
-	}
-
 	rsyncStatus := make(RSYNCStatus)
-	initRSYNC(config)
-	go handleRSYNC(config, rsyncStatus)
+	if os.Getenv("RSYNC_DISABLE") != "" {
+		logging.Error(".env variable RSYNC_DISABLE is set, rsync will not run")
+	} else {
+		if os.Getenv("RSYNC_LOGS") == "" {
+			logging.Error("missing .env variable RSYNC_LOGS, not saving rsync logs")
+		}
+
+		initRSYNC(config)
+		go handleRSYNC(config, rsyncStatus)
+	}
 
 	// Webserver
 	if InitWebserver() == nil {
