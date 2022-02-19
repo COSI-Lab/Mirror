@@ -81,7 +81,7 @@
       "name": "Blender",
       "isDistro": false,
       "rsync": {
-        "host": "downloads.blender.org",
+        "host": "download.blender.org",
         "src": "blender",
         "dest": "/storage/blender",
         "options": "-avzrH --exclude \".~tmp~\"",
@@ -291,7 +291,7 @@
       "color": "#930056",
       "publicRsync": true
     },
-    "linuxmint-isos": {
+    "linuxmint": {
       "name": "LinuxMint (images)",
       "isDistro": true,
       "rsync": {

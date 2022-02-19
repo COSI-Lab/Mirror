@@ -18,7 +18,7 @@ func main() {
 	}
 
 	// Load config file and check schema
-	config := ParseConfig("configs/testmirror.json", "configs/mirrors.schema.json")
+	config := ParseConfig("configs/mirrors.json", "configs/mirrors.schema.json")
 
 	// We always do the map parsing
 	map_entries := make(chan *LogEntry, 100)

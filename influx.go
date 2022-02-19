@@ -19,7 +19,7 @@ func SetupInfluxClients(token string) {
 	// create new client with default option for server url authenticate by token
 	client := influxdb2.NewClient("https://mirror.clarkson.edu:8086", token)
 
-	writer = client.WriteAPI("COSI", "test")
+	writer = client.WriteAPI("COSI", "stats")
 	reader = client.QueryAPI("COSI")
 }
 
@@ -49,12 +49,12 @@ func QueryTotalBytesByDistro(projects map[string]*Project) (map[string]int, int)
 	bytesByDistro["other"] = 0
 
 	/*
-		from(bucket: \"test\")
+		from(bucket: \"stats\")
 			|> range(start: -7d)
 			|> filter(fn: (r) => r[\"_measurement\"] == \"mirror\" and  r[\"_field\"] == \"bytes_sent\")
 			|> last()
 	*/
-	result, err := reader.Query(context.Background(), "from(bucket: \"test\") |> range(start: -7d) |> filter(fn: (r) => r[\"_measurement\"] == \"mirror\" and  r[\"_field\"] == \"bytes_sent\") |> last()")
+	result, err := reader.Query(context.Background(), "from(bucket: \"stats\") |> range(start: -7d) |> filter(fn: (r) => r[\"_measurement\"] == \"mirror\" and  r[\"_field\"] == \"bytes_sent\") |> last()")
 
 	if err != nil {
 		logging.Error("Error querying influxdb", err)
