@@ -19,30 +19,19 @@ func InitNGINXStats(projects map[string]*Project) {
 
 // NGINX statisitcs
 func HandleNGINXStats(entries chan *LogEntry) {
-	timer := time.NewTimer(1 * time.Minute)
+	ticker := time.NewTicker(1 * time.Minute)
 
-LOOP:
 	for {
 		select {
-		case <-timer.C:
+		case <-ticker.C:
 			SendTotalBytesByDistro(BytesByDistro)
-		case entry, ok := <-entries:
-			// TODO this shouldn't ever happen, but I'm keeping this in while we're testing
-			if !ok {
-				break LOOP
-			}
-
+		case entry := <-entries:
 			if _, ok := BytesByDistro[entry.Distro]; ok {
 				BytesByDistro[entry.Distro] += entry.BytesSent
 			} else {
+				// logging.Info("Unknown distro", entry.Distro)
 				BytesByDistro["other"] += entry.BytesSent
 			}
 		}
-
-		// TODO: Remove sleep condition
-		time.Sleep(200 * time.Millisecond)
 	}
-
-	// This loop should never break out to here, if we hit this state then we're no longer sending distro usage stats
-	logging.Panic("HandleNGINXStats stop sending distro bytes")
 }
