@@ -37,8 +37,6 @@ func Setup() error {
 
 func log(messageType MessageType, v ...interface{}) {
 	loggingLock.Lock()
-	defer loggingLock.Unlock()
-
 	fmt.Print(time.Now().Format("2006/01/02 15:04:05 "))
 
 	switch messageType {
@@ -55,6 +53,7 @@ func log(messageType MessageType, v ...interface{}) {
 	}
 
 	fmt.Println(v...)
+	loggingLock.Unlock()
 }
 
 func Info(v ...interface{}) {

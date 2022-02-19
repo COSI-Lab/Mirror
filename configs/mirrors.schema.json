@@ -48,6 +48,11 @@
                 "type": "string",
                 "default": ""
               },
+              "third": {
+                "description": "For projects that require a third rsync pass this is the third options",
+                "type": "string",
+                "default": ""
+              },
               "user": {
                 "description": "Host username for the upstream mirror",
                 "type": "string"
@@ -110,7 +115,8 @@
           },
           "color": {
             "type": "string",
-            "description": "Color this repo is represented as on the Map"
+            "description": "Color this repo is represented as on the Map",
+            "pattern": "#[0-9a-f]{6}"
           },
           "publicRsync": {
             "type": "boolean",
