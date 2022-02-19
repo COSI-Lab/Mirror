@@ -1,6 +1,8 @@
 package datarithms
 
-import "sync"
+import (
+	"sync"
+)
 
 // Thread Safe circular queue implmentation using a slice for byte slices
 type CircularQueue struct {
@@ -76,6 +78,20 @@ func (q *CircularQueue) Len() int {
 func (q *CircularQueue) Capacity() int {
 	q.lock.RLock()
 	result := q.capacity
+	q.lock.RUnlock()
+	return result
+}
+
+// Returns all the elements of the queue
+func (q *CircularQueue) All() []interface{} {
+	q.lock.RLock()
+	result := make([]interface{}, 0, q.length)
+
+	// From start to end
+	for i := q.start; i != q.end; i = (i + 1) % q.capacity {
+		result = append(result, q.queue[i])
+	}
+
 	q.lock.RUnlock()
 	return result
 }

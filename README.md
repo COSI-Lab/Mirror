@@ -17,8 +17,8 @@ WIP monolithic software for [mirror](https://mirror.clarkson.edu) that handles
 - [ ] Exposing total network bandwidth
 - [x] Mirror map of real time downloads
 - [x] Mirror map generated from project config
-- [ ] Periodically syncing projects
-- [ ] Exposing sync status
+- [x] Periodically syncing projects
+- [ ] Exposing sync status per project
 - [x] Discord webhook integration
 - [x] Notifies our discord server when things fail
 
@@ -44,13 +44,29 @@ First you need to install the latest version of [golang](https://golang.org/doc/
 
 ```
 go install github.com/codegangsta/gin@latest
-gin --all -p 3002 -b mirror -i
+gin --all -p 3002 -b Mirror -i
 ```
 
 ## Env File Formatting
 ```
-HOOK_URL = url
-INFLUX_TOKEN = token
+# Discord Webhook URL
+HOOK_URL=url
+
+# InfluxDB RW Token
+INFLUX_TOKEN=token
+
+# File to tail NGINX access logs, if empty then we read the static ./access.log file
+NGINX_TAIL=/var/log/nginx/access.log
+
+# Set to _anything_ to completely disable rsync
+RSYNC_DISABLE=1
+
+# Set to _anything_ to add the --dry-run flag to the rsync jobs
+RSYNC_DRY_RUN=1
+
+# Directory to store the rsync log files, if empty then we don't keep logs
+# RSYNC_LOGS will be created if it doesn't exist
+RSYNC_LOGS=/var/log/mirror/rsync
 ```
 
 ## GeoLite2 Attribution

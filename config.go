@@ -11,13 +11,14 @@ import (
 )
 
 type ConfigFile struct {
-	Schema  string    `json:"$schema"`
-	Mirrors []Project `json:"mirrors"`
+	Schema  string              `json:"$schema"`
+	Mirrors map[string]*Project `json:"mirrors"`
 }
 
 type Project struct {
 	Name   string `json:"name"`
-	Short  string `json:"short"`
+	Short  string // Copied from key
+	Id     byte   // Id is given out in alphabetical order of short (yes only 255 are supported)
 	Script struct {
 		Command     string `json:"command"`
 		SyncsPerDay int    `json:"syncs_per_day"`
@@ -30,7 +31,7 @@ type Project struct {
 		SyncFile     string `json:"sync_file"`
 		SyncsPerDay  int    `json:"syncs_per_day"`
 		PasswordFile string `json:"password_file"`
-		Password     string `json:"password"`
+		Password     string // Loaded from password file
 	} `json:"rsync"`
 	Static struct {
 		Location string `json:"location"`
@@ -78,11 +79,20 @@ func ParseConfig(configFile, schemaFile string) (config ConfigFile) {
 		log.Fatal("Could not parse the config file even though it fits the schema file: ", err.Error())
 	}
 
-	// Parse passwords
-	for _, project := range config.Mirrors {
+	// Parse passwords & copy key as short
+	var i uint8 = 0
+	for short, project := range config.Mirrors {
 		if project.Rsync.PasswordFile != "" {
 			project.Rsync.Password = getPassword("configs/" + project.Rsync.PasswordFile)
 		}
+		project.Short = short
+		project.Id = i
+
+		// add 1 and check for overflow
+		if i == 255 {
+			logging.Panic("Too many projects, 255 is the maximum because of the live map")
+		}
+		i++
 	}
 
 	return config
@@ -92,7 +102,7 @@ func getPassword(filename string) string {
 	bytes, err := ioutil.ReadFile(filename)
 
 	if err != nil {
-		logging.Log(logging.Warn, "Could not read password file: ", filename, err.Error())
+		logging.Warn("Could not read password file: ", filename, err.Error())
 	}
 
 	return string(bytes)
