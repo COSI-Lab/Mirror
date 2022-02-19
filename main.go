@@ -14,15 +14,11 @@ func main() {
 	// Setup error logger
 	err := logging.Setup()
 	if err != nil {
-		logging.Log(logging.Error, "Setting up logging", err)
+		logging.Error(err)
 	}
 
 	// Load config file and check schema
-	config := ParseConfig("configs/testmirror.json", "configs/mirrors.schema.json")
-	shorts := make([]string, 0, len(config.Mirrors))
-	for _, mirror := range config.Mirrors {
-		shorts = append(shorts, mirror.Short)
-	}
+	config := ParseConfig("configs/mirrors.json", "configs/mirrors.schema.json")
 
 	// We always do the map parsing
 	map_entries := make(chan *LogEntry, 100)
@@ -30,34 +26,48 @@ func main() {
 	// Connect to the database
 	influxToken := os.Getenv("INFLUX_TOKEN")
 	if influxToken == "" {
-		logging.Log(logging.Error, "Missing .env envirnment variable INFLUX_TOKEN, not using database")
+		logging.Error("missing .env variable INFLUX_TOKEN, not using database")
 
-		if os.Getenv("TAIL") != "" {
-			go ReadLogs("/var/log/nginx/access.log", map_entries)
+		// File to tail NGINX access logs, if empty then we read the static ./access.log file
+		if os.Getenv("NGINX_TAIL") != "" {
+			go ReadLogs(os.Getenv("NGINX_TAIL"), map_entries)
 		} else {
 			go ReadLogFile("access.log", map_entries)
 		}
 	} else {
 		SetupInfluxClients(influxToken)
-		logging.Log(logging.Success, "Connected to InfluxDB")
+		logging.Success("Connected to InfluxDB")
 
 		// Stats handling
 		nginx_entries := make(chan *LogEntry, 100)
 
-		InitNGINXStats(shorts)
+		InitNGINXStats(config.Mirrors)
 		go HandleNGINXStats(nginx_entries)
 
-		if os.Getenv("TAIL") != "" {
-			go ReadLogs("/var/log/nginx/access.log", nginx_entries, map_entries)
+		if os.Getenv("NGINX_TAIL") != "" {
+			go ReadLogs(os.Getenv("NGINX_TAIL"), nginx_entries, map_entries)
 		} else {
 			go ReadLogFile("access.log", nginx_entries, map_entries)
 		}
 	}
 
+	// RSYNC
+	rsyncStatus := make(RSYNCStatus)
+	if os.Getenv("RSYNC_DISABLE") != "" {
+		logging.Error(".env variable RSYNC_DISABLE is set, rsync will not run")
+	} else {
+		if os.Getenv("RSYNC_LOGS") == "" {
+			logging.Error("missing .env variable RSYNC_LOGS, not saving rsync logs")
+		}
+
+		initRSYNC(config)
+		go handleRSYNC(config, rsyncStatus)
+	}
+
 	// Webserver
 	if InitWebserver() == nil {
 		webserverLoadConfig(config)
-		go HandleWebserver(shorts, map_entries)
+		go HandleWebserver(map_entries, rsyncStatus)
 	}
 
 	// Wait for all goroutines to finish

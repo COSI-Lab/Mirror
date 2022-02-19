@@ -2,28 +2,6 @@
 const DISPLAY_TIME = 1000 * 30;
 var circles = [];
 
-// TODO list of distros to add to config
-// const distros = [
-//   ["clonezilla", "#e08d3c", 0, 0],
-//   ["cygwin", "#746cc0", 0, 0],
-//   ["eclipse", "#00755e", 0, 0],
-//   ["freebsd", "#deaa88", 0, 0],
-//   ["gentoo", "#30d5c8", 0, 0],
-//   ["gentoo-portage", "#30d5c8", 0, 0],
-//   ["gparted", "#a0d6b4", 0, 0],
-//   ["ipfire", "#7c4848", 0, 0],
-//   ["isabelle", "#8a496b", 0, 0],
-//   ["linux", "#930056", 0, 0],
-//   ["linuxmint", "#62b858", 0, 0],
-//   ["manjaro", "#d9004c", 0, 0],
-//   ["msys2", "#8878c3", 0, 0],
-//   ["odroid", "#536895", 0, 0],
-//   ["openbsd", "#ffb300", 0, 0],
-//   ["opensuse", "#35b9ab", 0, 0],
-//   ["ros", "#635147", 0, 0],
-//   ["serenity", "#5b92e5", 0, 0],
-// ];
-
 // Connects to the websocket endpoint
 function connect() {
   let ws_scheme = window.location.protocol == "https:" ? "wss://" : "ws://";

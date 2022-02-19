@@ -3,13 +3,13 @@ package datarithms_test
 import (
 	"testing"
 
-	queue "github.com/COSI_Lab/Mirror/datarithms"
+	"github.com/COSI_Lab/Mirror/datarithms"
 )
 
 // Test the queue
 func TestQueue(t *testing.T) {
 	// Create a new queue
-	q := queue.CircularQueueInit(5)
+	q := datarithms.CircularQueueInit(5)
 
 	if q.Capacity() != 5 {
 		t.Error("Capacity is not 5")
@@ -125,5 +125,30 @@ func TestQueue(t *testing.T) {
 	// Check the length
 	if q.Len() != 0 {
 		t.Error("Expected 0, got", q.Len())
+	}
+}
+
+func TestSchedule(t *testing.T) {
+	// Create tasks
+	tasks := []datarithms.Task{
+		{Short: "a", Syncs: 1},
+		{Short: "b", Syncs: 2},
+		{Short: "c", Syncs: 4},
+		{Short: "d", Syncs: 8},
+	}
+
+	sched := datarithms.BuildSchedule(tasks)
+	t.Log(sched)
+
+	verify := datarithms.Verify(sched, tasks)
+	if !verify {
+		t.Error("Schedule is invalid")
+	}
+
+	// Next task is in the future
+	_, dt := sched.NextJob()
+
+	if dt < 0 {
+		t.Error("Next task is in the past")
 	}
 }

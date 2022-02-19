@@ -1,159 +1,148 @@
 {
-    "$schema": "http://json-schema.org/draft-07/schema#",
-    "type": "object",
-    "properties": {
-        "mirrors": {
-            "description": "List of mirrored linux distributions",
-            "type": "array",
-            "items": {
-                "type": "object",
-                "title": "mirror",
-                "description": "Information needed to create scripts for a particular distro",
-                "properties": {
-                    "name": {
-                        "description": "Human name of the repo",
-                        "type": "string"
-                    },
-                    "short": {
-                        "description": "short name of the repo, folders will be named this",
-                        "type": "string"
-                    },
-                    "script": {
-                        "description": "Host a project by periodically executing a shell command",
-                        "type": "object",
-                        "env": {
-                            "description": "Map of envirment variables to be set before calling the command",
-                            "type": "object",
-                            "additionalProperties": { "type": "string" }
-                        },
-                        "command": {
-                            "description": "Command to execute",
-                            "type": "string"
-                        },
-                        "syncs_per_day": {
-                            "description": "How many times a day to sync",
-                            "type": "number",
-                            "minimum": 1,
-                            "maximum": 24
-                        },
-                        "required": [
-                            "command", 
-                            "syncs_per_day"
-                        ]
-                    },
-                    "rsync": {
-                        "description": "Instructions for how to run rsync",
-                        "type": "object",
-                        "properties": {
-                            "options": {
-                                "description": "Command line options passed with rsync call",
-                                "type": "string",
-                                "default": "-avzrH --numeric-ids --delete --delete-delay --delay-updates --ignore-errors --exclude \".~tmp~\""
-                            },
-                            "second": {
-                                "description": "For projects that require a second rsync pass this is the second options",
-                                "type": "string",
-                                "default": ""
-                            },
-                            "user": {
-                                "description": "Host username for the upstream mirror",
-                                "type": "string"
-                            },
-                            "host": {
-                                "description": "Host address of the upstream mirror",
-                                "type": "string"
-                            },
-                            "src": {
-                                "description": "Location on the upstream to clone from",
-                                "type": "string"
-                            },
-                            "dest": {
-                                "description": "Location on disk to save to",
-                                "type": "string"
-                            },
-                            "sync_file": {
-                                "description": "A file that tracks if the mirror is in sync with the upstream",
-                                "type": "string"
-                            },
-                            "syncs_per_day": {
-                                "description": "How many times a day to sync",
-                                "type": "number",
-                                "minimum": 1,
-                                "maximum": 24
-                            },
-                            "password_file": {
-                                "description": "Read daemon-access password from FILE",
-                                "type": "string"
-                            }
-                        },
-                        "required": [
-                            "options",
-                            "host",
-                            "src",
-                            "dest",
-                            "syncs_per_day"
-                        ]
-                    },
-                    "static": {
-                        "description": "Host a repository that never changes",
-                        "type": "object",
-                        "properties": {
-                            "location": {
-                                "type": "string",
-                                "description": "Location on disk to serve files from"
-                            },
-                            "source": {
-                                "type": "string",
-                                "description": "Location that we originally cloned from"
-                            }
-                        },
-                        "required": [
-                            "location",
-                            "source"
-                        ]
-                    },
-                    "official": {
-                        "description": "Are we an official mirror for this software",
-                        "type": "boolean"
-                    },
-                    "isDistro": {
-                        "description": "True for 'distribution' False for 'software'",
-                        "type": "boolean"
-                    },
-                    "homepage": {
-                        "description": "URL to the homepage for the mirrored project",
-                        "type": "string"
-                    },
-                    "color": {
-                        "type": "string",
-                        "description": "Color this repo is represented as on the Map"
-                    },
-                    "publicRsync": {
-                        "type": "boolean",
-                        "description": "true if we want rsyncd to serve this repo"
-                    }
-                },
-                "required": [
-                    "name",
-                    "short",
-                    "official",
-                    "isDistro",
-                    "homepage",
-                    "color",
-                    "publicRsync"
-                ],
-                "oneOf":[
-                    {
-                        "required": ["rsync"]
-                    },
-                    {
-                        "required": ["static"]
-                    },
-                    {
-                        "required": ["script"]
-                    }
-                ]
-            }
-        }
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "mirrors": {
+      "description": "List of mirrored linux distributions",
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "title": "mirror",
+        "description": "Information needed to create scripts for a particular distro",
+        "properties": {
+          "name": {
+            "description": "Human name of the repo",
+            "type": "string"
+          },
+          "script": {
+            "description": "Host a project by periodically executing a shell command",
+            "type": "object",
+            "env": {
+              "description": "Map of envirment variables to be set before calling the command",
+              "type": "object",
+              "additionalProperties": { "type": "string" }
+            },
+            "command": {
+              "description": "Command to execute",
+              "type": "string"
+            },
+            "syncs_per_day": {
+              "description": "How many times a day to sync",
+              "type": "number",
+              "minimum": 1,
+              "maximum": 24
+            },
+            "required": ["command", "syncs_per_day"]
+          },
+          "rsync": {
+            "description": "Instructions for how to run rsync",
+            "type": "object",
+            "properties": {
+              "options": {
+                "description": "Command line options passed with rsync call",
+                "type": "string",
+                "default": "-avzrH --numeric-ids --delete --delete-delay --delay-updates --ignore-errors --exclude \".~tmp~\""
+              },
+              "second": {
+                "description": "For projects that require a second rsync pass this is the second options",
+                "type": "string",
+                "default": ""
+              },
+              "third": {
+                "description": "For projects that require a third rsync pass this is the third options",
+                "type": "string",
+                "default": ""
+              },
+              "user": {
+                "description": "Host username for the upstream mirror",
+                "type": "string"
+              },
+              "host": {
+                "description": "Host address of the upstream mirror",
+                "type": "string"
+              },
+              "src": {
+                "description": "Location on the upstream to clone from",
+                "type": "string"
+              },
+              "dest": {
+                "description": "Location on disk to save to",
+                "type": "string"
+              },
+              "sync_file": {
+                "description": "A file that tracks if the mirror is in sync with the upstream",
+                "type": "string"
+              },
+              "syncs_per_day": {
+                "description": "How many times a day to sync",
+                "type": "number",
+                "minimum": 1,
+                "maximum": 24
+              },
+              "password_file": {
+                "description": "Read daemon-access password from FILE",
+                "type": "string"
+              }
+            },
+            "required": ["options", "host", "src", "dest", "syncs_per_day"]
+          },
+          "static": {
+            "description": "Host a repository that never changes",
+            "type": "object",
+            "properties": {
+              "location": {
+                "type": "string",
+                "description": "Location on disk to serve files from"
+              },
+              "source": {
+                "type": "string",
+                "description": "Location that we originally cloned from"
+              }
+            },
+            "required": ["location", "source"]
+          },
+          "official": {
+            "description": "Are we an official mirror for this software",
+            "type": "boolean"
+          },
+          "isDistro": {
+            "description": "True for 'distribution' False for 'software'",
+            "type": "boolean"
+          },
+          "homepage": {
+            "description": "URL to the homepage for the mirrored project",
+            "type": "string"
+          },
+          "color": {
+            "type": "string",
+            "description": "Color this repo is represented as on the Map",
+            "pattern": "#[0-9a-f]{6}"
+          },
+          "publicRsync": {
+            "type": "boolean",
+            "description": "true if we want rsyncd to serve this repo"
+          }
+        },
+        "required": [
+          "name",
+          "official",
+          "isDistro",
+          "homepage",
+          "color",
+          "publicRsync"
+        ],
+        "oneOf": [
+          {
+            "required": ["rsync"]
+          },
+          {
+            "required": ["static"]
+          },
+          {
+            "required": ["script"]
+          }
+        ]
+      }
     }
+  }
 }

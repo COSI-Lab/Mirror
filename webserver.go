@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/binary"
+	"encoding/json"
 	"html/template"
 	"log"
 	"math"
@@ -15,7 +16,7 @@ import (
 )
 
 var tmpls *template.Template
-var projects []Project
+var projects map[string]*Project
 var distributions []Project
 var software []Project
 var dataLock = &sync.RWMutex{}
@@ -24,29 +25,27 @@ func handleIndex(w http.ResponseWriter, r *http.Request) {
 	err := tmpls.ExecuteTemplate(w, "index.gohtml", "")
 
 	if err != nil {
-		logging.Log(logging.Warn, "handleIndex;", err)
+		logging.Warn("handleIndex;", err)
 	}
 }
 
 func handleMap(w http.ResponseWriter, r *http.Request) {
 	dataLock.RLock()
-	defer dataLock.RUnlock()
-
 	err := tmpls.ExecuteTemplate(w, "map.gohtml", projects)
+	dataLock.RUnlock()
 
 	if err != nil {
-		logging.Log(logging.Warn, "handleMap;", err)
+		logging.Warn("handleMap;", err)
 	}
 }
 
 func handleDistributions(w http.ResponseWriter, r *http.Request) {
 	dataLock.RLock()
-	defer dataLock.RUnlock()
-
 	err := tmpls.ExecuteTemplate(w, "distributions.gohtml", distributions)
+	dataLock.RUnlock()
 
 	if err != nil {
-		logging.Log(logging.Warn, "handleDistributions;", err)
+		logging.Warn("handleDistributions;", err)
 	}
 }
 
@@ -54,18 +53,16 @@ func handleHistory(w http.ResponseWriter, r *http.Request) {
 	err := tmpls.ExecuteTemplate(w, "history.gohtml", "")
 
 	if err != nil {
-		logging.Log(logging.Warn, "handleHistory;", err)
+		logging.Warn("handleHistory;", err)
 	}
 }
 
 func handleSoftware(w http.ResponseWriter, r *http.Request) {
 	dataLock.RLock()
-	defer dataLock.RUnlock()
-
 	err := tmpls.ExecuteTemplate(w, "software.gohtml", software)
-
+	dataLock.RUnlock()
 	if err != nil {
-		logging.Log(logging.Warn, "handleSoftware;", err)
+		logging.Warn("handleSoftware;", err)
 	}
 }
 
@@ -73,7 +70,7 @@ func handleStatistics(w http.ResponseWriter, r *http.Request) {
 	err := tmpls.ExecuteTemplate(w, "statistics.gohtml", "")
 
 	if err != nil {
-		logging.Log(logging.Warn, "handleStatistics;", err)
+		logging.Warn("handleStatistics;", err)
 	}
 }
 
@@ -82,10 +79,10 @@ func InitWebserver() error {
 	tmpls, err = template.ParseGlob("templates/*")
 
 	if err == nil {
-		logging.Log(logging.Info, tmpls.DefinedTemplates())
+		logging.Info(tmpls.DefinedTemplates())
 		return err
 	} else {
-		logging.Log(logging.Error, "InitWebserver;", err)
+		logging.Error("InitWebserver;", err)
 		tmpls = nil
 	}
 
@@ -95,7 +92,7 @@ func InitWebserver() error {
 // Logs request Method and request URI
 func loggingMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		logging.Log(logging.Info, r.Method, r.RequestURI)
+		logging.Info(r.Method, r.RequestURI)
 		next.ServeHTTP(w, r)
 	})
 }
@@ -103,29 +100,22 @@ func loggingMiddleware(next http.Handler) http.Handler {
 // Setup distributions and software arrays
 func webserverLoadConfig(config ConfigFile) {
 	dataLock.Lock()
-	defer dataLock.Unlock()
-
 	distributions = make([]Project, 0, len(config.Mirrors))
 	software = make([]Project, 0, len(config.Mirrors))
 
 	for _, project := range config.Mirrors {
 		if project.IsDistro {
-			distributions = append(distributions, project)
+			distributions = append(distributions, *project)
 		} else {
-			software = append(software, project)
+			software = append(software, *project)
 		}
 	}
 
 	projects = config.Mirrors
+	dataLock.Unlock()
 }
 
-func entriesToMessages(shorts []string, entries chan *LogEntry, messages chan []byte) {
-	// Create a map of dists and give them an id, hashing a map is quicker than an array
-	distMap := make(map[string]byte)
-	for i, dist := range shorts {
-		distMap[dist] = byte(i)
-	}
-
+func entriesToMessages(entries chan *LogEntry, messages chan []byte) {
 	// Track the previous IP to avoid sending duplicate data
 	prevIP := net.IPv4(0, 0, 0, 0)
 
@@ -155,14 +145,14 @@ func entriesToMessages(shorts []string, entries chan *LogEntry, messages chan []
 		}
 
 		// Get the distro
-		distroByte, ok := distMap[entry.Distro]
+		project, ok := projects[entry.Distro]
 		if !ok {
 			continue
 		}
 
 		// Create a new message
 		msg := make([]byte, 17)
-		msg[0] = distroByte
+		msg[0] = project.Id
 		binary.LittleEndian.PutUint64(msg[1:9], math.Float64bits(long))
 		binary.LittleEndian.PutUint64(msg[9:17], math.Float64bits(lat))
 
@@ -170,14 +160,14 @@ func entriesToMessages(shorts []string, entries chan *LogEntry, messages chan []
 	}
 }
 
-func HandleWebserver(shorts []string, entries chan *LogEntry) {
+func HandleWebserver(entries chan *LogEntry, status RSYNCStatus) {
 	r := mux.NewRouter()
 	r.Use(loggingMiddleware)
 
 	// Setup the map
 	r.HandleFunc("/map", handleMap)
 	mapMessages := make(chan []byte)
-	go entriesToMessages(shorts, entries, mapMessages)
+	go entriesToMessages(entries, mapMessages)
 	mirrormap.MapRouter(r.PathPrefix("/map").Subrouter(), mapMessages)
 
 	// Handlers for the other pages
@@ -187,14 +177,33 @@ func HandleWebserver(shorts []string, entries chan *LogEntry) {
 	r.HandleFunc("/history", handleHistory)
 	r.HandleFunc("/stats", handleStatistics)
 
+	// API subrouter
+	api := r.PathPrefix("/api").Subrouter()
+	api.HandleFunc("/status/{short}", func(w http.ResponseWriter, r *http.Request) {
+		dataLock.RLock()
+		defer dataLock.RUnlock()
+
+		vars := mux.Vars(r)
+		short := vars["short"]
+
+		s, ok := status[short]
+		if !ok {
+			w.WriteHeader(http.StatusNotFound)
+			return
+		}
+
+		// Send the status as json
+		json.NewEncoder(w).Encode(s.All())
+	})
+
 	r.PathPrefix("/").Handler(http.FileServer(http.Dir("static")))
 
 	// Serve on 8080
 	l := &http.Server{
-		Addr:    ":8010",
+		Addr:    ":8011",
 		Handler: r,
 	}
 
-	logging.Log(logging.Success, "Serving on http://localhost:8010")
+	logging.Success("Serving on http://localhost:8011")
 	log.Fatalf("%s", l.ListenAndServe())
 }
