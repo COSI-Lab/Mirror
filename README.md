@@ -51,6 +51,7 @@ gin --all -p 3002 -b Mirror -i
 ```
 # Discord Webhook URL
 HOOK_URL=url
+PING_ID=id
 
 # InfluxDB RW Token
 INFLUX_TOKEN=token
