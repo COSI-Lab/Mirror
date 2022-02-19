@@ -5,14 +5,51 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
+	"os"
+	"sort"
 
-	"github.com/COSI_Lab/Mirror/logging"
 	"github.com/xeipuuv/gojsonschema"
 )
 
 type ConfigFile struct {
 	Schema  string              `json:"$schema"`
 	Mirrors map[string]*Project `json:"mirrors"`
+}
+
+// Returns a slice of Projects with IsDistro set to true
+// the slice is sorted by the human name
+func (config *ConfigFile) GetDistributions() []Project {
+	distributions := make([]Project, 0)
+
+	for _, project := range config.Mirrors {
+		if project.IsDistro {
+			distributions = append(distributions, *project)
+		}
+	}
+
+	sort.Slice(distributions, func(i, j int) bool {
+		return distributions[i].Name < distributions[j].Name
+	})
+
+	return distributions
+}
+
+// Returns a slice of Projects with IsDistro set to false
+// the slice is sorted by the human name
+func (config *ConfigFile) GetSoftware() []Project {
+	software := make([]Project, 0)
+
+	for _, project := range config.Mirrors {
+		if !project.IsDistro {
+			software = append(software, *project)
+		}
+	}
+
+	sort.Slice(software, func(i, j int) bool {
+		return software[i].Name < software[j].Name
+	})
+
+	return software
 }
 
 type Project struct {
@@ -62,7 +99,7 @@ func ParseConfig(configFile, schemaFile string) (config ConfigFile) {
 	// Validate the config against the schema
 	result, err := gojsonschema.Validate(schemaLoader, documentLoader)
 	if err != nil {
-		panic(err.Error())
+		log.Fatal(err.Error())
 	}
 
 	// Report errors
@@ -71,6 +108,7 @@ func ParseConfig(configFile, schemaFile string) (config ConfigFile) {
 		for _, desc := range result.Errors() {
 			fmt.Printf("- %s\n", desc)
 		}
+		os.Exit(1)
 	}
 
 	// Finally parse the config
@@ -90,7 +128,7 @@ func ParseConfig(configFile, schemaFile string) (config ConfigFile) {
 
 		// add 1 and check for overflow
 		if i == 255 {
-			logging.Panic("Too many projects, 255 is the maximum because of the live map")
+			log.Fatal("Too many projects, 255 is the maximum because of the live map")
 		}
 		i++
 	}
@@ -102,7 +140,7 @@ func getPassword(filename string) string {
 	bytes, err := ioutil.ReadFile(filename)
 
 	if err != nil {
-		logging.Warn("Could not read password file: ", filename, err.Error())
+		log.Fatal("Could not read password file: ", filename, err.Error())
 	}
 
 	return string(bytes)
