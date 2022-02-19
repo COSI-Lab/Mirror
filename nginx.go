@@ -37,17 +37,6 @@ type LogEntry struct {
 }
 
 var reQuotes *regexp.Regexp
-var db *geoip2.Reader
-
-func InitDb() (err error) {
-	db, err = geoip2.Open("GeoLite2-City.mmdb")
-	if err != nil {
-		logging.Error("Could not open geolite city db")
-		return err
-	}
-
-	return nil
-}
 
 // Compiles regular expressions
 func InitRegex() (err error) {
@@ -63,12 +52,6 @@ func ReadLogFile(logFile string, channels ...chan *LogEntry) (err error) {
 	if reQuotes == nil {
 		if InitRegex() != nil {
 			logging.Error("could not compile nginx log parsing regex")
-		}
-	}
-
-	if db == nil {
-		if InitDb() != nil {
-			logging.Error("could not initilze geolite city db")
 		}
 	}
 
@@ -102,12 +85,6 @@ func ReadLogs(logFile string, channels ...chan *LogEntry) {
 	if reQuotes == nil {
 		if InitRegex() != nil {
 			logging.Error("could not compile nginx log parsing regex")
-		}
-	}
-
-	if db == nil {
-		if InitDb() != nil {
-			logging.Error("could not initilze geolite city db")
 		}
 	}
 
@@ -162,8 +139,8 @@ func ParseLine(line string) (*LogEntry, error) {
 	}
 
 	// Optional GeoIP lookup
-	if db != nil {
-		entry.City, _ = db.City(entry.IP)
+	if geoip != nil {
+		entry.City, _ = geoip.GetGeoIP(entry.IP)
 	} else {
 		entry.City = nil
 	}
