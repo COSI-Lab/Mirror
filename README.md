@@ -17,8 +17,9 @@ WIP monolithic software for [mirror](https://mirror.clarkson.edu) that handles
 - [ ] Exposing total network bandwidth
 - [x] Mirror map of real time downloads
 - [x] Mirror map generated from project config
+- [x] Map pulls the latest version of GeoIP database every day
 - [x] Periodically syncing projects
-- [ ] Exposing sync status per project
+- [x] Exposing sync status per project
 - [x] Discord webhook integration
 - [x] Notifies our discord server when things fail
 
