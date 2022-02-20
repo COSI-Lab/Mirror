@@ -52,6 +52,21 @@ func (config *ConfigFile) GetSoftware() []Project {
 	return software
 }
 
+// Returns a slice of projects sorted by Id
+func (config *ConfigFile) GetProjects() []Project {
+	projects := make([]Project, 0, len(config.Mirrors))
+
+	for _, project := range config.Mirrors {
+		projects = append(projects, *project)
+	}
+
+	sort.Slice(projects, func(i, j int) bool {
+		return projects[i].Id < projects[j].Id
+	})
+
+	return projects
+}
+
 type Project struct {
 	Name   string `json:"name"`
 	Short  string // Copied from key

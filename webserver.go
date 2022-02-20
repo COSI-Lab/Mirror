@@ -17,6 +17,7 @@ import (
 
 var tmpls *template.Template
 var projects map[string]*Project
+var projects_sorted []Project
 var distributions []Project
 var software []Project
 var dataLock = &sync.RWMutex{}
@@ -31,7 +32,7 @@ func handleIndex(w http.ResponseWriter, r *http.Request) {
 
 func handleMap(w http.ResponseWriter, r *http.Request) {
 	dataLock.RLock()
-	err := tmpls.ExecuteTemplate(w, "map.gohtml", projects)
+	err := tmpls.ExecuteTemplate(w, "map.gohtml", projects_sorted)
 	dataLock.RUnlock()
 
 	if err != nil {
@@ -102,6 +103,7 @@ func webserverLoadConfig(config ConfigFile) {
 	dataLock.Lock()
 	distributions = config.GetDistributions()
 	software = config.GetSoftware()
+	projects_sorted = config.GetProjects()
 	projects = config.Mirrors
 	dataLock.Unlock()
 }
