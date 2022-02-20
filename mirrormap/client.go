@@ -1,8 +1,7 @@
 package mirrormap
 
 import (
-	"log"
-
+	"github.com/COSI_Lab/Mirror/logging"
 	"github.com/gorilla/websocket"
 )
 
@@ -23,7 +22,7 @@ func (c *client) write() {
 	for message := range c.send {
 		w, err := c.conn.NextWriter(websocket.BinaryMessage)
 		if err != nil {
-			log.Printf("error: %v", err)
+			logging.Info("Closing websocket connection", err)
 			break
 		}
 

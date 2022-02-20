@@ -40,10 +40,7 @@ func (hub *hub) run() {
 				select {
 				case client.send <- message:
 				default:
-					// if sending to a client blocks we drop the client
-					close(client.send)
-					delete(hub.clients, client)
-					logging.Warn("Dropped client", client.conn.RemoteAddr())
+					// If the client blocks we skip it
 				}
 			}
 		}

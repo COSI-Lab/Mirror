@@ -58,6 +58,9 @@ function connect() {
   };
   socket.onerror = function (e) {
     console.log("Error!", e);
+
+    // Try to reconnect after 5 seconds
+    setTimeout(connect, 5000);
   };
 
   return socket;
