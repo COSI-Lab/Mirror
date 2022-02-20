@@ -75,10 +75,9 @@ func main() {
 	}
 
 	// Webserver
-	if InitWebserver() == nil {
-		webserverLoadConfig(config)
-		go HandleWebserver(map_entries, rsyncStatus)
-	}
+	InitWebserver()
+	WebserverLoadConfig(config)
+	go HandleWebserver(map_entries, rsyncStatus)
 
 	// Wait for all goroutines to finish
 	for {

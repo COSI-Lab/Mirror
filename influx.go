@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
+	"os"
 	"time"
 
 	"github.com/COSI_Lab/Mirror/logging"
@@ -35,6 +36,11 @@ type NGINXStatistics map[string]*DistroStat
 
 // Sends the latest NGINX stats to the database
 func SendTotalBytesByDistro(statistics NGINXStatistics) {
+	if os.Getenv("INFLUX_READ_ONLY") != "" {
+		logging.Info("INFLUX_READ_ONLY is set, not sending data to influx")
+		return
+	}
+
 	// Measure time
 	t := time.Now()
 
@@ -133,4 +139,55 @@ func QueryTotalBytesByDistro(projects map[string]*Project) NGINXStatistics {
 	}
 
 	return statistics
+}
+
+// Gets the bytes sent for each project in the last 24 hours
+// Returns a sorted list of bytes sent for each project
+func QueryBytesSentByProject() (map[string]int64, error) {
+	// Map from short names to bytes sent
+	bytesSent := make(map[string]int64)
+
+	// You can paste this into the influxdb data explorer
+	/*
+		from(bucket: "stats")
+			|> range(start: -24h, stop: now())
+			|> filter(fn: (r) => r["_measurement"] == "mirror")
+			|> filter(fn: (r) => r["_field"] == "bytes_sent")
+			|> spread()
+			|> yield(name: "spread")
+	*/
+	result, err := reader.Query(context.Background(), "from(bucket: \"stats\") |> range(start: -24h, stop: now()) |> filter(fn: (r) => r[\"_measurement\"] == \"mirror\") |> filter(fn: (r) => r[\"_field\"] == \"bytes_sent\") |> spread() |> yield(name: \"spread\")")
+
+	if err != nil {
+		return nil, err
+	}
+
+	for result.Next() {
+		if result.Err() == nil {
+			// Get the data point
+			dp := result.Record()
+
+			// Get the project short name
+			project, ok := dp.ValueByKey("distro").(string)
+			if !ok {
+				logging.Warn("Error getting distro short name")
+				fmt.Printf("%T %v\n", project, project)
+				continue
+			}
+
+			// Get the bytes sent
+			sent, ok := dp.ValueByKey("_value").(int64)
+			if !ok {
+				logging.Warn("Error getting bytes sent")
+				fmt.Printf("%T %v\n", dp.ValueByKey("_value"), dp.ValueByKey("_value"))
+				continue
+			}
+
+			bytesSent[project] = sent
+		} else {
+			logging.Warn("InitNGINXStats Flux Query Error", result.Err())
+		}
+	}
+
+	return bytesSent, nil
 }

@@ -1,14 +1,18 @@
 package main
 
 import (
+	"bytes"
 	"encoding/binary"
 	"encoding/json"
+	"fmt"
 	"html/template"
 	"log"
 	"math"
 	"net"
 	"net/http"
+	"regexp"
 	"sync"
+	"time"
 
 	"github.com/COSI_Lab/Mirror/logging"
 	"github.com/COSI_Lab/Mirror/mirrormap"
@@ -68,44 +72,106 @@ func handleSoftware(w http.ResponseWriter, r *http.Request) {
 }
 
 func handleStatistics(w http.ResponseWriter, r *http.Request) {
-	err := tmpls.ExecuteTemplate(w, "statistics.gohtml", "")
-
+	var buf bytes.Buffer
+	err := tmpls.ExecuteTemplate(&buf, "statistics.gohtml", getPieChart())
 	if err != nil {
 		logging.Warn("handleStatistics;", err)
 	}
+
+	pat := regexp.MustCompile(`(__f__")|("__f__)|(__f__)`)
+	content := pat.ReplaceAll(buf.Bytes(), []byte(""))
+
+	w.Write(content)
 }
 
-func InitWebserver() error {
-	var err error
-	tmpls, err = template.ParseGlob("templates/*")
+type ProxyWriter struct {
+	header http.Header
+	buffer bytes.Buffer
+	status int
+}
 
-	if err == nil {
-		logging.Info(tmpls.DefinedTemplates())
-		return err
-	} else {
-		logging.Error("InitWebserver;", err)
-		tmpls = nil
+func (p *ProxyWriter) Header() http.Header {
+	return p.header
+}
+
+func (p *ProxyWriter) Write(bytes []byte) (int, error) {
+	return p.buffer.Write(bytes)
+}
+
+func (p *ProxyWriter) WriteHeader(status int) {
+	p.status = status
+}
+
+type CacheEntry struct {
+	header http.Header
+	body   []byte
+	status int
+	time   time.Time
+}
+
+func (c *CacheEntry) WriteTo(w http.ResponseWriter) (int, error) {
+	header := w.Header()
+
+	for k, v := range c.header {
+		header[k] = v
 	}
 
-	return nil
+	if c.status != 0 {
+		w.WriteHeader(c.status)
+	}
+
+	return w.Write(c.body)
 }
 
-// Logs request Method and request URI
-func loggingMiddleware(next http.Handler) http.Handler {
+// Caches the responses from the webserver
+var cache = map[string]*CacheEntry{}
+var cacheLock = &sync.RWMutex{}
+
+func cachingMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		logging.Info(r.Method, r.RequestURI)
-		next.ServeHTTP(w, r)
-	})
-}
+		start := time.Now()
 
-// Setup distributions and software arrays
-func webserverLoadConfig(config ConfigFile) {
-	dataLock.Lock()
-	distributions = config.GetDistributions()
-	software = config.GetSoftware()
-	projects_sorted = config.GetProjects()
-	projects = config.Mirrors
-	dataLock.Unlock()
+		// Check if the request is cached
+		cacheLock.RLock()
+		if entry, ok := cache[r.RequestURI]; ok && r.Method == "GET" {
+			// Check that the cache entry is still valid
+			if time.Since(entry.time) < time.Hour {
+				// Write the cached response
+				entry.WriteTo(w)
+				cacheLock.RUnlock()
+				logging.Info(r.Method, r.RequestURI, "in", time.Since(start), "; cached")
+				return
+			}
+		}
+		cacheLock.RUnlock()
+
+		// Create a new response writer
+		proxyWriter := &ProxyWriter{
+			header: make(http.Header),
+		}
+
+		// If not, call the next handler
+		next.ServeHTTP(proxyWriter, r)
+
+		// Create the response cache entry
+		entry := &CacheEntry{
+			header: proxyWriter.header,
+			body:   proxyWriter.buffer.Bytes(),
+			status: proxyWriter.status,
+			time:   time.Now(),
+		}
+
+		// Send the response to client
+		go func() {
+			// Cache the response
+			cacheLock.Lock()
+			cache[r.RequestURI] = entry
+			cacheLock.Unlock()
+		}()
+
+		entry.WriteTo(w)
+		logging.Info(r.Method, r.RequestURI, "in", time.Since(start))
+	})
 }
 
 func entriesToMessages(entries chan *LogEntry, messages chan []byte) {
@@ -153,9 +219,32 @@ func entriesToMessages(entries chan *LogEntry, messages chan []byte) {
 	}
 }
 
+func InitWebserver() {
+	// Load the templates with safeJS
+	tmpls = template.Must(template.New("").Funcs(template.FuncMap{
+		"safeJS": func(s interface{}) template.JS {
+			return template.JS(fmt.Sprint(s))
+		},
+	}).ParseGlob("templates/*.gohtml"))
+
+	logging.Info(tmpls.DefinedTemplates())
+}
+
+// Reload distributions and software arrays
+func WebserverLoadConfig(config ConfigFile) {
+	dataLock.Lock()
+	distributions = config.GetDistributions()
+	software = config.GetSoftware()
+	projects_sorted = config.GetProjects()
+	projects = config.Mirrors
+	dataLock.Unlock()
+}
+
 func HandleWebserver(entries chan *LogEntry, status RSYNCStatus) {
 	r := mux.NewRouter()
-	r.Use(loggingMiddleware)
+
+	cache = make(map[string]*CacheEntry)
+	r.Use(cachingMiddleware)
 
 	// Setup the map
 	r.HandleFunc("/map", handleMap)
@@ -189,6 +278,7 @@ func HandleWebserver(entries chan *LogEntry, status RSYNCStatus) {
 		json.NewEncoder(w).Encode(s.All())
 	})
 
+	// Static files
 	r.PathPrefix("/").Handler(http.FileServer(http.Dir("static")))
 
 	// Serve on 8080
