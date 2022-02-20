@@ -120,6 +120,15 @@ body > h1{
 .statpage b {
     font-size: 30px;
 }
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.item {
+    margin: auto;
+}
+
 /* General Use: CHANGE WITH CAUTION */
 main{
     background-color: white;

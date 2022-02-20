@@ -3,6 +3,7 @@ module github.com/COSI_Lab/Mirror
 go 1.17
 
 require (
+	github.com/go-echarts/go-echarts/v2 v2.2.4
 	github.com/gorilla/mux v1.8.0
 	github.com/gorilla/websocket v1.5.0
 	github.com/influxdata/influxdb-client-go/v2 v2.8.0

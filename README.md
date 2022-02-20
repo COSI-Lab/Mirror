@@ -11,7 +11,7 @@ WIP monolithic software for [mirror](https://mirror.clarkson.edu) that handles
 - [ ] Recording rsyncd bandwidth
 - [ ] Recording tranmission bittorrent bandwidth
 - [ ] Recording total network bandwidth
-- [ ] Exposing nginx bandwidth per repo
+- [x] Exposing nginx bandwidth per repo (pie chart)
 - [ ] Exposing rsync bandwidth
 - [ ] Exposing tranmission bittorrent bandwidth
 - [ ] Exposing total network bandwidth
@@ -56,6 +56,9 @@ PING_ID=id
 
 # InfluxDB RW Token
 INFLUX_TOKEN=token
+
+# Read only from the database
+INFLUX_READ_ONLY=1
 
 # File to tail NGINX access logs, if empty then we read the static ./access.log file
 NGINX_TAIL=/var/log/nginx/access.log
