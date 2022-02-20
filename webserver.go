@@ -127,7 +127,7 @@ func (c *CacheEntry) WriteTo(w http.ResponseWriter) (int, error) {
 var cache = map[string]*CacheEntry{}
 var cacheLock = &sync.RWMutex{}
 
-func cachingMiddleware(next http.Handler) http.Handler {
+func cachingMiddleware(next func(w http.ResponseWriter, r *http.Request)) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		start := time.Now()
 
@@ -151,7 +151,7 @@ func cachingMiddleware(next http.Handler) http.Handler {
 		}
 
 		// If not, call the next handler
-		next.ServeHTTP(proxyWriter, r)
+		next(proxyWriter, r)
 
 		// Create the response cache entry
 		entry := &CacheEntry{
@@ -244,20 +244,19 @@ func HandleWebserver(entries chan *LogEntry, status RSYNCStatus) {
 	r := mux.NewRouter()
 
 	cache = make(map[string]*CacheEntry)
-	r.Use(cachingMiddleware)
 
 	// Setup the map
-	r.HandleFunc("/map", handleMap)
+	r.Handle("/map", cachingMiddleware(handleMap))
 	mapMessages := make(chan []byte)
 	go entriesToMessages(entries, mapMessages)
 	mirrormap.MapRouter(r.PathPrefix("/map").Subrouter(), mapMessages)
 
 	// Handlers for the other pages
-	r.HandleFunc("/", handleIndex)
-	r.HandleFunc("/distributions", handleDistributions)
-	r.HandleFunc("/software", handleSoftware)
-	r.HandleFunc("/history", handleHistory)
-	r.HandleFunc("/stats", handleStatistics)
+	r.Handle("/", cachingMiddleware(handleIndex))
+	r.Handle("/distributions", cachingMiddleware(handleDistributions))
+	r.Handle("/software", cachingMiddleware(handleSoftware))
+	r.Handle("/history", cachingMiddleware(handleHistory))
+	r.Handle("/stats", cachingMiddleware(handleStatistics))
 
 	// API subrouter
 	api := r.PathPrefix("/api").Subrouter()
@@ -279,7 +278,7 @@ func HandleWebserver(entries chan *LogEntry, status RSYNCStatus) {
 	})
 
 	// Static files
-	r.PathPrefix("/").Handler(http.FileServer(http.Dir("static")))
+	r.PathPrefix("/").Handler(cachingMiddleware(http.FileServer(http.Dir("static")).ServeHTTP))
 
 	// Serve on 8080
 	l := &http.Server{
