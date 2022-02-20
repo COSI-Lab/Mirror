@@ -191,10 +191,10 @@ func HandleWebserver(entries chan *LogEntry, status RSYNCStatus) {
 
 	// Serve on 8080
 	l := &http.Server{
-		Addr:    ":8011",
+		Addr:    ":8012",
 		Handler: r,
 	}
 
-	logging.Success("Serving on http://localhost:8011")
+	logging.Success("Serving on http://localhost:8012")
 	log.Fatalf("%s", l.ListenAndServe())
 }
