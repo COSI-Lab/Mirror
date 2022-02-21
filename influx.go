@@ -2,6 +2,8 @@ package main
 
 import (
 	"context"
+	"fmt"
+	"os"
 	"time"
 
 	"github.com/COSI_Lab/Mirror/logging"
@@ -23,14 +25,34 @@ func SetupInfluxClients(token string) {
 	reader = client.QueryAPI("COSI")
 }
 
+// Statistics measured for each distribution
+type DistroStat struct {
+	BytesSent int
+	BytesRecv int
+	Requests  int
+}
+
+type NGINXStatistics map[string]*DistroStat
+
 // Sends the latest NGINX stats to the database
-func SendTotalBytesByDistro(bytesByDistro map[string]int) {
+func SendTotalBytesByDistro(statistics NGINXStatistics) {
+	if os.Getenv("INFLUX_READ_ONLY") != "" {
+		logging.Info("INFLUX_READ_ONLY is set, not sending data to influx")
+		return
+	}
+
 	// Measure time
 	t := time.Now()
 
 	// Create and send points
-	for short, bytes := range bytesByDistro {
-		p := influxdb2.NewPoint("mirror", map[string]string{"distro": short}, map[string]interface{}{"bytes_sent": bytes}, t)
+	for short, stat := range statistics {
+		p := influxdb2.NewPoint("mirror",
+			map[string]string{"distro": short},
+			map[string]interface{}{
+				"bytes_sent": stat.BytesSent,
+				"bytes_recv": stat.BytesRecv,
+				"requests":   stat.Requests,
+			}, t)
 		writer.WritePoint(p)
 	}
 
@@ -39,50 +61,137 @@ func SendTotalBytesByDistro(bytesByDistro map[string]int) {
 
 // Loads the latest NGINX stats from the database
 // Returns a map of distro short names to total bytes sent and total in the map
-func QueryTotalBytesByDistro(projects map[string]*Project) (map[string]int, int) {
+func QueryTotalBytesByDistro(projects map[string]*Project) NGINXStatistics {
 	// Map from short names to bytes sent
-	bytesByDistro := make(map[string]int)
+	statistics := make(NGINXStatistics)
 
 	for short := range projects {
-		bytesByDistro[short] = 0
+		statistics[short] = &DistroStat{}
 	}
-	bytesByDistro["other"] = 0
+	statistics["other"] = &DistroStat{}
 
+	// You can paste this into the influxdb data explorer
 	/*
-		from(bucket: \"stats\")
-			|> range(start: -7d)
-			|> filter(fn: (r) => r[\"_measurement\"] == \"mirror\" and  r[\"_field\"] == \"bytes_sent\")
-			|> last()
+		from(bucket: "stats")
+		    |> range(start: 0, stop: now())
+		    |> filter(fn: (r) => r["_measurement"] == "mirror")
+		    |> filter(fn: (r) => r["_field"] == "bytes_sent" or r["_field"] == "bytes_recv" or r["_field"] == "requests")
+		    |> last()
+		    |> group(columns: ["distro"], mode: "by")
 	*/
-	result, err := reader.Query(context.Background(), "from(bucket: \"stats\") |> range(start: -7d) |> filter(fn: (r) => r[\"_measurement\"] == \"mirror\" and  r[\"_field\"] == \"bytes_sent\") |> last()")
+	result, err := reader.Query(context.Background(), "from(bucket: \"stats\") |> range(start: 0, stop: now()) |> filter(fn: (r) => r[\"_measurement\"] == \"mirror\") |> filter(fn: (r) => r[\"_field\"] == \"bytes_sent\" or r[\"_field\"] == \"bytes_recv\" or r[\"_field\"] == \"requests\") |> last() |> group(columns: [\"distro\"], mode: \"by\")")
 
 	if err != nil {
 		logging.Error("Error querying influxdb", err)
 	}
 
-	total := 0
 	for result.Next() {
 		if result.Err() == nil {
-			distro, ok := result.Record().ValueByKey("distro").(string)
+			// Get the data point
+			dp := result.Record()
+
+			// Get the distro short name
+			distro, ok := dp.ValueByKey("distro").(string)
 			if !ok {
-				logging.Warn("InitNGINXStats can not parse distro to string: ", distro)
+				logging.Warn("Error getting distro short name")
+				fmt.Printf("%T %v\n", distro, distro)
 				continue
 			}
 
-			bytes, ok := result.Record().Value().(int64)
-			if !ok {
-				logging.Warn("InitNGINXStats can not parse ", distro, " bytes to int ", distro+result.Record().String())
+			if statistics[distro] == nil {
 				continue
 			}
 
-			if _, ok := bytesByDistro[distro]; ok {
-				bytesByDistro[distro] = int(bytes)
-				total += int(bytes)
+			// Get the field
+			field, ok := dp.ValueByKey("_field").(string)
+			if !ok {
+				logging.Warn("Error getting field")
+				fmt.Printf("%T %v\n", field, field)
+				continue
+			}
+
+			// Switch on the field
+			switch field {
+			case "bytes_sent":
+				sent, ok := dp.ValueByKey("_value").(int64)
+				if !ok {
+					logging.Warn("Error getting bytes sent")
+					fmt.Printf("%T %v\n", dp.ValueByKey("_value"), dp.ValueByKey("_value"))
+					continue
+				}
+				statistics[distro].BytesSent = int(sent)
+			case "bytes_recv":
+				received, ok := dp.ValueByKey("_value").(int64)
+				if !ok {
+					logging.Warn("Error getting bytes recv")
+					fmt.Printf("%T %v\n", dp.ValueByKey("_value"), dp.ValueByKey("_value"))
+					continue
+				}
+				statistics[distro].BytesRecv = int(received)
+			case "requests":
+				requests, ok := dp.ValueByKey("_value").(int64)
+				if !ok {
+					logging.Warn("Error getting requests")
+					fmt.Printf("%T %v\n", dp.ValueByKey("_value"), dp.ValueByKey("_value"))
+					continue
+				}
+				statistics[distro].Requests = int(requests)
 			}
 		} else {
 			logging.Warn("InitNGINXStats Flux Query Error", result.Err())
 		}
 	}
 
-	return bytesByDistro, total
+	return statistics
+}
+
+// Gets the bytes sent for each project in the last 24 hours
+// Returns a sorted list of bytes sent for each project
+func QueryBytesSentByProject() (map[string]int64, error) {
+	// Map from short names to bytes sent
+	bytesSent := make(map[string]int64)
+
+	// You can paste this into the influxdb data explorer
+	/*
+		from(bucket: "stats")
+			|> range(start: -24h, stop: now())
+			|> filter(fn: (r) => r["_measurement"] == "mirror")
+			|> filter(fn: (r) => r["_field"] == "bytes_sent")
+			|> spread()
+			|> yield(name: "spread")
+	*/
+	result, err := reader.Query(context.Background(), "from(bucket: \"stats\") |> range(start: -24h, stop: now()) |> filter(fn: (r) => r[\"_measurement\"] == \"mirror\") |> filter(fn: (r) => r[\"_field\"] == \"bytes_sent\") |> spread() |> yield(name: \"spread\")")
+
+	if err != nil {
+		return nil, err
+	}
+
+	for result.Next() {
+		if result.Err() == nil {
+			// Get the data point
+			dp := result.Record()
+
+			// Get the project short name
+			project, ok := dp.ValueByKey("distro").(string)
+			if !ok {
+				logging.Warn("Error getting distro short name")
+				fmt.Printf("%T %v\n", project, project)
+				continue
+			}
+
+			// Get the bytes sent
+			sent, ok := dp.ValueByKey("_value").(int64)
+			if !ok {
+				logging.Warn("Error getting bytes sent")
+				fmt.Printf("%T %v\n", dp.ValueByKey("_value"), dp.ValueByKey("_value"))
+				continue
+			}
+
+			bytesSent[project] = sent
+		} else {
+			logging.Warn("InitNGINXStats Flux Query Error", result.Err())
+		}
+	}
+
+	return bytesSent, nil
 }
