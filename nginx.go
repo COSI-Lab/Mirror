@@ -75,7 +75,7 @@ func ReadLogFile(logFile string, channels ...chan *LogEntry) (err error) {
 			}
 		}
 
-		time.Sleep(1 * time.Second)
+		time.Sleep(150 * time.Millisecond)
 	}
 
 	return nil
