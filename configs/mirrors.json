@@ -291,7 +291,7 @@
       "color": "#930056",
       "publicRsync": true
     },
-    "linuxmint": {
+    "linuxmint-images": {
       "name": "LinuxMint (images)",
       "isDistro": true,
       "rsync": {

@@ -7,51 +7,32 @@ function connect() {
   let ws_scheme = window.location.protocol == "https:" ? "wss://" : "ws://";
 
   let socket = new WebSocket(ws_scheme + window.location.host + "/map/ws");
+  socket.binaryType = "arraybuffer";
+
   socket.onopen = function (e) {
     console.log("Connected!", e);
   };
-  socket.onmessage = function (evt) {
-    var reader = new FileReader();
+  socket.onmessage = function (message) {
+    const buffer = new Uint8Array(message.data);
+    console.log(buffer)
 
-    reader.readAsArrayBuffer(evt.data);
-    reader.addEventListener("loadend", function (e) {
-      buffer = new Uint8Array(reader.result);
-
-      let distro = parseFloat(buffer[0], 2);
-
-      // Split the byte array into longByte and latByte
-      let longByte = buffer.slice(1, 9);
-      let latByte = buffer.slice(9, 17);
-
-      // Convert the bytes to floats
-      // Create new buffer
-      // apply buffer to dataview
-      let latBuf = new ArrayBuffer(8);
-      let latView = new DataView(latBuf);
-      latByte.forEach(function (b, i) {
-        latView.setUint8(i, b);
-      });
-      // Swap bytes around becuase little endian encoding
-      // Repeat for lat
-
-      let lat = latView.getFloat64(0, true);
-
-      let longBuf = new ArrayBuffer(8);
-      let longView = new DataView(longBuf);
-      longByte.forEach(function (b, i) {
-        longView.setUint8(i, b);
-      });
-
-      let long = longView.getFloat64(0, true);
+    // 8 message at 5 bytes = 40 bytes
+    for (let i = 0; i < buffer.length; i += 5) {
+      // First byte is the distro id
+      const distro = buffer[i];
+      const lat = buffer[i+1] << 8 | buffer[i+2];
+      const long = buffer[i+3] << 8 | buffer[i+4];
 
       // Convert into x and y coordinates and put them on scale of 0-1
-      let x = (lat + 180) / 360;
-      let y = (90 - long) / 180;
-      distros[distro][2] += 1;
+      const x = long / 4096;
+      const y = (4096 - lat)  / 4096;
 
       // Add new data points to the front of the list
       circles.unshift([x, y, distro, new Date().getTime()]);
-    });
+
+      // count hits
+      distros[distro][2] += 1;
+    }
   };
   socket.onclose = function (e) {
     console.log("Disconnected!", e);
@@ -67,7 +48,7 @@ function connect() {
 }
 
 window.onload = async function () {
-  var websocket = connect();
+  connect();
 
   const canvas = document.getElementById("myCanvas");
   const ctx = canvas.getContext("2d");
@@ -75,7 +56,9 @@ window.onload = async function () {
 
   window.onresize = function () {
     canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight * 0.9;
+
+    // Height is viewport height - "#header" height 
+    canvas.height = window.innerHeight - document.getElementById("header").clientHeight;
   };
 
   window.onresize();

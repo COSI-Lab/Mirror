@@ -1,151 +1,148 @@
 body {
-    margin: 0;
-    background: rgb(40, 104, 40);
+  margin: 0;
+  background: rgb(40, 104, 40);
 }
 
 /* For header.gohtml */
 header {
-    background: rgb(40, 104, 40);
-    color: white;
-    display: block;
-    padding-bottom: 0;
-    text-align: left;
+  background: rgb(40, 104, 40);
+  color: white;
+  display: block;
+  padding-bottom: 0;
+  border-bottom: yellow solid 3px;
 }
-.title {
-    display: flex;
-    justify-content: left;
-    align-items: center;
-    margin-left: 25%;
-    max-height: 130px;
+header ul {
+  font-family: "Montserrat", Arial, sans-serif;
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background-color: rgb(40, 104, 40);
 }
-.title p{
-    color: lightgrey;
-    font-size: 80px;
+header li {
+  float: left;
 }
-.topbar {
-    /* Mobile Dropdown Main Bar */
-    background: rgb(40, 104, 40);
-    background-color: darkgreen;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+header li > a {
+  display: block;
+  color: white;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
 }
-.topbar > a {
-    background-color: darkgreen;
-    color: white;
-    margin: 0px;
-    padding: 20px;
-    font-size: 15px;
+header li a:hover {
+  background-color: darkgreen;
 }
 
 /* For footer.gohtml */
 footer {
-    background: rgb(40, 104, 40);
-    color: white;
-    padding: 25px;
-    display: block;
-    text-align: center;
+  background: rgb(40, 104, 40);
+  color: white;
+  padding: 25px;
+  display: block;
+  text-align: center;
 }
 footer a {
-    color: white;
+  color: white;
 }
 
 /* For index.gohtml */
 .home {
-    padding-top: 20px;
-    padding-left:25%;
-    padding-right:25%;
-    /*max-width: 60%;*/
-    display: flex;
-    min-height: 10vh;
-    flex-direction: column;
-    margin: 0;
+  padding-top: 20px;
+  padding-left: 25%;
+  padding-right: 25%;
+  /*max-width: 60%;*/
+  display: flex;
+  min-height: 10vh;
+  flex-direction: column;
+  margin: 0;
 }
-body > h1{
-    font-size: 50px;
-    padding: 100px;
-    margin-top: 0;
-    margin-bottom: 0;
-    background-image: url("/img/mainback.jpeg");
-    display: flex;
-    justify-content: center;
-    color: white;
+body > h1 {
+  font-size: 50px;
+  padding: 100px;
+  margin-top: 0;
+  margin-bottom: 0;
+  background-image: url("/img/mainback.jpeg");
+  display: flex;
+  justify-content: center;
+  color: white;
 }
 .horlist {
-    display: flex;
-    justify-content: center;
-    align-items:flex-start;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
 }
 .vertlist {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: left;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: left;
 }
-.vertlist > img{
-    margin-left: 30px;
+.vertlist > img {
+  margin-left: 30px;
 }
-.vertlist > b{
-    padding-left: 30px;
-    padding-right: 30px;
-    text-align: left;
-    font-size: 30px;
+.vertlist > b {
+  padding-left: 30px;
+  padding-right: 30px;
+  text-align: left;
+  font-size: 30px;
 }
-.vertlist > p{
-    text-align: left;
-    padding-left: 30px;
-    padding-right: 30px;
-    max-width: 250px;
+.vertlist > p {
+  text-align: left;
+  padding-left: 30px;
+  padding-right: 30px;
+  max-width: 250px;
 }
 
 /* For distributions.gohtml */
 .distro {
-    border-bottom: 2px solid #cccccc;
-    padding-bottom: 1em;
-    width: 100%;
-    overflow: hidden;
+  border-bottom: 2px solid #cccccc;
+  padding-bottom: 1em;
+  width: 100%;
+  overflow: hidden;
 }
 
 .distro > a {
-    color:rgb(40, 104, 40)
+  color: rgb(40, 104, 40);
 }
 /* For statistics.gohtml */
 .statpage {
-    display:flex;
-    padding: 50px;
-    flex-direction: column;
-    align-items: center;
-    justify-content:center;
+  display: flex;
+  padding: 50px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 .statpage b {
-    font-size: 30px;
+  font-size: 30px;
 }
 .container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 .item {
-    margin: auto;
+  margin: auto;
 }
 
 /* General Use: CHANGE WITH CAUTION */
-main{
-    background-color: white;
+main {
+  background-color: white;
+  padding-left: 10%;
+  padding-right: 10%;
 }
 p {
-    color : black;
+  color: black;
 }
 a {
-    padding: 0;
-    color: green;
+  padding: 0;
+  color: green;
 }
 /* For history.gohtml */
 .history {
-    padding-left:5%;
-    padding-right:5%;
-    display: flex;
-    min-height: 150px;
-    flex-direction: column;
-    margin: 50;
+  padding-left: 5%;
+  padding-right: 5%;
+  display: flex;
+  min-height: 150px;
+  flex-direction: column;
+  margin: 50;
 }
