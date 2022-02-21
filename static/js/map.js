@@ -12,9 +12,8 @@ function connect() {
   socket.onopen = function (e) {
     console.log("Connected!", e);
   };
-  socket.onmessage = function (message) {
+  socket.onmessage = async function (message) {
     const buffer = new Uint8Array(message.data);
-    console.log(buffer)
 
     // 8 message at 5 bytes = 40 bytes
     for (let i = 0; i < buffer.length; i += 5) {
@@ -32,6 +31,9 @@ function connect() {
 
       // count hits
       distros[distro][2] += 1;
+
+      // block this thread for a bit
+      await new Promise((r) => setTimeout(r, Math.random() * 500));
     }
   };
   socket.onclose = function (e) {
