@@ -1,24 +1,9 @@
 html, body {
-    margin: 0px !important;
-    padding: 0px !important;
+    margin: 0px;
+    padding: 0px;
     overflow: hidden !important;
-    background-color: black;
+    background-color: #282828;
 }
-
-canvas {
-    position: absolute;
-    bottom: 0px;
-    top: 10%;
-}
-
-a {
-    color: inherit;
-    text-decoration: underline;
-}
-
-div {
-    padding-left: 10px;
-    padding-right: 10px;
-    height: 5%;
-    color: white;
+header {
+    border-bottom: none !important;
 }

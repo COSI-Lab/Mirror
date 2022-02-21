@@ -1,23 +1,34 @@
 <!DOCTYPE html>
 <html>
-{{template "head.gohtml" .}}
+
+<head>
+    {{template "head.gohtml" .}}
+</head>
 
 <body>
     {{template "nav.gohtml" .}}
     <main>
         {{ range . }}
-        <div class="distro" style= "background-color: white">
-            {{ .Name }}
-            {{if .Official }}
-            <b>
-                (Official Mirror)
-            </b>
-            {{ end }}
-            <br>
-            HTTP:
-            <a href=mirror.clarkson.edu/{{ .Short }}>
-                http://mirror.clarkson.edu/{{ .Short }}
-            </a>
+        <div class="distro" style="background-color: white">
+            <h2> 
+                {{ .Name }} {{if .Official }} (Official Mirror) {{ end }}
+            </h2>
+            <p> 
+                HTTP: <a href=http://mirror.clarkson.edu/{{ .Short }}>http://mirror.clarkson.edu/{{ .Short }}</a>
+                <br>
+                HTTPS: <a href=https://mirror.clarkson.edu/{{ .Short }}>https://mirror.clarkson.edu/{{ .Short }}</a>
+                {{ if .PublicRsync }}
+                <br>
+                RSYNC: rsync://mirror.clarkson.edu/{{ .Short }}
+                {{ end }}
+            </p>
+            <p>
+                {{ if eq (.SyncStyle) ("rsync") }}
+                Upstream Mirror: rsync://{{ .Rsync.Host }}/{{ .Rsync.Src }}
+                {{ end }}
+                <br>
+                Homepage: <a href={{ .HomePage }}>{{ .HomePage }}</a>
+            </p>
         </div>
         {{ end }}
     </main>

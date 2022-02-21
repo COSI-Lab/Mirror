@@ -24,7 +24,7 @@ func handleWebsocket(w http.ResponseWriter, r *http.Request) {
 	// Create a new client
 	client := &client{
 		conn: conn,
-		send: make(chan []byte),
+		send: make(chan []byte, 16),
 	}
 
 	// Register the client

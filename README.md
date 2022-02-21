@@ -11,14 +11,15 @@ WIP monolithic software for [mirror](https://mirror.clarkson.edu) that handles
 - [ ] Recording rsyncd bandwidth
 - [ ] Recording tranmission bittorrent bandwidth
 - [ ] Recording total network bandwidth
-- [ ] Exposing nginx bandwidth per repo
+- [x] Exposing nginx bandwidth per repo (pie chart)
 - [ ] Exposing rsync bandwidth
 - [ ] Exposing tranmission bittorrent bandwidth
-- [ ] Exposing total network bandwidth
+- [x] Exposing total network bandwidth
 - [x] Mirror map of real time downloads
 - [x] Mirror map generated from project config
+- [x] Map pulls the latest version of GeoIP database every day
 - [x] Periodically syncing projects
-- [ ] Exposing sync status per project
+- [x] Exposing sync status per project
 - [x] Discord webhook integration
 - [x] Notifies our discord server when things fail
 
@@ -56,8 +57,14 @@ PING_ID=id
 # InfluxDB RW Token
 INFLUX_TOKEN=token
 
+# Read only from the database
+INFLUX_READ_ONLY=1
+
 # File to tail NGINX access logs, if empty then we read the static ./access.log file
 NGINX_TAIL=/var/log/nginx/access.log
+
+# Maxmind DB token
+MAXMIND_LICENSE_KEY=key
 
 # Set to _anything_ to completely disable rsync
 RSYNC_DISABLE=1
