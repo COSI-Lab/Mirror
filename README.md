@@ -14,7 +14,7 @@ WIP monolithic software for [mirror](https://mirror.clarkson.edu) that handles
 - [x] Exposing nginx bandwidth per repo (pie chart)
 - [ ] Exposing rsync bandwidth
 - [ ] Exposing tranmission bittorrent bandwidth
-- [ ] Exposing total network bandwidth
+- [x] Exposing total network bandwidth
 - [x] Mirror map of real time downloads
 - [x] Mirror map generated from project config
 - [x] Map pulls the latest version of GeoIP database every day

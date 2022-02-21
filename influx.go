@@ -98,6 +98,10 @@ func QueryTotalBytesByDistro(projects map[string]*Project) NGINXStatistics {
 				continue
 			}
 
+			if statistics[distro] == nil {
+				continue
+			}
+
 			// Get the field
 			field, ok := dp.ValueByKey("_field").(string)
 			if !ok {

@@ -68,10 +68,11 @@ func (config *ConfigFile) GetProjects() []Project {
 }
 
 type Project struct {
-	Name   string `json:"name"`
-	Short  string // Copied from key
-	Id     byte   // Id is given out in alphabetical order of short (yes only 255 are supported)
-	Script struct {
+	Name      string `json:"name"`
+	Short     string // Copied from key
+	Id        byte   // Id is given out in alphabetical order of short (yes only 255 are supported)
+	SyncStyle string // "script" "rsync" or "static"
+	Script    struct {
 		Command     string `json:"command"`
 		SyncsPerDay int    `json:"syncs_per_day"`
 	}
@@ -132,9 +133,17 @@ func ParseConfig(configFile, schemaFile string) (config ConfigFile) {
 		log.Fatal("Could not parse the config file even though it fits the schema file: ", err.Error())
 	}
 
-	// Parse passwords & copy key as short
+	// Parse passwords & copy key as short & determine style
 	var i uint8 = 0
 	for short, project := range config.Mirrors {
+		if project.Rsync.Dest != "" {
+			project.SyncStyle = "rsync"
+		} else if project.Static.Location != "" {
+			project.SyncStyle = "static"
+		} else {
+			project.SyncStyle = "script"
+		}
+
 		if project.Rsync.PasswordFile != "" {
 			project.Rsync.Password = getPassword("configs/" + project.Rsync.PasswordFile)
 		}

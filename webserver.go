@@ -2,14 +2,13 @@ package main
 
 import (
 	"bytes"
-	"encoding/binary"
 	"encoding/json"
 	"fmt"
 	"html/template"
 	"log"
-	"math"
 	"net"
 	"net/http"
+	"os"
 	"regexp"
 	"sync"
 	"time"
@@ -128,6 +127,13 @@ var cache = map[string]*CacheEntry{}
 var cacheLock = &sync.RWMutex{}
 
 func cachingMiddleware(next func(w http.ResponseWriter, r *http.Request)) http.Handler {
+	if os.Getenv("WEB_SERVER_CACHE") != "1" {
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			logging.Info(r.Method, r.URL.Path)
+			next(w, r)
+		})
+	}
+
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		start := time.Now()
 
@@ -136,7 +142,7 @@ func cachingMiddleware(next func(w http.ResponseWriter, r *http.Request)) http.H
 		if entry, ok := cache[r.RequestURI]; ok && r.Method == "GET" {
 			// Check that the cache entry is still valid
 			if time.Since(entry.time) < time.Hour {
-				// Write the cached response
+				// Send the cached response
 				entry.WriteTo(w)
 				cacheLock.RUnlock()
 				logging.Info(r.Method, r.RequestURI, "in", time.Since(start), "; cached")
@@ -150,7 +156,7 @@ func cachingMiddleware(next func(w http.ResponseWriter, r *http.Request)) http.H
 			header: make(http.Header),
 		}
 
-		// If not, call the next handler
+		// Call the next handler
 		next(proxyWriter, r)
 
 		// Create the response cache entry
@@ -161,23 +167,34 @@ func cachingMiddleware(next func(w http.ResponseWriter, r *http.Request)) http.H
 			time:   time.Now(),
 		}
 
-		// Send the response to client
+		// Cache the response
 		go func() {
-			// Cache the response
 			cacheLock.Lock()
 			cache[r.RequestURI] = entry
 			cacheLock.Unlock()
 		}()
 
+		// Send the response to client
 		entry.WriteTo(w)
 		logging.Info(r.Method, r.RequestURI, "in", time.Since(start))
 	})
 }
 
 func entriesToMessages(entries chan *LogEntry, messages chan []byte) {
+	// Send groups of 8 messages
+	ch := make(chan []byte)
+	go func() {
+		for {
+			group := make([]byte, 0, 40)
+			for i := 0; i < 8; i++ {
+				group = append(group, <-ch...)
+			}
+			messages <- group
+		}
+	}()
+
 	// Track the previous IP to avoid sending duplicate data
 	prevIP := net.IPv4(0, 0, 0, 0)
-
 	for {
 		// Read from the channel
 		entry := <-entries
@@ -195,27 +212,37 @@ func entriesToMessages(entries chan *LogEntry, messages chan []byte) {
 		// Update the previous IP
 		prevIP = entry.IP
 
-		// Create a new message
-		long := entry.City.Location.Latitude
-		lat := entry.City.Location.Longitude
-
-		if long == 0 || lat == 0 {
-			continue
-		}
-
 		// Get the distro
 		project, ok := projects[entry.Distro]
 		if !ok {
 			continue
 		}
 
-		// Create a new message
-		msg := make([]byte, 17)
-		msg[0] = project.Id
-		binary.LittleEndian.PutUint64(msg[1:9], math.Float64bits(long))
-		binary.LittleEndian.PutUint64(msg[9:17], math.Float64bits(lat))
+		// Get the location
+		lat_ := entry.City.Location.Latitude
+		long_ := entry.City.Location.Longitude
 
-		messages <- msg
+		if lat_ == 0 && long_ == 0 {
+			continue
+		}
+
+		// convert [-90, 90] latitude to [0, 4096] pixels
+		lat := int16((lat_ + 90) * 4096 / 180)
+		// convert [-180, 180] longitude to [0, 4096] pixels
+		long := int16((long_ + 180) * 4096 / 360)
+
+		// Create a new message
+		msg := make([]byte, 5)
+		// First byte is the project ID
+		msg[0] = project.Id
+		// Second and Third byte are the latitude
+		msg[1] = byte(lat >> 8)
+		msg[2] = byte(lat & 0xFF)
+		// Fourth and Fifth byte are the longitude
+		msg[3] = byte(long >> 8)
+		msg[4] = byte(long & 0xFF)
+
+		ch <- msg
 	}
 }
 
