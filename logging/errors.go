@@ -30,13 +30,13 @@ const (
 	SUCCESS
 )
 
-func sendHook(ping bool, content string) {
+func sendHook(ping bool, content ...interface{}) {
 	if hookURL != "" {
 		var values map[string]string
 		if ping {
-			values = map[string]string{"content": fmt.Sprintf("<@%s> %s", PING_ID, content)}
+			values = map[string]string{"content": fmt.Sprintf("<@%s> %s", PING_ID, fmt.Sprint(content...))}
 		} else {
-			values = map[string]string{"content": content}
+			values = map[string]string{"content": fmt.Sprint(content...)}
 		}
 		json_data, err := json.Marshal(values)
 
