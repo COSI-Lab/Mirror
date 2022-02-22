@@ -43,8 +43,8 @@ func NewGeoIPHandler(licenseKey string) (*GeoIPHandler, error) {
 	g.db = db
 
 	// update the database every 24 hours
-	g.updateDatabase()
 	go func() {
+		g.updateDatabase()
 		for {
 			time.Sleep(24 * time.Hour)
 			g.updateDatabase()

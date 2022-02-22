@@ -195,3 +195,60 @@ func QueryBytesSentByProject() (map[string]int64, error) {
 
 	return bytesSent, nil
 }
+
+// Gets the total network bytes sent and recieved for the last week in 1 hour blocks
+func QueryWeeklyNetStats() (sent []float64, recv []float64, times []int64, err error) {
+	// You can paste this into the influxdb data explorer
+	/*
+		from(bucket: "system")
+		  |> range(start: -7d, stop: now())
+		  |> filter(fn: (r) => r["_measurement"] == "net")
+		  |> filter(fn: (r) => r["_field"] == "bytes_sent" or r["_field"] == "bytes_recv")
+		  |> derivative(unit: 1s, nonNegative: true)
+		  |> aggregateWindow(every: 1h, fn: mean)
+		  |> yield(name: "nonnegative derivative")
+	*/
+	result, err := reader.Query(context.Background(), "from(bucket: \"system\") |> range(start: -7d, stop: now()) |> filter(fn: (r) => r[\"_measurement\"] == \"net\") |> filter(fn: (r) => r[\"_field\"] == \"bytes_sent\" or r[\"_field\"] == \"bytes_recv\") |> derivative(unit: 1s, nonNegative: true) |> aggregateWindow(every: 1h, fn: mean) |> yield(name: \"nonnegative derivative\")")
+
+	if err != nil {
+		return nil, nil, nil, err
+	}
+
+	sent = make([]float64, 0)
+	recv = make([]float64, 0)
+	times = make([]int64, 0)
+
+	for result.Next() {
+		if result.Err() == nil {
+			// Get the data point
+			dp := result.Record()
+
+			// Get the field
+			field, ok := dp.ValueByKey("_field").(string)
+			if !ok {
+				logging.Warn("Error getting field")
+				fmt.Printf("%T %v\n", field, field)
+				continue
+			}
+
+			// Get the value
+			value, ok := dp.ValueByKey("_value").(float64)
+			if !ok {
+				logging.Warn("Error getting value")
+				fmt.Printf("%T %v\n", value, value)
+				continue
+			}
+
+			switch field {
+			case "bytes_sent":
+				sent = append(sent, value)
+			case "bytes_recv":
+				recv = append(recv, value)
+				times = append(times, dp.Time().Unix())
+			}
+		} else {
+			logging.Warn("InitNGINXStats Flux Query Error", result.Err())
+		}
+	}
+	return sent, recv, times, nil
+}
