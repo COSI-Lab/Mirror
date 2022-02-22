@@ -2,6 +2,7 @@ package main
 
 import (
 	"os"
+	"runtime"
 	"time"
 
 	"github.com/COSI_Lab/Mirror/logging"
@@ -16,7 +17,7 @@ func main() {
 	// Setup error logger
 	err := logging.Setup()
 	if err != nil {
-		logging.Error(err)
+		logging.Warn(err)
 	}
 
 	// Load config file and check schema
@@ -36,7 +37,7 @@ func main() {
 	// Connect to the database
 	influxToken := os.Getenv("INFLUX_TOKEN")
 	if influxToken == "" {
-		logging.Error("missing .env variable INFLUX_TOKEN, not using database")
+		logging.Warn("missing .env variable INFLUX_TOKEN, not using database")
 
 		// File to tail NGINX access logs, if empty then we read the static ./access.log file
 		if os.Getenv("NGINX_TAIL") != "" {
@@ -64,10 +65,10 @@ func main() {
 	// RSYNC
 	rsyncStatus := make(RSYNCStatus)
 	if os.Getenv("RSYNC_DISABLE") != "" {
-		logging.Error(".env variable RSYNC_DISABLE is set, rsync will not run")
+		logging.Warn(".env variable RSYNC_DISABLE is set, rsync will not run")
 	} else {
 		if os.Getenv("RSYNC_LOGS") == "" {
-			logging.Error("missing .env variable RSYNC_LOGS, not saving rsync logs")
+			logging.Warn("missing .env variable RSYNC_LOGS, not saving rsync logs")
 		}
 
 		initRSYNC(config)
@@ -79,8 +80,8 @@ func main() {
 	WebserverLoadConfig(config)
 	go HandleWebserver(map_entries, rsyncStatus)
 
-	// Wait for all goroutines to finish
 	for {
+		logging.Info(runtime.NumGoroutine(), "goroutines")
 		time.Sleep(time.Hour)
 	}
 }

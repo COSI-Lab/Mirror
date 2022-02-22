@@ -3,7 +3,7 @@
   "mirrors": {
     "almalinux": {
       "name": "AlmaLinux",
-      "isDistro": true,
+      "page": "Distributions",
       "rsync": {
         "host": "rsync.repo.almalinux.org",
         "src": "alma",
@@ -18,7 +18,7 @@
     },
     "alpine": {
       "name": "Alpine Linux",
-      "isDistro": true,
+      "page": "Distributions",
       "rsync": {
         "host": "rsync.alpinelinux.org",
         "src": "alpine",
@@ -34,7 +34,7 @@
     },
     "archlinux": {
       "name": "Arch Linux",
-      "isDistro": true,
+      "page": "Distributions",
       "rsync": {
         "host": "mirrors.rit.edu",
         "src": "archlinux",
@@ -49,7 +49,7 @@
     },
     "archlinux32": {
       "name": "Arch Linux 32",
-      "isDistro": true,
+      "page": "Distributions",
       "rsync": {
         "host": "mirror.archlinux32.org",
         "src": "archlinux32",
@@ -64,7 +64,7 @@
     },
     "artix-linux": {
       "name": "Artix Linux",
-      "isDistro": true,
+      "page": "Distributions",
       "rsync": {
         "host": "mirror1.artixlinux.org",
         "src": "artix-linux",
@@ -79,7 +79,7 @@
     },
     "blender": {
       "name": "Blender",
-      "isDistro": false,
+      "page": "Software",
       "rsync": {
         "host": "download.blender.org",
         "src": "blender",
@@ -95,7 +95,7 @@
     },
     "centos": {
       "name": "CentOS",
-      "isDistro": true,
+      "page": "Distributions",
       "rsync": {
         "host": "msync.centos.org",
         "src": "centos",
@@ -110,7 +110,7 @@
     },
     "cpan": {
       "name": "CPAN",
-      "isDistro": false,
+      "page": "Software",
       "rsync": {
         "host": "mirrors.rit.edu",
         "src": "cpan",
@@ -125,7 +125,7 @@
     },
     "cran": {
       "name": "CRAN",
-      "isDistro": false,
+      "page": "Software",
       "rsync": {
         "host": "cran.r-project.org",
         "src": "cran",
@@ -140,7 +140,7 @@
     },
     "ctan": {
       "name": "CTAN",
-      "isDistro": false,
+      "page": "Software",
       "rsync": {
         "host": "ctan.math.utah.edu",
         "src": "ctan",
@@ -155,7 +155,7 @@
     },
     "cygwin": {
       "name": "Cygwin",
-      "isDistro": false,
+      "page": "Software",
       "rsync": {
         "host": "cygwin.org",
         "src": "cygwin-ftp",
@@ -170,7 +170,7 @@
     },
     "debian": {
       "name": "Debian",
-      "isDistro": true,
+      "page": "Distributions",
       "rsync": {
         "host": "rsync.osuosl.org",
         "src": "debian",
@@ -186,7 +186,7 @@
     },
     "debian-cd": {
       "name": "Debian Images",
-      "isDistro": true,
+      "page": "Distributions",
       "rsync": {
         "host": "cdimage.debian.org",
         "src": "debian-cd",
@@ -201,7 +201,7 @@
     },
     "eclipse": {
       "name": "Eclipse",
-      "isDistro": false,
+      "page": "Software",
       "rsync": {
         "host": "download.eclipse.org",
         "src": "eclipse",
@@ -218,7 +218,7 @@
     },
     "gentoo": {
       "name": "Gentoo",
-      "isDistro": true,
+      "page": "Distributions",
       "rsync": {
         "host": "masterdistfiles.gentoo.org",
         "src": "gentoo",
@@ -233,7 +233,7 @@
     },
     "gentoo-portage": {
       "name": "Gentoo Portage",
-      "isDistro": true,
+      "page": "Distributions",
       "rsync": {
         "host": "rsync11.us.gentoo.org",
         "src": "gentoo-portage",
@@ -248,7 +248,7 @@
     },
     "ipfire": {
       "name": "IPFire",
-      "isDistro": true,
+      "page": "Distributions",
       "rsync": {
         "host": "rsync.ipfire.org",
         "src": "full",
@@ -263,7 +263,7 @@
     },
     "isabelle": {
       "name": "Isabelle",
-      "isDistro": false,
+      "page": "Software",
       "rsync": {
         "host": "isabelle.in.tum.de",
         "src": "isabelle-website",
@@ -278,7 +278,7 @@
     },
     "linux": {
       "name": "Linux (including source)",
-      "isDistro": false,
+      "page": "Software",
       "rsync": {
         "host": "rsync.kernel.org",
         "src": "pub/linux",
@@ -293,7 +293,7 @@
     },
     "linuxmint-images": {
       "name": "LinuxMint (images)",
-      "isDistro": true,
+      "page": "Distributions",
       "rsync": {
         "host": "pub.linuxmint.com",
         "src": "pub",
@@ -308,7 +308,7 @@
     },
     "linuxmint-packages": {
       "name": "LinuxMint (packages)",
-      "isDistro": true,
+      "page": "Distributions",
       "rsync": {
         "host": "rsync-packages.linuxmint.com",
         "src": "packages",
@@ -324,7 +324,7 @@
     },
     "manjaro": {
       "name": "Manjaro",
-      "isDistro": true,
+      "page": "Distributions",
       "rsync": {
         "host": "mirror.netcologne.de",
         "src": "manjaro",
@@ -339,7 +339,7 @@
     },
     "msys2": {
       "name": "msys2",
-      "isDistro": false,
+      "page": "Software",
       "rsync": {
         "host": "repo.msys2.org",
         "src": "builds",
@@ -354,7 +354,7 @@
     },
     "opensuse": {
       "name": "OpenSUSE",
-      "isDistro": true,
+      "page": "Distributions",
       "rsync": {
         "host": "stage.opensuse.org",
         "src": "opensuse-full-with-factory",
@@ -369,7 +369,7 @@
     },
     "parrot": {
       "name": "Parrot Security OS",
-      "isDistro": true,
+      "page": "Distributions",
       "rsync": {
         "host": "rsync.parrot.org",
         "src": "parrot",
@@ -384,7 +384,7 @@
     },
     "ubuntu": {
       "name": "Ubuntu",
-      "isDistro": true,
+      "page": "Distributions",
       "rsync": {
         "host": "us.archive.ubuntu.com",
         "src": "ubuntu",
@@ -400,7 +400,7 @@
     },
     "ubuntu-releases": {
       "name": "Ubuntu Releases",
-      "isDistro": true,
+      "page": "Distributions",
       "rsync": {
         "host": "releases.ubuntu.com",
         "src": "releases",
@@ -415,7 +415,7 @@
     },
     "ubuntu-cdimage": {
       "name": "Ubuntu CD Images (Kubuntu, Xubuntu, Mate, etc.)",
-      "isDistro": true,
+      "page": "Distributions",
       "rsync": {
         "host": "cdimage.ubuntu.com",
         "src": "cdimage",
@@ -430,7 +430,7 @@
     },
     "ubuntu-ports": {
       "name": "Ubuntu Ports",
-      "isDistro": true,
+      "page": "Distributions",
       "rsync": {
         "host": "ports.ubuntu.com",
         "src": "ubuntu-ports",
@@ -446,7 +446,7 @@
     },
     "raspian": {
       "name": "Raspbian",
-      "isDistro": true,
+      "page": "Distributions",
       "script": {
         "env": {
           "mirror": "mirror.umd.edu"
@@ -461,7 +461,7 @@
     },
     "RebornOS": {
       "name": "RebornOS",
-      "isDistro": true,
+      "page": "Distributions",
       "rsync": {
         "host": "mirrors.dotsrc.org",
         "src": "osdn/storage/g/r/re/rebornos/repo/RebornOS",
@@ -476,7 +476,7 @@
     },
     "sabayon": {
       "name": "Sabayon",
-      "isDistro": true,
+      "page": "Distributions",
       "rsync": {
         "host": "mirror.umd.edu",
         "src": "sabayonlinux",
@@ -492,7 +492,7 @@
     },
     "slackware": {
       "name": "Slackware",
-      "isDistro": false,
+      "page": "Software",
       "rsync": {
         "host": "mirror.cs.princeton.edu",
         "src": "slackware",
@@ -507,7 +507,7 @@
     },
     "slitaz": {
       "name": "SliTaz Linux",
-      "isDistro": true,
+      "page": "Distributions",
       "rsync": {
         "host": "mirror1.slitaz.org",
         "src": "slitaz",
@@ -522,7 +522,7 @@
     },
     "tdf": {
       "name": "LibreOffice",
-      "isDistro": false,
+      "page": "Software",
       "rsync": {
         "host": "rsync.documentfoundation.org",
         "src": "tdf-pub",
@@ -537,7 +537,7 @@
     },
     "videolan": {
       "name": "VLC",
-      "isDistro": false,
+      "page": "Software",
       "rsync": {
         "host": "rsync.videolan.org",
         "src": "videolan-ftp",
@@ -552,7 +552,7 @@
     },
     "templeos": {
       "name": "TempleOS",
-      "isDistro": false,
+      "page": "Software",
       "static": {
         "location": "/storage/templeos",
         "source": "https://templeos.org/Downloads/"
@@ -563,8 +563,8 @@
       "publicRsync": true
     },
     "voidlinux": {
-      "name": "Void Linux",
-      "isDistro": true,
+      "name": "VoidLinux",
+      "page": "Distributions",
       "rsync": {
         "user": "vmirror",
         "password_file": "voidlinux.secret",
@@ -575,13 +575,25 @@
         "options": "-avzrH --numeric-ids --delete --delete-delay --delay-updates --ignore-errors --exclude \".~tmp~\" --exclude=\".*\" --exclude=\"*.lock\" --exclude=\"*.XXXX*\""
       },
       "official": true,
-      "homepage": "http://www.voidlinux.org/",
+      "homepage": "https://www.voidlinux.org/",
       "color": "#bb85fc",
       "publicRsync": true
     },
+    "wikipedia": {
+      "name": "Wikipedia",
+      "page": "Miscellaneous",
+      "static": {
+        "location": "/storage/wikipedia",
+        "source": "dumps.wikipedia.org"
+      },
+      "official": false,
+      "homepage": "https://wikipedia.org",
+      "color": "#000000",
+      "publicRsync": false
+    },
     "zorinos": {
       "name": "Zorin OS",
-      "isDistro": true,
+      "page": "Distributions",
       "rsync": {
         "host": "mirror.zorinos.com",
         "src": "isos",

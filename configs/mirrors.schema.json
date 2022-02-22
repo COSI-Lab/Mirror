@@ -105,9 +105,10 @@
             "description": "Are we an official mirror for this software",
             "type": "boolean"
           },
-          "isDistro": {
-            "description": "True for 'distribution' False for 'software'",
-            "type": "boolean"
+          "page": {
+            "description": "Which page should the project be displayed on the website",
+            "type": "string",
+            "enum": ["Distributions", "Software", "Miscellaneous"]
           },
           "homepage": {
             "description": "URL to the homepage for the mirrored project",
@@ -126,7 +127,7 @@
         "required": [
           "name",
           "official",
-          "isDistro",
+          "page",
           "homepage",
           "color",
           "publicRsync"
@@ -141,7 +142,8 @@
           {
             "required": ["script"]
           }
-        ]
+        ],
+        "additionalProperties": false
       }
     }
   }

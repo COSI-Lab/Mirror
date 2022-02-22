@@ -9,7 +9,6 @@ import (
 	"net"
 	"net/http"
 	"os"
-	"regexp"
 	"sync"
 	"time"
 
@@ -23,6 +22,7 @@ var projects map[string]*Project
 var projects_sorted []Project
 var distributions []Project
 var software []Project
+var miscellaneous []Project
 var dataLock = &sync.RWMutex{}
 
 func handleIndex(w http.ResponseWriter, r *http.Request) {
@@ -43,16 +43,6 @@ func handleMap(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func handleDistributions(w http.ResponseWriter, r *http.Request) {
-	dataLock.RLock()
-	err := tmpls.ExecuteTemplate(w, "distributions.gohtml", distributions)
-	dataLock.RUnlock()
-
-	if err != nil {
-		logging.Warn("handleDistributions;", err)
-	}
-}
-
 func handleHistory(w http.ResponseWriter, r *http.Request) {
 	err := tmpls.ExecuteTemplate(w, "history.gohtml", "")
 
@@ -61,26 +51,57 @@ func handleHistory(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func handleSoftware(w http.ResponseWriter, r *http.Request) {
-	dataLock.RLock()
-	err := tmpls.ExecuteTemplate(w, "software.gohtml", software)
-	dataLock.RUnlock()
-	if err != nil {
-		logging.Warn("handleSoftware;", err)
+func handleProjects(projects []Project) func(w http.ResponseWriter, r *http.Request) {
+	return func(w http.ResponseWriter, r *http.Request) {
+		dataLock.RLock()
+		err := tmpls.ExecuteTemplate(w, "projects.gohtml", projects)
+		dataLock.RUnlock()
+		if err != nil {
+			logging.Warn("handleProjects,", projects, err)
+		}
 	}
 }
 
+type LineChart struct {
+	Sent  []float64
+	Recv  []float64
+	Times []int64
+}
+
+type StatsPage struct {
+	Pie    map[string]int64
+	Weekly LineChart
+}
+
 func handleStatistics(w http.ResponseWriter, r *http.Request) {
-	var buf bytes.Buffer
-	err := tmpls.ExecuteTemplate(&buf, "statistics.gohtml", getPieChart())
+	// get pie chart data
+	pie, err := QueryBytesSentByProject()
+
+	if err != nil {
+		logging.Warn("handleStatistics; failed to load pie data", err)
+	}
+
+	// get bar chart data
+	sent, recv, times, nil := QueryWeeklyNetStats()
+
+	if err != nil {
+		logging.Warn("handleStatistics; failed to load bar data", err)
+	}
+
+	page := StatsPage{
+		Pie: pie,
+		Weekly: LineChart{
+			sent,
+			recv,
+			times,
+		},
+	}
+
+	err = tmpls.ExecuteTemplate(w, "statistics.gohtml", page)
+
 	if err != nil {
 		logging.Warn("handleStatistics;", err)
 	}
-
-	pat := regexp.MustCompile(`(__f__")|("__f__)|(__f__)`)
-	content := pat.ReplaceAll(buf.Bytes(), []byte(""))
-
-	w.Write(content)
 }
 
 type ProxyWriter struct {
@@ -262,6 +283,7 @@ func WebserverLoadConfig(config ConfigFile) {
 	dataLock.Lock()
 	distributions = config.GetDistributions()
 	software = config.GetSoftware()
+	miscellaneous = config.GetMiscellaneous()
 	projects_sorted = config.GetProjects()
 	projects = config.Mirrors
 	dataLock.Unlock()
@@ -280,8 +302,9 @@ func HandleWebserver(entries chan *LogEntry, status RSYNCStatus) {
 
 	// Handlers for the other pages
 	r.Handle("/", cachingMiddleware(handleIndex))
-	r.Handle("/distributions", cachingMiddleware(handleDistributions))
-	r.Handle("/software", cachingMiddleware(handleSoftware))
+	r.Handle("/distributions", cachingMiddleware(handleProjects(distributions)))
+	r.Handle("/software", cachingMiddleware(handleProjects(software)))
+	r.Handle("/miscellaneous", cachingMiddleware(handleProjects(miscellaneous)))
 	r.Handle("/history", cachingMiddleware(handleHistory))
 	r.Handle("/stats", cachingMiddleware(handleStatistics))
 

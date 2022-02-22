@@ -16,13 +16,13 @@ type ConfigFile struct {
 	Mirrors map[string]*Project `json:"mirrors"`
 }
 
-// Returns a slice of Projects with IsDistro set to true
+// Returns a slice of Projects with Page set to "Distributions"
 // the slice is sorted by the human name
 func (config *ConfigFile) GetDistributions() []Project {
 	distributions := make([]Project, 0)
 
 	for _, project := range config.Mirrors {
-		if project.IsDistro {
+		if project.Page == "Distributions" {
 			distributions = append(distributions, *project)
 		}
 	}
@@ -34,13 +34,13 @@ func (config *ConfigFile) GetDistributions() []Project {
 	return distributions
 }
 
-// Returns a slice of Projects with IsDistro set to false
+// Returns a slice of Projects with Page set to "Software"
 // the slice is sorted by the human name
 func (config *ConfigFile) GetSoftware() []Project {
 	software := make([]Project, 0)
 
 	for _, project := range config.Mirrors {
-		if !project.IsDistro {
+		if project.Page == "Software" {
 			software = append(software, *project)
 		}
 	}
@@ -52,7 +52,25 @@ func (config *ConfigFile) GetSoftware() []Project {
 	return software
 }
 
-// Returns a slice of projects sorted by Id
+// Returns a slice of Projects with Page set to "Miscellaneous"
+// the slice is sorted by the human name
+func (config *ConfigFile) GetMiscellaneous() []Project {
+	miscellaneous := make([]Project, 0)
+
+	for _, project := range config.Mirrors {
+		if project.Page == "Miscellaneous" {
+			miscellaneous = append(miscellaneous, *project)
+		}
+	}
+
+	sort.Slice(miscellaneous, func(i, j int) bool {
+		return miscellaneous[i].Name < miscellaneous[j].Name
+	})
+
+	return miscellaneous
+}
+
+// Returns a slice of all projects sorted by Id
 func (config *ConfigFile) GetProjects() []Project {
 	projects := make([]Project, 0, len(config.Mirrors))
 
@@ -92,7 +110,7 @@ type Project struct {
 	} `json:"static"`
 	Color       string `json:"color"`
 	Official    bool   `json:"official"`
-	IsDistro    bool   `json:"isDistro"`
+	Page        string `json:"page"`
 	HomePage    string `json:"homepage"`
 	PublicRsync bool   `json:"publicRsync"`
 }
