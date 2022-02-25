@@ -32,7 +32,17 @@
 <body>
     {{template "nav.gohtml" .}}
     <main>
-        {{ range . }}
+        <br>
+        <h1>Linux Distributions</h1>
+        {{ range .Distributions }}
+        {{ template "project" . }}
+        {{ end }}
+        <h1>Software Mirrors</h1>
+        {{ range .Software }}
+        {{ template "project" . }}
+        {{ end }}
+        <h1>Miscellaneous</h1>
+        {{ range .Miscellaneous }}
         {{ template "project" . }}
         {{ end }}
     </main>

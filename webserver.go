@@ -19,10 +19,8 @@ import (
 
 var tmpls *template.Template
 var projects map[string]*Project
-var projects_sorted []Project
-var distributions []Project
-var software []Project
-var miscellaneous []Project
+var projectsById []Project
+var projectsGrouped ProjectsGrouped
 var dataLock = &sync.RWMutex{}
 
 func handleIndex(w http.ResponseWriter, r *http.Request) {
@@ -35,7 +33,7 @@ func handleIndex(w http.ResponseWriter, r *http.Request) {
 
 func handleMap(w http.ResponseWriter, r *http.Request) {
 	dataLock.RLock()
-	err := tmpls.ExecuteTemplate(w, "map.gohtml", projects_sorted)
+	err := tmpls.ExecuteTemplate(w, "map.gohtml", projectsById)
 	dataLock.RUnlock()
 
 	if err != nil {
@@ -51,14 +49,12 @@ func handleHistory(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func handleProjects(projects []Project) func(w http.ResponseWriter, r *http.Request) {
-	return func(w http.ResponseWriter, r *http.Request) {
-		dataLock.RLock()
-		err := tmpls.ExecuteTemplate(w, "projects.gohtml", projects)
-		dataLock.RUnlock()
-		if err != nil {
-			logging.Warn("handleProjects,", projects, err)
-		}
+func handleProjects(w http.ResponseWriter, r *http.Request) {
+	dataLock.RLock()
+	err := tmpls.ExecuteTemplate(w, "projects.gohtml", projectsGrouped)
+	dataLock.RUnlock()
+	if err != nil {
+		logging.Warn("handleProjects,", projects, err)
 	}
 }
 
@@ -281,10 +277,8 @@ func InitWebserver() {
 // Reload distributions and software arrays
 func WebserverLoadConfig(config ConfigFile) {
 	dataLock.Lock()
-	distributions = config.GetDistributions()
-	software = config.GetSoftware()
-	miscellaneous = config.GetMiscellaneous()
-	projects_sorted = config.GetProjects()
+	projectsById = config.GetProjects()
+	projectsGrouped = config.GetProjectsByPage()
 	projects = config.Mirrors
 	dataLock.Unlock()
 }
@@ -302,9 +296,7 @@ func HandleWebserver(entries chan *LogEntry, status RSYNCStatus) {
 
 	// Handlers for the other pages
 	r.Handle("/", cachingMiddleware(handleIndex))
-	r.Handle("/distributions", cachingMiddleware(handleProjects(distributions)))
-	r.Handle("/software", cachingMiddleware(handleProjects(software)))
-	r.Handle("/miscellaneous", cachingMiddleware(handleProjects(miscellaneous)))
+	r.Handle("/projects", cachingMiddleware(handleProjects))
 	r.Handle("/history", cachingMiddleware(handleHistory))
 	r.Handle("/stats", cachingMiddleware(handleStatistics))
 
