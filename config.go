@@ -16,63 +16,9 @@ type ConfigFile struct {
 	Mirrors map[string]*Project `json:"mirrors"`
 }
 
-// Returns a slice of Projects with Page set to "Distributions"
-// the slice is sorted by the human name
-func (config *ConfigFile) GetDistributions() []Project {
-	distributions := make([]Project, 0)
-
-	for _, project := range config.Mirrors {
-		if project.Page == "Distributions" {
-			distributions = append(distributions, *project)
-		}
-	}
-
-	sort.Slice(distributions, func(i, j int) bool {
-		return distributions[i].Name < distributions[j].Name
-	})
-
-	return distributions
-}
-
-// Returns a slice of Projects with Page set to "Software"
-// the slice is sorted by the human name
-func (config *ConfigFile) GetSoftware() []Project {
-	software := make([]Project, 0)
-
-	for _, project := range config.Mirrors {
-		if project.Page == "Software" {
-			software = append(software, *project)
-		}
-	}
-
-	sort.Slice(software, func(i, j int) bool {
-		return software[i].Name < software[j].Name
-	})
-
-	return software
-}
-
-// Returns a slice of Projects with Page set to "Miscellaneous"
-// the slice is sorted by the human name
-func (config *ConfigFile) GetMiscellaneous() []Project {
-	miscellaneous := make([]Project, 0)
-
-	for _, project := range config.Mirrors {
-		if project.Page == "Miscellaneous" {
-			miscellaneous = append(miscellaneous, *project)
-		}
-	}
-
-	sort.Slice(miscellaneous, func(i, j int) bool {
-		return miscellaneous[i].Name < miscellaneous[j].Name
-	})
-
-	return miscellaneous
-}
-
-// Returns a slice of all projects sorted by Id
+// Returns a slice of all projects sorted by id
 func (config *ConfigFile) GetProjects() []Project {
-	projects := make([]Project, 0, len(config.Mirrors))
+	var projects []Project
 
 	for _, project := range config.Mirrors {
 		projects = append(projects, *project)
@@ -83,6 +29,47 @@ func (config *ConfigFile) GetProjects() []Project {
 	})
 
 	return projects
+}
+
+type ProjectsGrouped struct {
+	Distributions []Project
+	Software      []Project
+	Miscellaneous []Project
+}
+
+// Returns 3 slices of projects grouped by Page and sorted by Human name
+func (config *ConfigFile) GetProjectsByPage() ProjectsGrouped {
+	// "Distributions", "Software", "Miscellaneous"
+	var distributions, software, misc []Project
+
+	for _, project := range config.GetProjects() {
+		switch project.Page {
+		case "Distributions":
+			distributions = append(distributions, project)
+		case "Software":
+			software = append(software, project)
+		case "Miscellaneous":
+			misc = append(misc, project)
+		}
+	}
+
+	sort.Slice(distributions, func(i, j int) bool {
+		return distributions[i].Name < distributions[j].Name
+	})
+
+	sort.Slice(software, func(i, j int) bool {
+		return software[i].Name < software[j].Name
+	})
+
+	sort.Slice(misc, func(i, j int) bool {
+		return misc[i].Name < misc[j].Name
+	})
+
+	return ProjectsGrouped{
+		Distributions: distributions,
+		Software:      software,
+		Miscellaneous: misc,
+	}
 }
 
 type Project struct {

@@ -49,7 +49,7 @@ func MapRouter(r *mux.Router, broadcast chan []byte) {
 		broadcast:  broadcast,
 		register:   make(chan *client),
 		unregister: make(chan *client),
-		clients:    make(map[*client]bool),
+		clients:    make(map[*client]struct{}),
 	}
 
 	// Start the hub

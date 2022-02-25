@@ -5,8 +5,8 @@ import (
 )
 
 type hub struct {
-	// Map of clients TODO: Make a HashSet?
-	clients map[*client]bool
+	// Hashset of clients
+	clients map[*client]struct{}
 
 	// Inbound messages from the clients
 	broadcast chan []byte
@@ -27,7 +27,7 @@ func (hub *hub) run() {
 		select {
 		case client := <-hub.register:
 			// registers a client
-			hub.clients[client] = true
+			hub.clients[client] = struct{}{}
 			logging.Info("Registered client", client.conn.RemoteAddr())
 		case client := <-hub.unregister:
 			// unregister a client
