@@ -69,6 +69,7 @@ func QueryTotalBytesByDistro(projects map[string]*Project) NGINXStatistics {
 		statistics[short] = &DistroStat{}
 	}
 	statistics["other"] = &DistroStat{}
+	statistics["total"] = &DistroStat{}
 
 	// You can paste this into the influxdb data explorer
 	/*

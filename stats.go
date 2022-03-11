@@ -29,11 +29,14 @@ func HandleNGINXStats(entries chan *LogEntry) {
 				statisitcs[entry.Distro].BytesRecv += entry.BytesRecv
 				statisitcs[entry.Distro].Requests++
 			} else {
-				// logging.Info("Unknown distro", entry.Distro)
 				statisitcs["other"].BytesSent += entry.BytesSent
 				statisitcs["other"].BytesRecv += entry.BytesRecv
 				statisitcs["other"].Requests++
 			}
+
+			statisitcs["total"].BytesSent += entry.BytesSent
+			statisitcs["total"].BytesRecv += entry.BytesRecv
+			statisitcs["total"].Requests++
 		}
 	}
 }
