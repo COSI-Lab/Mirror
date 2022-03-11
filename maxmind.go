@@ -44,10 +44,9 @@ func NewGeoIPHandler(licenseKey string) (*GeoIPHandler, error) {
 
 	// update the database every 24 hours
 	go func() {
-		g.updateDatabase()
 		for {
-			time.Sleep(24 * time.Hour)
 			g.updateDatabase()
+			time.Sleep(24 * time.Hour)
 		}
 	}()
 
@@ -173,8 +172,8 @@ func (g *GeoIPHandler) downloadNewDatabase() (db *geoip2.Reader, err error) {
 		}
 
 		if strings.Split(header.Name, "/")[1] == "GeoLite2-City.mmdb" {
-			// write the file to disk
-			f, err := os.Create("GeoLite2-City.mmdb")
+			// write the file to disk (open in write mode)
+			f, err := os.OpenFile("GeoLite2-City.mmdb", os.O_WRONLY|os.O_CREATE, 0644)
 
 			if err != nil {
 				return nil, err
@@ -197,7 +196,9 @@ func (g *GeoIPHandler) downloadNewDatabase() (db *geoip2.Reader, err error) {
 				return nil, err
 			}
 
-			// load the byte slice as the database
+			f.Close()
+
+			// TODO: instead opening the database from disk just load the byte slice instead
 			db, err = geoip2.Open("GeoLite2-City.mmdb")
 
 			if err != nil {
