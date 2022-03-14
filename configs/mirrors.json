@@ -98,7 +98,7 @@
       "page": "Distributions",
       "rsync": {
         "host": "msync.centos.org",
-        "src": "Centos",
+        "src": "CentOS",
         "dest": "/storage/centos",
         "options": "-avzrH --numeric-ids --delete --delete-delay --delay-updates --ignore-errors --exclude \".~tmp~\"",
         "syncs_per_day": 2
