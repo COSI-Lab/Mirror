@@ -6,7 +6,7 @@
       "page": "Distributions",
       "rsync": {
         "host": "rsync.repo.almalinux.org",
-        "src": "alma",
+        "src": "almalinux",
         "dest": "/storage/almalinux",
         "options": "-avzrH --numeric-ids --delete --delete-delay --delay-updates --ignore-errors --exclude \".~tmp~\"",
         "syncs_per_day": 8
@@ -54,7 +54,7 @@
         "host": "mirror.archlinux32.org",
         "src": "archlinux32",
         "dest": "/storage/archlinux32",
-        "options": "-rtlvH --delete-after --delay-updates --safe-links --bwlimit=50000",
+        "options": "-rtlvH --delete-after --delay-updates --safe-links",
         "syncs_per_day": 4
       },
       "official": true,
@@ -69,7 +69,7 @@
         "host": "mirror1.artixlinux.org",
         "src": "artix-linux",
         "dest": "/storage/artix-linux/repos",
-        "options": " -rtlvH --delete-after --delay-updates --safe-links --bwlimit=50000",
+        "options": "-rtlvH --delete-after --delay-updates --safe-links",
         "syncs_per_day": 3
       },
       "official": true,
@@ -98,7 +98,7 @@
       "page": "Distributions",
       "rsync": {
         "host": "msync.centos.org",
-        "src": "centos",
+        "src": "Centos",
         "dest": "/storage/centos",
         "options": "-avzrH --numeric-ids --delete --delete-delay --delay-updates --ignore-errors --exclude \".~tmp~\"",
         "syncs_per_day": 2
@@ -128,9 +128,9 @@
       "page": "Software",
       "rsync": {
         "host": "cran.r-project.org",
-        "src": "cran",
+        "src": "CRAN",
         "dest": "/storage/cran",
-        "options": "-rtlzv --delete --bwlimit=50000",
+        "options": "-rtlzv --delete",
         "syncs_per_day": 1
       },
       "official": false,
@@ -143,7 +143,7 @@
       "page": "Software",
       "rsync": {
         "host": "ctan.math.utah.edu",
-        "src": "ctan",
+        "src": "CTAN",
         "dest": "/storage/ctan",
         "options": "-avzrH --numeric-ids --delete --delete-delay --delay-updates --ignore-errors --exclude \".~tmp~\"",
         "syncs_per_day": 2
@@ -204,7 +204,7 @@
       "page": "Software",
       "rsync": {
         "host": "download.eclipse.org",
-        "src": "eclipse",
+        "src": "eclipseMirror",
         "dest": "/storage/eclipse",
         "options": "-rtvp --delete --include='TIME' --exclude='*'",
         "second": "-rtvp --delete",
@@ -371,7 +371,7 @@
       "name": "Parrot Security OS",
       "page": "Distributions",
       "rsync": {
-        "host": "rsync.parrot.org",
+        "host": "rsync.parrotsec.org",
         "src": "parrot",
         "dest": "/storage/parrot",
         "syncs_per_day": 4,
