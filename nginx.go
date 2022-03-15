@@ -95,7 +95,7 @@ func ReadLogs(logFile string, channels ...chan *LogEntry) {
 	}
 	tail, err := tail.TailFile(logFile, tail.Config{Follow: true, ReOpen: true, MustExist: true, Location: &seek})
 	if err != nil {
-		logging.Error("TailFile failed to start", err)
+		logging.Error("TailFile failed to start: ", err)
 		return
 	}
 
