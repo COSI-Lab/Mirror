@@ -94,13 +94,13 @@
       "publicRsync": true
     },
     "centos": {
-      "name": "CentOS",
+      "name": "CentOS (<8)",
       "page": "Distributions",
       "rsync": {
         "host": "msync.centos.org",
         "src": "CentOS",
         "dest": "/storage/centos",
-        "options": "-avzrH --no-owner --delete --delete-delay --delay-updates --ignore-errors --exclude \".~tmp~\"",
+        "options": "-avzrH -4 --no-owner --delete --delete-delay --delay-updates --ignore-errors --exclude \".~tmp~\"",
         "syncs_per_day": 2
       },
       "official": true,
