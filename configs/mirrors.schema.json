@@ -41,7 +41,7 @@
               "options": {
                 "description": "Command line options passed with rsync call",
                 "type": "string",
-                "default": "-avzrH --numeric-ids --delete --delete-delay --delay-updates --ignore-errors --exclude \".~tmp~\""
+                "default": "-avzrH --no-owner --delete --delete-delay --delay-updates --ignore-errors --exclude \".~tmp~\""
               },
               "second": {
                 "description": "For projects that require a second rsync pass this is the second options",

@@ -145,7 +145,7 @@ func handleRSYNC(config ConfigFile, status RSYNCStatus) {
 
 			// append start time to its log file
 			if os.Getenv("RSYNC_LOGS") != "" {
-				appendToLogFile(short, []byte("\n\n"+start.Format(time.RFC1123)))
+				appendToLogFile(short, []byte("\n\n"+start.Format(time.RFC1123)+"\n"))
 			}
 
 			b, state := rsync(config.Mirrors[short])
