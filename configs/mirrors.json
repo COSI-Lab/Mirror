@@ -206,9 +206,9 @@
         "host": "download.eclipse.org",
         "src": "eclipseMirror",
         "dest": "/storage/eclipse",
-        "options": "-rtvp --no-owner --delete --include='TIME' --exclude='*'",
-        "second": "-rtvp --no-owner --delete",
-        "third": "-rtvp --no-owner --delete --include='ztime' --include='ztime/*' --exclude='*'",
+        "options": "-tlvp --no-owner --delete --include='TIME' --exclude='*'",
+        "second": "-rtvp --delete --no-owner",
+        "third": "-tvp --no-owner --delete --include='ztime' --include='ztime/*' --exclude='*'",
         "syncs_per_day": 1
       },
       "official": true,

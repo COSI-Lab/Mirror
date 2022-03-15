@@ -36,6 +36,7 @@ func rsync(project *Project) ([]byte, *os.ProcessState) {
 	args = append(args, project.Rsync.Dest)
 
 	command := exec.Command("rsync", args...)
+	logging.Info("rsync", args)
 	output, err := command.CombinedOutput()
 
 	if err != nil {
