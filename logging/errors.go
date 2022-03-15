@@ -34,9 +34,9 @@ func sendHook(ping bool, content ...interface{}) {
 	if hookURL != "" {
 		var values map[string]string
 		if ping {
-			values = map[string]string{"content": fmt.Sprintf("<@%s> %s", PING_ID, fmt.Sprint(content...))}
+			values = map[string]string{"content": fmt.Sprintf("<@%s> PANIC: %v", PING_ID, fmt.Sprintf("%s", content...))}
 		} else {
-			values = map[string]string{"content": fmt.Sprint(content...)}
+			values = map[string]string{"content": fmt.Sprintf("ERROR: %v", fmt.Sprint(content...))}
 		}
 		json_data, err := json.Marshal(values)
 
@@ -77,10 +77,10 @@ func log(messageType MessageType, v ...interface{}) {
 		fmt.Print("\033[1m\033[33m[WARN]    \033[0m| ")
 	case ERROR:
 		fmt.Print("\033[1m\033[31m[ERROR]   \033[0m| ")
-		sendHook(false, fmt.Sprintf("ERROR: %s", v...))
+		sendHook(false, v...)
 	case PANIC:
 		fmt.Print("\033[1m\033[34m[PANIC]  \033[0m| ")
-		sendHook(true, fmt.Sprintf("PANIC: %s", v...))
+		sendHook(true, v...)
 	case SUCCESS:
 		fmt.Print("\033[1m\033[32m[SUCCESS] \033[0m| ")
 	}
