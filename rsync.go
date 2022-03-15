@@ -175,6 +175,6 @@ func handleRSYNC(config ConfigFile, status RSYNCStatus) {
 			rsyncLocks[short] = false
 		}()
 
-		time.Sleep(sleep)
+		time.Sleep(sleep + time.Second)
 	}
 }
