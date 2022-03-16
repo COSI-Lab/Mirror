@@ -25,32 +25,35 @@ type GeoIPHandler struct {
 	licenseKey string
 }
 
-func NewGeoIPHandler(licenseKey string) (*GeoIPHandler, error) {
-	g := &GeoIPHandler{
-		licenseKey: licenseKey,
-	}
+func NewGeoIPHandler(licenseKey string) *GeoIPHandler {
+	g := &GeoIPHandler{licenseKey: licenseKey}
 
-	// Load the database from disk or download it
+	// Load the database from disk
 	db, err := geoip2.Open("GeoLite2-City.mmdb")
 	if err != nil {
-		db, err = g.downloadNewDatabase()
-
-		if err != nil {
-			return nil, err
-		}
+		logging.Warn("Error opening database:", err)
+	} else {
+		logging.Success("Loaded GeoIP database from disk")
 	}
-
 	g.db = db
 
-	// update the database every 24 hours
-	go func() {
-		for {
-			g.updateDatabase()
-			time.Sleep(24 * time.Hour)
+	if g.licenseKey == "" {
+		if g.db == nil {
+			logging.Warn("No license key found and no database was found on disk. GeoIP will not be available")
+		} else {
+			logging.Warn("No license key found. GeoIP database will never be updated")
 		}
-	}()
+	} else {
+		// update the database every 24 hours
+		go func() {
+			for {
+				g.updateDatabase()
+				time.Sleep(24 * time.Hour)
+			}
+		}()
+	}
 
-	return g, nil
+	return g
 }
 
 func (g *GeoIPHandler) GetGeoIP(ip net.IP) (city *geoip2.City, err error) {
@@ -75,15 +78,15 @@ func (g *GeoIPHandler) updateDatabase() {
 	logging.Info("Checking for new MaxMind GeoLite2-City database")
 
 	if !g.checkForNewDatabase() {
-		logging.Info("No new database found")
+		logging.Info("No new GeoIP database found")
 	} else {
 		start := time.Now()
 		db, err := g.downloadNewDatabase()
 
 		if err != nil {
-			logging.Error("Error while downloading new database:", err)
+			logging.Error("Error while downloading new GeoIP database:", err)
 		} else {
-			logging.Info("Found new database and downloaded it in", time.Since(start))
+			logging.Success("Found new GeoIP database and downloaded it in", time.Since(start))
 
 			// Update the database
 			g.Lock()

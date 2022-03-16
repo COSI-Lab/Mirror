@@ -2,10 +2,8 @@ package main
 
 import (
 	"bytes"
-	"encoding/json"
 	"fmt"
 	"html/template"
-	"log"
 	"net"
 	"net/http"
 	"os"
@@ -22,6 +20,17 @@ var projects map[string]*Project
 var projectsById []Project
 var projectsGrouped ProjectsGrouped
 var dataLock = &sync.RWMutex{}
+
+func init() {
+	// Load the templates with safeJS
+	tmpls = template.Must(template.New("").Funcs(template.FuncMap{
+		"safeJS": func(s interface{}) template.JS {
+			return template.JS(fmt.Sprint(s))
+		},
+	}).ParseGlob("templates/*.gohtml"))
+
+	logging.Info(tmpls.DefinedTemplates())
+}
 
 func handleIndex(w http.ResponseWriter, r *http.Request) {
 	err := tmpls.ExecuteTemplate(w, "index.gohtml", "")
@@ -263,19 +272,8 @@ func entriesToMessages(entries chan *LogEntry, messages chan []byte) {
 	}
 }
 
-func InitWebserver() {
-	// Load the templates with safeJS
-	tmpls = template.Must(template.New("").Funcs(template.FuncMap{
-		"safeJS": func(s interface{}) template.JS {
-			return template.JS(fmt.Sprint(s))
-		},
-	}).ParseGlob("templates/*.gohtml"))
-
-	logging.Info(tmpls.DefinedTemplates())
-}
-
 // Reload distributions and software arrays
-func WebserverLoadConfig(config ConfigFile) {
+func WebserverLoadConfig(config *ConfigFile) {
 	dataLock.Lock()
 	projectsById = config.GetProjects()
 	projectsGrouped = config.GetProjectsByPage()
@@ -283,7 +281,7 @@ func WebserverLoadConfig(config ConfigFile) {
 	dataLock.Unlock()
 }
 
-func HandleWebserver(entries chan *LogEntry, status RSYNCStatus) {
+func HandleWebserver(entries chan *LogEntry) {
 	r := mux.NewRouter()
 
 	cache = make(map[string]*CacheEntry)
@@ -301,23 +299,23 @@ func HandleWebserver(entries chan *LogEntry, status RSYNCStatus) {
 	r.Handle("/stats", cachingMiddleware(handleStatistics))
 
 	// API subrouter
-	api := r.PathPrefix("/api").Subrouter()
-	api.HandleFunc("/status/{short}", func(w http.ResponseWriter, r *http.Request) {
-		dataLock.RLock()
-		defer dataLock.RUnlock()
+	// api := r.PathPrefix("/api").Subrouter()
+	// api.HandleFunc("/status/{short}", func(w http.ResponseWriter, r *http.Request) {
+	// 	dataLock.RLock()
+	// 	defer dataLock.RUnlock()
 
-		vars := mux.Vars(r)
-		short := vars["short"]
+	// 	vars := mux.Vars(r)
+	// 	short := vars["short"]
 
-		s, ok := status[short]
-		if !ok {
-			w.WriteHeader(http.StatusNotFound)
-			return
-		}
+	// 	s, ok := status[short]
+	// 	if !ok {
+	// 		w.WriteHeader(http.StatusNotFound)
+	// 		return
+	// 	}
 
-		// Send the status as json
-		json.NewEncoder(w).Encode(s.All())
-	})
+	// 	// Send the status as json
+	// 	json.NewEncoder(w).Encode(s.All())
+	// })
 
 	// Static files
 	r.PathPrefix("/").Handler(cachingMiddleware(http.FileServer(http.Dir("static")).ServeHTTP))
@@ -329,5 +327,5 @@ func HandleWebserver(entries chan *LogEntry, status RSYNCStatus) {
 	}
 
 	logging.Success("Serving on http://localhost:8012")
-	log.Fatalf("%s", l.ListenAndServe())
+	go l.ListenAndServe()
 }

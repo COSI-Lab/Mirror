@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"fmt"
-	"os"
 	"time"
 
 	"github.com/COSI_Lab/Mirror/logging"
@@ -35,8 +34,8 @@ type DistroStat struct {
 type NGINXStatistics map[string]*DistroStat
 
 // Sends the latest NGINX stats to the database
-func SendTotalBytesByDistro(statistics NGINXStatistics) {
-	if os.Getenv("INFLUX_READ_ONLY") != "" {
+func SendTotalBytesByDistro() {
+	if influxReadOnly {
 		logging.Info("INFLUX_READ_ONLY is set, not sending data to influx")
 		return
 	}
@@ -45,7 +44,8 @@ func SendTotalBytesByDistro(statistics NGINXStatistics) {
 	t := time.Now()
 
 	// Create and send points
-	for short, stat := range statistics {
+	statisitcsLock.RLock()
+	for short, stat := range statisitcs {
 		p := influxdb2.NewPoint("mirror",
 			map[string]string{"distro": short},
 			map[string]interface{}{
@@ -55,6 +55,7 @@ func SendTotalBytesByDistro(statistics NGINXStatistics) {
 			}, t)
 		writer.WritePoint(p)
 	}
+	statisitcsLock.RUnlock()
 
 	logging.Info("Sent nginx stats")
 }

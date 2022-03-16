@@ -3,7 +3,6 @@ package main
 import (
 	"bufio"
 	"errors"
-	"log"
 	"net"
 	"os"
 	"regexp"
@@ -21,9 +20,10 @@ import (
  * log_format config '"$remote_addr" "$time_local" "$request" "$status" "$body_bytes_sent" "$request_length" "$http_user_agent"';
  * access_log /var/log/nginx/access.log config;
  */
+
+// LogEntry is a struct that represents a parsed nginx log entry
 type LogEntry struct {
 	IP        net.IP
-	Country   string
 	City      *geoip2.City
 	Time      time.Time
 	Method    string
@@ -38,26 +38,20 @@ type LogEntry struct {
 
 var reQuotes *regexp.Regexp
 
-// Compiles regular expressions
-func InitRegex() (err error) {
-	reQuotes, err = regexp.Compile(`"(.*?)"`)
-	if err != nil {
-		return err
-	}
-
-	return nil
+// Compiles regular expression used to parse nginx log entries
+func init() {
+	reQuotes = regexp.MustCompile(`"(.*?)"`)
 }
 
+// ReadLogFile is a testing function that simulates tailing a log file by reading it line by line with some delay between lines
 func ReadLogFile(logFile string, channels ...chan *LogEntry) (err error) {
 	if reQuotes == nil {
-		if InitRegex() != nil {
-			logging.Error("could not compile nginx log parsing regex")
-		}
+		logging.Warn("regexp is nil")
 	}
 
 	f, err := os.Open(logFile)
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
 
 	defer f.Close()
@@ -81,18 +75,17 @@ func ReadLogFile(logFile string, channels ...chan *LogEntry) (err error) {
 	return nil
 }
 
+// ReadLogs tails a log file and sends the parsed log entries to the specified channels
 func ReadLogs(logFile string, channels ...chan *LogEntry) {
-	if reQuotes == nil {
-		if InitRegex() != nil {
-			logging.Error("could not compile nginx log parsing regex")
-		}
-	}
-
-	// Tail the log file `tail -F`
+	// TODO - Right now we're skipping to the end of the file
+	// We could save some presistent state and continue parsing from there
+	// For example save the date and time of the last entry
 	seek := tail.SeekInfo{
 		Offset: 0,
 		Whence: os.SEEK_END,
 	}
+
+	// Tail the log file `tail -F`
 	tail, err := tail.TailFile(logFile, tail.Config{Follow: true, ReOpen: true, MustExist: true, Location: &seek})
 	if err != nil {
 		logging.Error("TailFile failed to start: ", err)
@@ -109,25 +102,32 @@ func ReadLogs(logFile string, channels ...chan *LogEntry) {
 				select {
 				case ch <- entry:
 				default:
+					// TODO - right now we're just dropping the log entries if the channels are full.
+					// We should probably do something more intelligent here.
 				}
 			}
 		}
 	}
 
+	// Tailing this file should never end
 	logging.Panic("No longer reading log file", tail.Err())
 }
 
+// ParseLine parses a single line of the nginx log file
+// It's critical the log file uses the correct format found at the top of this file
+// If the log file is not in the correct format or if some other part of the parsing fails
+// this function will return an error
 func ParseLine(line string) (*LogEntry, error) {
 	// "$remote_addr" "$time_local" "$request" "$status" "$body_bytes_sent" "$request_length" "$http_user_agent";
 	quoteList := reQuotes.FindAllString(line, -1)
 
+	if len(quoteList) != 7 {
+		return nil, errors.New("invalid number of parameters in log entry")
+	}
+
 	// Trim quotation marks
 	for i := 0; i < len(quoteList); i++ {
 		quoteList[i] = quoteList[i][1 : len(quoteList[i])-1]
-	}
-
-	if len(quoteList) != 7 {
-		return nil, errors.New("invalid number of parameters in log")
 	}
 
 	var entry LogEntry

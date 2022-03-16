@@ -7,8 +7,3 @@ touch blender.secret
 chmod 600 blender.secret
 $EDITOR blender.secret
 ```
-
-TODO:
-- [ ] clonezilla
-- [ ] ROS
-- [ ] Ubuntu (all)

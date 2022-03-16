@@ -1,14 +1,14 @@
 package datarithms
 
 import (
+	"fmt"
 	"sync"
 )
 
 // Thread Safe circular queue implmentation using a slice for byte slices
-type CircularQueue struct {
-	lock sync.RWMutex
-	// TODO replace interface{} with generics in the future
-	queue    []interface{}
+type CircularQueue[T any] struct {
+	lock     sync.RWMutex
+	queue    []T
 	capacity int
 	start    int
 	end      int
@@ -16,10 +16,10 @@ type CircularQueue struct {
 }
 
 // Creates a new circular queue of given capacity
-func CircularQueueInit(capacity int) *CircularQueue {
-	q := new(CircularQueue)
+func CircularQueueInit[T any](capacity int) *CircularQueue[T] {
+	q := new(CircularQueue[T])
 
-	q.queue = make([]interface{}, capacity)
+	q.queue = make([]T, capacity)
 	q.capacity = capacity
 	q.start = 0
 	q.end = 0
@@ -30,7 +30,7 @@ func CircularQueueInit(capacity int) *CircularQueue {
 }
 
 // Adds a new element to the queue
-func (q *CircularQueue) Push(element interface{}) {
+func (q *CircularQueue[T]) Push(element T) {
 	q.lock.Lock()
 	q.queue[q.end] = element
 	q.end = (q.end + 1) % q.capacity
@@ -44,22 +44,23 @@ func (q *CircularQueue) Push(element interface{}) {
 }
 
 // Pops the element at the front of the queue
-func (q *CircularQueue) Pop() interface{} {
+// If the queue is empty, returns the zero value followed by an error
+func (q *CircularQueue[T]) Pop() (element T, err error) {
 	q.lock.Lock()
 	// If the queue is empty, return nil
 	if q.length == 0 {
 		q.lock.Unlock()
-		return nil
+		return element, fmt.Errorf("CircularQueue is empty")
 	}
-	element := q.queue[q.start]
+	element = q.queue[q.start]
 	q.start = (q.start + 1) % q.capacity
 	q.length--
 	q.lock.Unlock()
-	return element
+	return element, nil
 }
 
 // Returns the element at the front of the queue
-func (q *CircularQueue) Front() interface{} {
+func (q *CircularQueue[T]) Front() T {
 	q.lock.RLock()
 	result := q.queue[q.start]
 	q.lock.RUnlock()
@@ -67,7 +68,7 @@ func (q *CircularQueue) Front() interface{} {
 }
 
 // Returns the number of elements in the queue
-func (q *CircularQueue) Len() int {
+func (q *CircularQueue[T]) Len() int {
 	q.lock.RLock()
 	result := q.length
 	q.lock.RUnlock()
@@ -75,7 +76,7 @@ func (q *CircularQueue) Len() int {
 }
 
 // Returns the capacity of the queue
-func (q *CircularQueue) Capacity() int {
+func (q *CircularQueue[T]) Capacity() int {
 	q.lock.RLock()
 	result := q.capacity
 	q.lock.RUnlock()
@@ -83,9 +84,9 @@ func (q *CircularQueue) Capacity() int {
 }
 
 // Returns all the elements of the queue
-func (q *CircularQueue) All() []interface{} {
+func (q *CircularQueue[T]) All() []T {
 	q.lock.RLock()
-	result := make([]interface{}, 0, q.length)
+	result := make([]T, 0, q.length)
 
 	// From start to end
 	for i := q.start; i != q.end; i = (i + 1) % q.capacity {

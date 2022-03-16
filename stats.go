@@ -1,18 +1,24 @@
 package main
 
 import (
+	"sync"
 	"time"
 
 	"github.com/COSI_Lab/Mirror/logging"
 )
 
 var statisitcs NGINXStatistics
+var statisitcsLock = &sync.RWMutex{}
 
 // Loads the latest NGINX stats from the database
 func InitNGINXStats(projects map[string]*Project) {
+	statisitcsLock.Lock()
+
 	// Query influxdb for the latest stats
 	statisitcs = QueryTotalBytesByDistro(projects)
 	logging.Info("Loaded responses from influxdb")
+
+	statisitcsLock.Unlock()
 }
 
 // NGINX statisitcs
@@ -22,8 +28,9 @@ func HandleNGINXStats(entries chan *LogEntry) {
 	for {
 		select {
 		case <-ticker.C:
-			SendTotalBytesByDistro(statisitcs)
+			SendTotalBytesByDistro()
 		case entry := <-entries:
+			statisitcsLock.Lock()
 			if _, ok := statisitcs[entry.Distro]; ok {
 				statisitcs[entry.Distro].BytesSent += entry.BytesSent
 				statisitcs[entry.Distro].BytesRecv += entry.BytesRecv
@@ -37,6 +44,7 @@ func HandleNGINXStats(entries chan *LogEntry) {
 			statisitcs["total"].BytesSent += entry.BytesSent
 			statisitcs["total"].BytesRecv += entry.BytesRecv
 			statisitcs["total"].Requests++
+			statisitcsLock.Unlock()
 		}
 	}
 }
