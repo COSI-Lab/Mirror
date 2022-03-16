@@ -214,7 +214,7 @@ func handleRSYNC(config *ConfigFile, status RSYNCStatus, stop chan struct{}) {
 					appendToLogFile(short, output1)
 				}
 
-				checkState(short, state1)
+				checkState(short, state1, output1)
 
 				// 2 stage syncs happen sometimes
 				if config.Mirrors[short].Rsync.Second != "" {
@@ -227,7 +227,7 @@ func handleRSYNC(config *ConfigFile, status RSYNCStatus, stop chan struct{}) {
 						appendToLogFile(short, output2)
 					}
 
-					checkState(short, state2)
+					checkState(short, state2, output2)
 				}
 
 				// A few mirrors are 3 stage syncs
@@ -241,7 +241,7 @@ func handleRSYNC(config *ConfigFile, status RSYNCStatus, stop chan struct{}) {
 						appendToLogFile(short, output3)
 					}
 
-					checkState(short, state3)
+					checkState(short, state3, output3)
 				}
 
 				// Unlock the project
@@ -253,15 +253,15 @@ func handleRSYNC(config *ConfigFile, status RSYNCStatus, stop chan struct{}) {
 	}
 }
 
-func checkState(short string, state *os.ProcessState) {
+func checkState(short string, state *os.ProcessState, output []byte) {
 	if state != nil && state.Success() {
 		logging.Success("Job rsync:", short, "finished successfully")
 	} else {
 		// We have some human readable error descriptions
 		if meaning, ok := rysncErrorCodes[state.ExitCode()]; ok {
-			logging.Error("Job rsync: ", short, "failed. Exit code: ", state.ExitCode(), meaning)
+			logging.Error(output, "Job rsync: ", short, "failed. Exit code: ", state.ExitCode(), " ", meaning)
 		} else {
-			logging.Error("Job rsync: ", short, "failed. Exit code: ", state.ExitCode())
+			logging.Error(output, "Job rsync: ", short, "failed. Exit code: ", state.ExitCode())
 		}
 	}
 }
