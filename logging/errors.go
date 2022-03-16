@@ -79,7 +79,7 @@ func sendFile(url string, file []byte) []byte {
 
 	defer response.Body.Close()
 
-	content, err := io.ReadAll(response.Body)
+	content, _ := io.ReadAll(response.Body)
 	f.Close()
 	os.Remove(f.Name())
 
