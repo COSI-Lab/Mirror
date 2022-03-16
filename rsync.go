@@ -21,9 +21,9 @@ type Status struct {
 	ExitCode  int   `json:"exitCode"`
 }
 
-func rsync(project *Project) ([]byte, *os.ProcessState) {
+func rsync(project *Project, options string) ([]byte, *os.ProcessState) {
 	// split up the options TODO maybe precompute this?
-	args := strings.Split(project.Rsync.Options, " ")
+	args := strings.Split(options, " ")
 
 	// Run with dry run if specified
 	if os.Getenv("RSYNC_DRY_RUN") != "" {
@@ -149,26 +149,43 @@ func handleRSYNC(config ConfigFile, status RSYNCStatus) {
 				appendToLogFile(short, []byte("\n\n"+start.Format(time.RFC1123)+"\n"))
 			}
 
-			b, state := rsync(config.Mirrors[short])
-
+			// 1 stage syncs are the norm
+			output1, state1 := rsync(config.Mirrors[short], config.Mirrors[short].Rsync.Options)
 			// track the status for the API
-			status[short].Push(Status{StartTime: start.Unix(), EndTime: time.Now().Unix(), ExitCode: state.ExitCode()})
+			status[short].Push(Status{StartTime: start.Unix(), EndTime: time.Now().Unix(), ExitCode: state1.ExitCode()})
 
-			// append status to its log file
+			// append stage 1 to its log file
 			if os.Getenv("RSYNC_LOGS") != "" {
-				appendToLogFile(short, b)
+				appendToLogFile(short, output1)
 			}
 
-			// check if the process exited with an error
-			if state != nil && state.Success() {
-				logging.Success("Job rsync:", short, "finished successfully")
-			} else {
-				// We have some human readable error descriptions
-				if meaning, ok := rysncErrorCodes[state.ExitCode()]; ok {
-					logging.Error("Job rsync:", short, "failed. Exit code:", state.ExitCode(), meaning)
-				} else {
-					logging.Error("Job rsync:", short, "failed. Exit code:", state.ExitCode())
+			checkState(short, state1)
+
+			// 2 stage syncs happen sometimes
+			if config.Mirrors[short].Rsync.Second != "" {
+				start = time.Now()
+				output2, state2 := rsync(config.Mirrors[short], config.Mirrors[short].Rsync.Second)
+				status[short].Push(Status{StartTime: start.Unix(), EndTime: time.Now().Unix(), ExitCode: state2.ExitCode()})
+
+				if os.Getenv("RSYNC_LOGS") != "" {
+					appendToLogFile(short, []byte("\n\n"+start.Format(time.RFC1123)+"\n"))
+					appendToLogFile(short, output2)
 				}
+
+				checkState(short, state2)
+			}
+
+			if config.Mirrors[short].Rsync.Third != "" {
+				start = time.Now()
+				output3, state3 := rsync(config.Mirrors[short], config.Mirrors[short].Rsync.Third)
+				status[short].Push(Status{StartTime: start.Unix(), EndTime: time.Now().Unix(), ExitCode: state3.ExitCode()})
+
+				if os.Getenv("RSYNC_LOGS") != "" {
+					appendToLogFile(short, []byte("\n\n"+start.Format(time.RFC1123)+"\n"))
+					appendToLogFile(short, output3)
+				}
+
+				checkState(short, state3)
 			}
 
 			// Unlock the project
@@ -176,5 +193,18 @@ func handleRSYNC(config ConfigFile, status RSYNCStatus) {
 		}()
 
 		time.Sleep(sleep + time.Second)
+	}
+}
+
+func checkState(short string, state *os.ProcessState) {
+	if state != nil && state.Success() {
+		logging.Success("Job rsync:", short, "finished successfully")
+	} else {
+		// We have some human readable error descriptions
+		if meaning, ok := rysncErrorCodes[state.ExitCode()]; ok {
+			logging.Error("Job rsync:", short, "failed. Exit code:", state.ExitCode(), meaning)
+		} else {
+			logging.Error("Job rsync:", short, "failed. Exit code:", state.ExitCode())
+		}
 	}
 }
