@@ -9,7 +9,7 @@ import (
 // Test the queue
 func TestQueue(t *testing.T) {
 	// Create a new queue
-	q := datarithms.CircularQueueInit(5)
+	q := datarithms.CircularQueueInit[int](5)
 
 	if q.Capacity() != 5 {
 		t.Error("Capacity is not 5")
@@ -25,10 +25,11 @@ func TestQueue(t *testing.T) {
 		t.Error("Expected 3, got", q.Len())
 	}
 
-	var element interface{}
+	var element int
+	var err error
 
 	// Pop the first element
-	if element = q.Pop(); element != 1 {
+	if element, err = q.Pop(); err == nil && element != 1 {
 		t.Error("Expected 1, got", element)
 	}
 
@@ -38,7 +39,7 @@ func TestQueue(t *testing.T) {
 	}
 
 	// Pop the second element
-	if element = q.Pop(); element != 2 {
+	if element, err = q.Pop(); err == nil && element != 2 {
 		t.Error("Expected 2, got", element)
 	}
 
@@ -48,7 +49,7 @@ func TestQueue(t *testing.T) {
 	}
 
 	// Pop the third element
-	if element = q.Pop(); element != 3 {
+	if element, err = q.Pop(); err == nil && element != 3 {
 		t.Error("Expected 3, got", element)
 	}
 
@@ -58,7 +59,7 @@ func TestQueue(t *testing.T) {
 	}
 
 	// Pop the fourth element
-	if element = q.Pop(); element != nil {
+	if element, err = q.Pop(); err == nil && element == 0 {
 		t.Error("Expected nil, got", element)
 	}
 
@@ -78,7 +79,7 @@ func TestQueue(t *testing.T) {
 	}
 
 	// Pop the first element
-	if element = q.Pop(); element != 5 {
+	if element, err = q.Pop(); err != nil && element != 5 {
 		t.Error("Expected 5, got", element)
 	}
 
@@ -88,7 +89,7 @@ func TestQueue(t *testing.T) {
 	}
 
 	// Pop the second element
-	if element = q.Pop(); element != 6 {
+	if element, err = q.Pop(); err != nil && element != 6 {
 		t.Error("Expected 6, got", element)
 	}
 
@@ -98,7 +99,7 @@ func TestQueue(t *testing.T) {
 	}
 
 	// Pop the third element
-	if element = q.Pop(); element != 7 {
+	if element, err = q.Pop(); err != nil && element != 7 {
 		t.Error("Expected 7, got", element)
 	}
 
@@ -108,7 +109,7 @@ func TestQueue(t *testing.T) {
 	}
 
 	// Pop the fourth element
-	if element = q.Pop(); element != 8 {
+	if element, err = q.Pop(); err != nil && element != 8 {
 		t.Error("Expected 8, got", element)
 	}
 
@@ -118,7 +119,7 @@ func TestQueue(t *testing.T) {
 	}
 
 	// Pop the fifth element
-	if element = q.Pop(); element != 9 {
+	if element, err = q.Pop(); err != nil && element != 9 {
 		t.Error("Expected 9, got", element)
 	}
 

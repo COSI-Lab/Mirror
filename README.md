@@ -5,12 +5,11 @@ WIP monolithic software for [mirror](https://mirror.clarkson.edu) that handles
 - [x] Parsing passwords from config
 - [ ] Generating rsyncd.conf from config
 - [ ] Manage torrents using config
-- [ ] Config reloading using SIGHUP
+- [x] Config reloading using SIGHUP
 - [x] Recording nginx bandwidth per repo
 - [ ] Recording rsync bandwidth
 - [ ] Recording rsyncd bandwidth
 - [ ] Recording tranmission bittorrent bandwidth
-- [ ] Recording total network bandwidth
 - [x] Exposing nginx bandwidth per repo (pie chart)
 - [ ] Exposing rsync bandwidth
 - [ ] Exposing tranmission bittorrent bandwidth
@@ -25,19 +24,16 @@ WIP monolithic software for [mirror](https://mirror.clarkson.edu) that handles
 
 ## Frontend
 
-- [ ] Highlight nav links on hover
-- [ ] "Welcome to Mirror" on home page
+- [x] Highlight nav links on hover
+- [x] "Welcome to Mirror" on home page
 - [ ] Mobile friendly navbar
 - [ ] Table of contents on distro and software pages
-- [ ] "Designed By: COSI", mirror contact "mirroradmin@clarkson.edu"
-- [ ] "Full screen" map mode
+- [x] "Designed By: COSI", mirror contact "mirroradmin@clarkson.edu"
 - [ ] Somehow make the map look nice on mobile devices
 - [ ] Move the "longer mirror history" off of Meeting Minutes
 - [ ] Need new content about reporting errors and requesting new projects through github issues
-- [ ] please use a nicer font
-- [ ] software page should mostly mirror the distribuions page
+- [x] please use a nicer font
 - [ ] On the stats page please put "construction tux" :)
-- [ ] Make better use of the header `h1, h2, h3, ...` tags
 
 ## Development
 
@@ -50,31 +46,31 @@ gin --all -p 3002 -b Mirror -i
 
 ## Env File Formatting
 ```
-# Discord Webhook URL
-HOOK_URL=url
-PING_ID=id
+# Discord Webhook URL and id to ping when things panic
+# Omit either and the bot will not communicate with discord
+#HOOK_URL=url
+#PING_ID=id
+
+# Maxmind DB token to update the database, omit and we'll only use a local copy if it exists
+MAXMIND_LICENSE_KEY=key
 
 # InfluxDB RW Token
 INFLUX_TOKEN=token
 
-# Read only from the database
-INFLUX_READ_ONLY=1
+# "true" if we only read from the database (still uses a rw token)
+INFLUX_READ_ONLY=true
 
 # File to tail NGINX access logs, if empty then we read the static ./access.log file
 NGINX_TAIL=/var/log/nginx/access.log
 
-# Maxmind DB token
-MAXMIND_LICENSE_KEY=key
+# "true" if the --dry-run flag to the rsync jobs
+RSYNC_DRY_RUN=true
 
-# Set to _anything_ to completely disable rsync
-RSYNC_DISABLE=1
+# Directory to store the rsync log files, if empty then we don't keep logs. It will be created if it doesn't exist.
+RSYNC_LOGS=/tmp/mirror/
 
-# Set to _anything_ to add the --dry-run flag to the rsync jobs
-RSYNC_DRY_RUN=1
-
-# Directory to store the rsync log files, if empty then we don't keep logs
-# RSYNC_LOGS will be created if it doesn't exist
-RSYNC_LOGS=/var/log/mirror/rsync
+# If we should cache the result of executing templates
+WEB_SERVER_CACHE=true
 ```
 
 ## GeoLite2 Attribution

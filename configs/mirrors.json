@@ -412,22 +412,6 @@
       "color": "#1e73be",
       "publicRsync": true
     },
-    "sabayon": {
-      "name": "Sabayon",
-      "page": "Distributions",
-      "rsync": {
-        "host": "mirror.umd.edu",
-        "src": "sabayonlinux",
-        "dest": "/storage/sabayon",
-        "syncs_per_day": 4,
-        "sync_file": "mirror.umd.edu.timestamp.txt",
-        "options": "-avzrH --no-owner --no-group --delete --delete-delay --delay-updates --ignore-errors --exclude \".~tmp~\" --exclude=\"packages.db.lock\" --exclude=\".*\""
-      },
-      "official": true,
-      "homepage": "http://sabayon.org/",
-      "color": "#ffddca",
-      "publicRsync": true
-    },
     "slackware": {
       "name": "Slackware",
       "page": "Software",
