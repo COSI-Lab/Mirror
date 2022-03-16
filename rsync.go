@@ -153,11 +153,10 @@ func handleRSYNC(config *ConfigFile, status RSYNCStatus, stop chan struct{}) {
 	}
 
 	// skip the first job
-	// _, sleep := schedule.NextJob()
-	// timer := time.NewTimer(sleep)
+	_, sleep := schedule.NextJob()
+	timer := time.NewTimer(sleep)
 
-	// logging.Success("RSYNC scheduler started, next sync in", sleep)
-	timer := time.NewTimer(time.Second)
+	logging.Success("RSYNC scheduler started, next sync in", sleep)
 
 	// run the schedule
 	for {
