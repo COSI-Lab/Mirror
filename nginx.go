@@ -36,12 +36,7 @@ type LogEntry struct {
 	Agent     string
 }
 
-var reQuotes *regexp.Regexp
-
-// Compiles regular expression used to parse nginx log entries
-func init() {
-	reQuotes = regexp.MustCompile(`"(.*?)"`)
-}
+var reQuotes = regexp.MustCompile(`"(.*?)"`)
 
 // ReadLogFile is a testing function that simulates tailing a log file by reading it line by line with some delay between lines
 func ReadLogFile(logFile string, channels ...chan *LogEntry) (err error) {
@@ -78,7 +73,7 @@ func ReadLogFile(logFile string, channels ...chan *LogEntry) (err error) {
 // ReadLogs tails a log file and sends the parsed log entries to the specified channels
 func ReadLogs(logFile string, channels ...chan *LogEntry) {
 	// TODO - Right now we're skipping to the end of the file
-	// We could save some presistent state and continue parsing from there
+	// We could save some persistent state and continue parsing from there
 	// For example save the date and time of the last entry
 	seek := tail.SeekInfo{
 		Offset: 0,
