@@ -82,7 +82,9 @@ type Project struct {
 		SyncsPerDay int    `json:"syncs_per_day"`
 	}
 	Rsync struct {
-		Options      string `json:"options"`
+		Options      string `json:"options"` // cmdline options for first stage
+		Second       string `json:"second"`  // cmdline options for second stage
+		Third        string `json:"third"`   // cmdline options for third stage
 		Host         string `json:"host"`
 		Src          string `json:"src"`
 		Dest         string `json:"dest"`
