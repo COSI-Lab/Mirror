@@ -39,7 +39,8 @@ type fileHook struct {
 }
 
 func sendFile(url string, file []byte) []byte {
-	f, _ := ioutil.TempFile("", "logging")
+	// f, _ := ioutil.TempFile("", "logging")
+	f, _ := os.CreateTemp("", "logging")
 
 	defer f.Close()
 
@@ -60,6 +61,7 @@ func sendFile(url string, file []byte) []byte {
 
 	content, _ := ioutil.ReadAll(response.Body)
 	f.Close()
+	os.Remove(f.Name())
 
 	return content
 }
