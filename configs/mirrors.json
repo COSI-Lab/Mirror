@@ -81,6 +81,7 @@
       "name": "Blender",
       "page": "Software",
       "rsync": {
+        "user": "clarksonedu",
         "host": "download.blender.org",
         "src": "blender",
         "dest": "/storage/blender",
