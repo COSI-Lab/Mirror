@@ -86,11 +86,7 @@ func rsync(project *Project, options string) ([]byte, *os.ProcessState) {
 
 	logging.Info(command)
 
-	output, err := command.CombinedOutput()
-
-	if err != nil {
-		logging.Warn("Combined output call failed", err)
-	}
+	output, _ := command.CombinedOutput()
 
 	return output, command.ProcessState
 }
