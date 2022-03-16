@@ -39,7 +39,7 @@ type fileHook struct {
 }
 
 func sendFile(url string, file []byte) []byte {
-	f, _ := os.Open("tempLogFile.txt")
+	f, _ := ioutil.TempFile("", "logging")
 
 	defer f.Close()
 
@@ -47,7 +47,6 @@ func sendFile(url string, file []byte) []byte {
 	writer := multipart.NewWriter(body)
 	part, _ := writer.CreateFormFile("text", filepath.Base(f.Name()))
 
-	// io.Copy(part, f)
 	part.Write(file)
 	writer.Close()
 	request, _ := http.NewRequest("POST", url, body)
@@ -60,6 +59,7 @@ func sendFile(url string, file []byte) []byte {
 	defer response.Body.Close()
 
 	content, _ := ioutil.ReadAll(response.Body)
+	f.Close()
 
 	return content
 }
@@ -115,10 +115,10 @@ func log(messageType MessageType, v ...interface{}) {
 		fmt.Print("\033[1m\033[33m[WARN]    \033[0m| ")
 	case ERROR:
 		fmt.Print("\033[1m\033[31m[ERROR]   \033[0m| ")
-		sendHook(false, v...)
+		go sendHook(false, v...)
 	case PANIC:
 		fmt.Print("\033[1m\033[34m[PANIC]  \033[0m| ")
-		sendHook(true, v...)
+		go sendHook(true, v...)
 	case SUCCESS:
 		fmt.Print("\033[1m\033[32m[SUCCESS] \033[0m| ")
 	}
@@ -169,10 +169,10 @@ func logWithAttachment(messageType MessageType, attachment []byte, message ...in
 		fmt.Print("\033[1m\033[33m[WARN]    \033[0m| ")
 	case ERROR:
 		fmt.Print("\033[1m\033[31m[ERROR]   \033[0m| ")
-		sendHookWithFile(false, attachment, message...)
+		go sendHookWithFile(false, attachment, message...)
 	case PANIC:
 		fmt.Print("\033[1m\033[34m[PANIC]  \033[0m| ")
-		sendHookWithFile(true, attachment, message...)
+		go sendHookWithFile(true, attachment, message...)
 	case SUCCESS:
 		fmt.Print("\033[1m\033[32m[SUCCESS] \033[0m| ")
 	}

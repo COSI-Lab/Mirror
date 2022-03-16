@@ -83,7 +83,7 @@ func ReadLogs(logFile string, channels ...chan *LogEntry) {
 	// Tail the log file `tail -F`
 	tail, err := tail.TailFile(logFile, tail.Config{Follow: true, ReOpen: true, MustExist: true, Location: &seek})
 	if err != nil {
-		logging.Error("TailFile failed to start: ", err)
+		logging.Warn("TailFile failed to start: ", err)
 		return
 	}
 
