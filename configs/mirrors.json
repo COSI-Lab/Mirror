@@ -206,9 +206,9 @@
         "host": "download.eclipse.org",
         "src": "eclipseMirror",
         "dest": "/storage/eclipse",
-        "options": "-tlvp --no-owner --no-group --delete --include='TIME' --exclude='*'",
+        "options": "-tlvp --no-owner --no-group --include='TIME' --exclude='*'",
         "second": "-rtvp --delete --no-owner --no-group",
-        "third": "-tvp --no-owner --no-group --delete --include='ztime' --include='ztime/*' --exclude='*'",
+        "third": "-tvp --no-owner --no-group --include='ztime' --include='ztime/*' --exclude='*'",
         "syncs_per_day": 1
       },
       "official": true,
@@ -382,68 +382,6 @@
       "color": "#ff6fff",
       "publicRsync": true
     },
-    "ubuntu": {
-      "name": "Ubuntu",
-      "page": "Distributions",
-      "rsync": {
-        "host": "us.archive.ubuntu.com",
-        "src": "ubuntu",
-        "dest": "/storage/ubuntu",
-        "options": "-vrtlH --no-owner --no-group --safe-links --exclude \"Packages*\" --exclude \"Sources*\" --exclude \"Release*\" --exclude \"InRelease\"",
-        "second": "-vrtlH --no-owner --no-group --safe-links --delete --delete-after",
-        "syncs_per_day": 4
-      },
-      "official": true,
-      "homepage": "https://www.ubuntu.com/",
-      "color": "#ffd300",
-      "publicRsync": true
-    },
-    "ubuntu-releases": {
-      "name": "Ubuntu Releases",
-      "page": "Distributions",
-      "rsync": {
-        "host": "releases.ubuntu.com",
-        "src": "releases",
-        "dest": "/storage/ubuntu-releases",
-        "options": "-avzrH --no-owner --no-group --delete --delete-delay --delay-updates --ignore-errors --exclude \".~tmp~\"",
-        "syncs_per_day": 6
-      },
-      "official": true,
-      "homepage": "https://ubuntu.com/#download",
-      "color": "#ffd300",
-      "publicRsync": true
-    },
-    "ubuntu-cdimage": {
-      "name": "Ubuntu CD Images (Kubuntu, Xubuntu, Mate, etc.)",
-      "page": "Distributions",
-      "rsync": {
-        "host": "cdimage.ubuntu.com",
-        "src": "cdimage",
-        "dest": "/storage/ubuntu-cdimage",
-        "options": "-avzrH --no-owner --no-group --delete --delete-delay --delay-updates --ignore-errors --exclude \".~tmp~\"",
-        "syncs_per_day": 6
-      },
-      "official": true,
-      "homepage": "https://ubuntu.com/download/flavours",
-      "color": "#ffd300",
-      "publicRsync": true
-    },
-    "ubuntu-ports": {
-      "name": "Ubuntu Ports",
-      "page": "Distributions",
-      "rsync": {
-        "host": "ports.ubuntu.com",
-        "src": "ubuntu-ports",
-        "dest": "/storage/ubuntu-ports",
-        "options": "-vrtlH --no-owner --no-group --safe-links --exclude \"Packages*\" --exclude \"Sources*\" --exclude \"Release*\" --exclude \"InRelease\"",
-        "second": "-vrtlH --no-owner --no-group --safe-links --delete --delete-after",
-        "syncs_per_day": 4
-      },
-      "official": true,
-      "homepage": "",
-      "color": "#ffd300",
-      "publicRsync": true
-    },
     "raspian": {
       "name": "Raspbian",
       "page": "Distributions",
@@ -520,6 +458,18 @@
       "color": "#ffff60",
       "publicRsync": true
     },
+    "templeos": {
+      "name": "TempleOS",
+      "page": "Software",
+      "static": {
+        "location": "/storage/templeos",
+        "source": "https://templeos.org/Downloads/"
+      },
+      "official": false,
+      "homepage": "https://templeos.org/",
+      "color": "#efcc00",
+      "publicRsync": true
+    },
     "tdf": {
       "name": "LibreOffice",
       "page": "Software",
@@ -535,6 +485,68 @@
       "color": "#00a500",
       "publicRsync": true
     },
+    "ubuntu": {
+      "name": "Ubuntu",
+      "page": "Distributions",
+      "rsync": {
+        "host": "us.archive.ubuntu.com",
+        "src": "ubuntu",
+        "dest": "/storage/ubuntu",
+        "options": "-vrtlH --no-owner --no-group --safe-links --exclude \"Packages*\" --exclude \"Sources*\" --exclude \"Release*\" --exclude \"InRelease\"",
+        "second": "-vrtlH --no-owner --no-group --safe-links --delete --delete-after",
+        "syncs_per_day": 4
+      },
+      "official": true,
+      "homepage": "https://www.ubuntu.com/",
+      "color": "#ffd300",
+      "publicRsync": true
+    },
+    "ubuntu-releases": {
+      "name": "Ubuntu Releases",
+      "page": "Distributions",
+      "rsync": {
+        "host": "releases.ubuntu.com",
+        "src": "releases",
+        "dest": "/storage/ubuntu-releases",
+        "options": "-avzrH --no-owner --no-group --delete --delete-delay --delay-updates --ignore-errors --exclude \".~tmp~\"",
+        "syncs_per_day": 6
+      },
+      "official": true,
+      "homepage": "https://ubuntu.com/#download",
+      "color": "#ffd300",
+      "publicRsync": true
+    },
+    "ubuntu-cdimage": {
+      "name": "Ubuntu CD Images (Kubuntu, Xubuntu, Mate, etc.)",
+      "page": "Distributions",
+      "rsync": {
+        "host": "cdimage.ubuntu.com",
+        "src": "cdimage",
+        "dest": "/storage/ubuntu-cdimage",
+        "options": "-avzrH --no-owner --no-group --delete --delete-delay --delay-updates --ignore-errors --exclude \".~tmp~\"",
+        "syncs_per_day": 6
+      },
+      "official": true,
+      "homepage": "https://ubuntu.com/download/flavours",
+      "color": "#ffd300",
+      "publicRsync": true
+    },
+    "ubuntu-ports": {
+      "name": "Ubuntu Ports",
+      "page": "Distributions",
+      "rsync": {
+        "host": "ports.ubuntu.com",
+        "src": "ubuntu-ports",
+        "dest": "/storage/ubuntu-ports",
+        "options": "-vrtlH --no-owner --no-group --safe-links --exclude \"Packages*\" --exclude \"Sources*\" --exclude \"Release*\" --exclude \"InRelease\"",
+        "second": "-vrtlH --no-owner --no-group --safe-links --delete --delete-after",
+        "syncs_per_day": 4
+      },
+      "official": true,
+      "homepage": "",
+      "color": "#ffd300",
+      "publicRsync": true
+    },
     "videolan": {
       "name": "VLC",
       "page": "Software",
@@ -548,18 +560,6 @@
       "official": true,
       "homepage": "https://www.videolan.org/index.html",
       "color": "#bb85fc",
-      "publicRsync": true
-    },
-    "templeos": {
-      "name": "TempleOS",
-      "page": "Software",
-      "static": {
-        "location": "/storage/templeos",
-        "source": "https://templeos.org/Downloads/"
-      },
-      "official": false,
-      "homepage": "https://templeos.org/",
-      "color": "#efcc00",
       "publicRsync": true
     },
     "voidlinux": {
@@ -578,18 +578,6 @@
       "homepage": "https://www.voidlinux.org/",
       "color": "#bb85fc",
       "publicRsync": true
-    },
-    "wikipedia": {
-      "name": "Wikipedia",
-      "page": "Miscellaneous",
-      "static": {
-        "location": "/storage/wikipedia",
-        "source": "dumps.wikipedia.org"
-      },
-      "official": false,
-      "homepage": "https://wikipedia.org",
-      "color": "#000000",
-      "publicRsync": false
     },
     "zorinos": {
       "name": "Zorin OS",
