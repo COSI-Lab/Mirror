@@ -5,8 +5,11 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io/ioutil"
+	"mime/multipart"
 	"net/http"
 	"os"
+	"path/filepath"
 	"sync"
 	"time"
 )
@@ -30,6 +33,37 @@ const (
 	SUCCESS
 )
 
+type fileHook struct {
+	content string
+	file    []byte
+}
+
+func sendFile(url string, file []byte) []byte {
+	f, _ := os.Open("tempLogFile.txt")
+
+	defer f.Close()
+
+	body := &bytes.Buffer{}
+	writer := multipart.NewWriter(body)
+	part, _ := writer.CreateFormFile("text", filepath.Base(f.Name()))
+
+	// io.Copy(part, f)
+	part.Write(file)
+	writer.Close()
+	request, _ := http.NewRequest("POST", url, body)
+
+	request.Header.Add("Content-Type", writer.FormDataContentType())
+	client := &http.Client{}
+
+	response, _ := client.Do(request)
+
+	defer response.Body.Close()
+
+	content, _ := ioutil.ReadAll(response.Body)
+
+	return content
+}
+
 func sendHook(ping bool, content ...interface{}) {
 	if hookURL != "" {
 		var values map[string]string
@@ -44,7 +78,11 @@ func sendHook(ping bool, content ...interface{}) {
 			fmt.Print(err)
 		}
 
-		resp, err := http.Post(hookURL, "application/json", bytes.NewBuffer(json_data))
+		send := bytes.NewBuffer(json_data)
+
+		resp, err := http.Post(hookURL, "application/json", send)
+
+		fmt.Println(send)
 
 		if err != nil {
 			fmt.Print(err)
@@ -89,6 +127,60 @@ func log(messageType MessageType, v ...interface{}) {
 	loggingLock.Unlock()
 }
 
+func sendHookWithFile(ping bool, attachment []byte, content ...interface{}) {
+	if hookURL != "" {
+		var values map[string]string
+		if ping {
+			values = map[string]string{"content": fmt.Sprintf("<@%s> PANIC: %v", PING_ID, fmt.Sprintf("%s", content...))}
+		} else {
+			values = map[string]string{"content": fmt.Sprintf("ERROR: %v", fmt.Sprint(content...))}
+		}
+		json_data, err := json.Marshal(values)
+		sendFile(hookURL, attachment)
+
+		if err != nil {
+			fmt.Print(err)
+		}
+
+		send := bytes.NewBuffer(json_data)
+
+		resp, err := http.Post(hookURL, "application/json", send)
+
+		fmt.Println(send)
+
+		if err != nil {
+			fmt.Print(err)
+		}
+
+		var res map[string]interface{}
+
+		json.NewDecoder(resp.Body).Decode((&res))
+	}
+}
+
+func logWithAttachment(messageType MessageType, attachment []byte, message ...interface{}) {
+	loggingLock.Lock()
+	fmt.Print(time.Now().Format("2006/01/02 15:04:05 "))
+
+	switch messageType {
+	case INFO:
+		fmt.Print("\033[1m[INFO]    \033[0m| ")
+	case WARN:
+		fmt.Print("\033[1m\033[33m[WARN]    \033[0m| ")
+	case ERROR:
+		fmt.Print("\033[1m\033[31m[ERROR]   \033[0m| ")
+		sendHookWithFile(false, attachment, message...)
+	case PANIC:
+		fmt.Print("\033[1m\033[34m[PANIC]  \033[0m| ")
+		sendHookWithFile(true, attachment, message...)
+	case SUCCESS:
+		fmt.Print("\033[1m\033[32m[SUCCESS] \033[0m| ")
+	}
+
+	fmt.Println(message...)
+	loggingLock.Unlock()
+}
+
 func Info(v ...interface{}) {
 	log(INFO, v...)
 }
@@ -101,8 +193,16 @@ func Error(v ...interface{}) {
 	log(ERROR, v...)
 }
 
+func ErrorWithAttachment(attachment []byte, v ...interface{}) {
+	logWithAttachment(ERROR, attachment, v...)
+}
+
 func Panic(v ...interface{}) {
 	log(PANIC, v...)
+}
+
+func PanicWithAttachment(attachment []byte, v ...interface{}) {
+	logWithAttachment(PANIC, attachment, v...)
 }
 
 func Success(v ...interface{}) {
