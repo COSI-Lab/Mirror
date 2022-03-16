@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"mime/multipart"
 	"net/http"
 	"os"
@@ -40,26 +40,46 @@ type fileHook struct {
 
 func sendFile(url string, file []byte) []byte {
 	// f, _ := ioutil.TempFile("", "logging")
-	f, _ := os.CreateTemp("", "logging")
+	f, err := os.CreateTemp("", "logging")
+	if err != nil {
+		fmt.Print(time.Now().Format("2006/01/02 15:04:05 "))
+		fmt.Print("\033[1m\033[31m[ERROR]   \033[0m| ")
+		fmt.Println(err)
+	}
 
 	defer f.Close()
 
 	body := &bytes.Buffer{}
 	writer := multipart.NewWriter(body)
-	part, _ := writer.CreateFormFile("text", filepath.Base(f.Name()))
+	part, err := writer.CreateFormFile("text", filepath.Base(f.Name()))
+	if err != nil {
+		fmt.Print(time.Now().Format("2006/01/02 15:04:05 "))
+		fmt.Print("\033[1m\033[31m[ERROR]   \033[0m| ")
+		fmt.Println(err)
+	}
 
 	part.Write(file)
 	writer.Close()
-	request, _ := http.NewRequest("POST", url, body)
+	request, err := http.NewRequest("POST", url, body)
+	if err != nil {
+		fmt.Print(time.Now().Format("2006/01/02 15:04:05 "))
+		fmt.Print("\033[1m\033[31m[ERROR]   \033[0m| ")
+		fmt.Println(err)
+	}
 
 	request.Header.Add("Content-Type", writer.FormDataContentType())
 	client := &http.Client{}
 
-	response, _ := client.Do(request)
+	response, err := client.Do(request)
+	if err != nil {
+		fmt.Print(time.Now().Format("2006/01/02 15:04:05 "))
+		fmt.Print("\033[1m\033[31m[ERROR]   \033[0m| ")
+		fmt.Println(err)
+	}
 
 	defer response.Body.Close()
 
-	content, _ := ioutil.ReadAll(response.Body)
+	content, err := io.ReadAll(response.Body)
 	f.Close()
 	os.Remove(f.Name())
 
