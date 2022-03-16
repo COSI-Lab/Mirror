@@ -70,17 +70,21 @@ func rsync(project *Project, options string) ([]byte, *os.ProcessState) {
 	}
 
 	// Set the source and destination
-	args = append(args, project.Rsync.Host+"::"+project.Rsync.Src)
+	if project.Rsync.User != "" {
+		args = append(args, fmt.Sprintf("%s@%s::%s", project.Rsync.User, project.Rsync.Host, project.Rsync.Src))
+	} else {
+		args = append(args, fmt.Sprintf("%s::%s", project.Rsync.Host, project.Rsync.Src))
+	}
 	args = append(args, project.Rsync.Dest)
 
-	logging.Info("rsync", args)
 	command := exec.Command("rsync", args...)
 
 	// Add the password environment variable if needed
 	if project.Rsync.Password != "" {
-		command.Env = make([]string, 1)
-		command.Env[0] = "RSYNC_PASSWORD=" + project.Rsync.Password
+		command.Env = append(os.Environ(), "RSYNC_PASSWORD="+project.Rsync.Password)
 	}
+
+	logging.Info(command)
 
 	output, err := command.CombinedOutput()
 
