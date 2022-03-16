@@ -7,10 +7,10 @@ assignees: ''
 
 ---
 
-**What is the project you'd like to request. Include project name & home page url:**
+## Include full project name, a short name, and the home page url
 
-**Are you an official maintainer of this project? Would we become an _Official_ mirror:**
+## Are you an official maintainer of this project? How would we become an "Official" mirror
 
-**Is there a link to documentation on how to mirror the project:**
+## Is there a link to documentation on how to mirror the project
 
-**(Optional) Around how much disk space is required to host the project:**
+## (Optional) Around how much disk space is required to host the project
