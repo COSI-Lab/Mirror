@@ -259,9 +259,9 @@ func checkState(short string, state *os.ProcessState, output []byte) {
 	} else {
 		// We have some human readable error descriptions
 		if meaning, ok := rysncErrorCodes[state.ExitCode()]; ok {
-			logging.Error(output, "Job rsync: ", short, "failed. Exit code: ", state.ExitCode(), " ", meaning)
+			logging.ErrorWithAttachment(output, "Job rsync: ", short, "failed. Exit code: ", state.ExitCode(), " ", meaning)
 		} else {
-			logging.Error(output, "Job rsync: ", short, "failed. Exit code: ", state.ExitCode())
+			logging.ErrorWithAttachment(output, "Job rsync: ", short, "failed. Exit code: ", state.ExitCode())
 		}
 	}
 }
