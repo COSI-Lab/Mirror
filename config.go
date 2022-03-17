@@ -7,6 +7,7 @@ import (
 	"log"
 	"os"
 	"sort"
+	"strings"
 
 	"github.com/xeipuuv/gojsonschema"
 )
@@ -169,11 +170,14 @@ func ParseConfig(configFile, schemaFile string) (config ConfigFile) {
 }
 
 func getPassword(filename string) string {
-	bytes, err := ioutil.ReadFile(filename)
+	bytes, err := os.ReadFile(filename)
 
 	if err != nil {
 		log.Fatal("Could not read password file: ", filename, err.Error())
 	}
 
-	return string(bytes)
+	// trim whitespace from the end
+	password := strings.TrimSpace(string(bytes))
+
+	return string(password)
 }

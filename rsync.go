@@ -61,6 +61,7 @@ func init() {
 
 func rsync(project *Project, options string) ([]byte, *os.ProcessState) {
 	// split up the options TODO maybe precompute this?
+	// actually in hindsight this whole thing can be precomputed
 	args := strings.Split(options, " ")
 
 	// Run with dry run if specified
