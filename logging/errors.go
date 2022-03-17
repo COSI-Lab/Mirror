@@ -38,15 +38,11 @@ type fileHook struct {
 	file    []byte
 }
 
-func printNicely(v ...interface{}) {
-	fmt.Println(v...)
-}
-
 func sendFile(url string, file []byte) []byte {
-	// f, _ := ioutil.TempFile("", "logging")
-	f, err := os.CreateTemp("", "logging")
+
+	f, err := os.CreateTemp("", "*logging.txt")
 	if err != nil {
-		printNicely(time.Now().Format("2006/01/02 15:04:05 "), "\033[1m\033[31m[ERROR]   \033[0m| ", err)
+		fmt.Println(time.Now().Format("2006/01/02 15:04:05 "), "\033[1m\033[31m[ERROR]   \033[0m| ", err)
 	}
 
 	defer f.Close()
@@ -55,14 +51,14 @@ func sendFile(url string, file []byte) []byte {
 	writer := multipart.NewWriter(body)
 	part, err := writer.CreateFormFile("text", filepath.Base(f.Name()))
 	if err != nil {
-		printNicely(time.Now().Format("2006/01/02 15:04:05 "), "\033[1m\033[31m[ERROR]   \033[0m| ", err)
+		fmt.Println(time.Now().Format("2006/01/02 15:04:05 "), "\033[1m\033[31m[ERROR]   \033[0m| ", err)
 	}
 
 	part.Write(file)
 	writer.Close()
 	request, err := http.NewRequest("POST", url, body)
 	if err != nil {
-		printNicely(time.Now().Format("2006/01/02 15:04:05 "), "\033[1m\033[31m[ERROR]   \033[0m| ", err)
+		fmt.Println(time.Now().Format("2006/01/02 15:04:05 "), "\033[1m\033[31m[ERROR]   \033[0m| ", err)
 	}
 
 	request.Header.Add("Content-Type", writer.FormDataContentType())
@@ -70,7 +66,7 @@ func sendFile(url string, file []byte) []byte {
 
 	response, err := client.Do(request)
 	if err != nil {
-		printNicely(time.Now().Format("2006/01/02 15:04:05 "), "\033[1m\033[31m[ERROR]   \033[0m| ", err)
+		fmt.Println(time.Now().Format("2006/01/02 15:04:05 "), "\033[1m\033[31m[ERROR]   \033[0m| ", err)
 	}
 
 	defer response.Body.Close()
