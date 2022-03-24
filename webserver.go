@@ -31,11 +31,11 @@ func init() {
 	logging.Info(tmpls.DefinedTemplates())
 }
 
-func handleIndex(w http.ResponseWriter, r *http.Request) {
-	err := tmpls.ExecuteTemplate(w, "index.gohtml", "")
+func handleHome(w http.ResponseWriter, r *http.Request) {
+	err := tmpls.ExecuteTemplate(w, "home.gohtml", "")
 
 	if err != nil {
-		logging.Warn("handleIndex;", err)
+		logging.Warn("handleHome;", err)
 	}
 }
 
@@ -293,29 +293,12 @@ func HandleWebserver(entries chan *LogEntry) {
 	mirrormap.MapRouter(r.PathPrefix("/map").Subrouter(), mapMessages)
 
 	// Handlers for the other pages
-	r.Handle("/", cachingMiddleware(handleIndex))
+	// redirect / to /home
+	r.Handle("/", http.RedirectHandler("/home", http.StatusTemporaryRedirect))
+	r.Handle("/home", cachingMiddleware(handleHome))
 	r.Handle("/projects", cachingMiddleware(handleProjects))
 	r.Handle("/history", cachingMiddleware(handleHistory))
 	r.Handle("/stats", cachingMiddleware(handleStatistics))
-
-	// API subrouter
-	// api := r.PathPrefix("/api").Subrouter()
-	// api.HandleFunc("/status/{short}", func(w http.ResponseWriter, r *http.Request) {
-	// 	dataLock.RLock()
-	// 	defer dataLock.RUnlock()
-
-	// 	vars := mux.Vars(r)
-	// 	short := vars["short"]
-
-	// 	s, ok := status[short]
-	// 	if !ok {
-	// 		w.WriteHeader(http.StatusNotFound)
-	// 		return
-	// 	}
-
-	// 	// Send the status as json
-	// 	json.NewEncoder(w).Encode(s.All())
-	// })
 
 	// Static files
 	r.PathPrefix("/").Handler(cachingMiddleware(http.FileServer(http.Dir("static")).ServeHTTP))
