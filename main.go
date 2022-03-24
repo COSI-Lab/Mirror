@@ -30,6 +30,10 @@ var (
 	rsyncLogs string
 	// WEB_SERVER_CACHE
 	webServerCache bool
+	// HOOK_URL
+	hookURL string
+	// PING_ID
+	pingID string
 )
 
 func init() {
@@ -50,6 +54,8 @@ func init() {
 	rsyncDryRun = os.Getenv("RSYNC_DRY_RUN") == "true"
 	rsyncLogs = os.Getenv("RSYNC_LOGS")
 	webServerCache = os.Getenv("WEB_SERVER_CACHE") == "true"
+	hookURL = os.Getenv("HOOK_URL")
+	pingID = os.Getenv("PING_ID")
 
 	// Check if the environment variables are set
 	if maxmindLicenseKey == "" {
@@ -79,6 +85,10 @@ func init() {
 	if !webServerCache {
 		logging.Warn("WEB_SERVER_CACHE is disabled. Expensive websever requests will not be cached")
 	}
+
+	if hookURL == "" || pingID == "" {
+		logging.Warn("HOOK_URL and PING_ID are required. Discord webhooks will not be used")
+	}
 }
 
 func loadConfig() *ConfigFile {
@@ -88,10 +98,7 @@ func loadConfig() *ConfigFile {
 
 func main() {
 	// Setup logging
-	err := logging.Setup()
-	if err != nil {
-		logging.Warn(err)
-	}
+	logging.Setup(hookURL, pingID)
 
 	// Load environment variables and parse the config file
 	config := loadConfig()
