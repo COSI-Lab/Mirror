@@ -3,222 +3,189 @@ package logging
 import (
 	"bytes"
 	"encoding/json"
-	"errors"
 	"fmt"
-	"io"
 	"mime/multipart"
 	"net/http"
-	"os"
-	"path/filepath"
 	"sync"
 	"time"
 )
 
-var hookURL string
-var loggingLock sync.Mutex
-var PING_ID string
-
 type MessageType int
 
 const (
-	// Info is the type for informational messages
-	INFO MessageType = iota
-	// Warn is the type for warning messages
-	WARN
-	// Error is for when we lose funcitonality but it's fairly understood what went wrong
-	ERROR
-	// Panic is the type for fatal error messages and will print the stack trace
-	PANIC
-	// Success is the type for successful messages
-	SUCCESS
+	typeInfo MessageType = iota
+	typeWarning
+	typeError
+	typePanic
+	typeSuccess
 )
 
-type fileHook struct {
-	content string
-	file    []byte
+var logger = threadSafeLogger{}
+
+type threadSafeLogger struct {
+	sync.Mutex
+	sendHooks      bool
+	discordHookURL string
+	discordPingID  string
 }
 
-func sendFile(url string, file []byte) []byte {
+// Setup initialize the variables for calling webhooks
+// TODO: Make this threadsafe so it can be reloadable with sighup
+func Setup(hookURL string, pingID string) {
+	logger.Lock()
+	logger.discordHookURL = hookURL
+	logger.discordPingID = pingID
+	logger.sendHooks = hookURL != "" && pingID != ""
+	logger.Unlock()
+}
 
-	f, err := os.CreateTemp("", "*logging.txt")
-	if err != nil {
-		fmt.Println(time.Now().Format("2006/01/02 15:04:05 "), "\033[1m\033[31m[ERROR]   \033[0m| ", err)
+// sendFile creates a multipart form message and sends it to the specified URL
+// with the specified content as a file attachment
+func sendFile(content []byte) {
+	logger.Lock()
+	defer logger.Unlock()
+
+	if !logger.sendHooks {
+		return
 	}
-
-	defer f.Close()
 
 	body := &bytes.Buffer{}
 	writer := multipart.NewWriter(body)
-	part, err := writer.CreateFormFile("text", filepath.Base(f.Name()))
+
+	// Add a file attachment to the multipart writer
+	part, err := writer.CreateFormFile("text", "attachment.txt")
 	if err != nil {
 		fmt.Println(time.Now().Format("2006/01/02 15:04:05 "), "\033[1m\033[31m[ERROR]   \033[0m| ", err)
+		return
 	}
-
-	part.Write(file)
+	part.Write(content)
 	writer.Close()
-	request, err := http.NewRequest("POST", url, body)
+
+	// Build the request
+	request, err := http.NewRequest("POST", logger.discordHookURL, body)
 	if err != nil {
 		fmt.Println(time.Now().Format("2006/01/02 15:04:05 "), "\033[1m\033[31m[ERROR]   \033[0m| ", err)
+		return
 	}
-
 	request.Header.Add("Content-Type", writer.FormDataContentType())
-	client := &http.Client{}
 
+	// Execute the request
+	client := &http.Client{}
 	response, err := client.Do(request)
+	response.Body.Close()
+
 	if err != nil {
 		fmt.Println(time.Now().Format("2006/01/02 15:04:05 "), "\033[1m\033[31m[ERROR]   \033[0m| ", err)
+		return
 	}
-
-	defer response.Body.Close()
-
-	content, err := io.ReadAll(response.Body)
-	f.Close()
-	os.Remove(f.Name())
-
-	return content
 }
 
 func sendHook(ping bool, content ...interface{}) {
-	if hookURL != "" {
-		var values map[string]string
-		if ping {
-			values = map[string]string{"content": fmt.Sprintf("<@%s> PANIC: %v", PING_ID, fmt.Sprintf("%s", content...))}
-		} else {
-			values = map[string]string{"content": fmt.Sprintf("ERROR: %v", fmt.Sprint(content...))}
-		}
-		json_data, err := json.Marshal(values)
+	logger.Lock()
+	defer logger.Unlock()
 
-		if err != nil {
-			fmt.Print(err)
-		}
-
-		send := bytes.NewBuffer(json_data)
-
-		resp, err := http.Post(hookURL, "application/json", send)
-
-		fmt.Println(send)
-
-		if err != nil {
-			fmt.Print(err)
-		}
-
-		var res map[string]interface{}
-
-		json.NewDecoder(resp.Body).Decode((&res))
-	}
-}
-
-func Setup() error {
-	hookURL = os.Getenv("HOOK_URL")
-	PING_ID = os.Getenv("PING_ID")
-	if hookURL == "" || PING_ID == "" {
-		return errors.New("missing .env variable HOOK_URL or PING_ID, not interfacing with discord")
+	if !logger.sendHooks {
+		return
 	}
 
-	return nil
+	var values map[string]string
+	if ping {
+		values = map[string]string{"content": fmt.Sprintf("<@%s> PANIC: %v", logger.discordPingID, fmt.Sprintf("%s", content...))}
+	} else {
+		values = map[string]string{"content": fmt.Sprintf("ERROR: %v", fmt.Sprint(content...))}
+	}
+	json_data, err := json.Marshal(values)
+	if err != nil {
+		fmt.Println(time.Now().Format("2006/01/02 15:04:05 "), "\033[1m\033[31m[ERROR]   \033[0m| ", err)
+		return
+	}
+
+	send := bytes.NewBuffer(json_data)
+	_, err = http.Post(logger.discordHookURL, "application/json", send)
+	if err != nil {
+		fmt.Println(time.Now().Format("2006/01/02 15:04:05 "), "\033[1m\033[31m[ERROR]   \033[0m| ", err)
+		return
+	}
 }
 
 func log(messageType MessageType, v ...interface{}) {
-	loggingLock.Lock()
+	logger.Lock()
 	fmt.Print(time.Now().Format("2006/01/02 15:04:05 "))
 
 	switch messageType {
-	case INFO:
+	case typeInfo:
 		fmt.Print("\033[1m[INFO]    \033[0m| ")
-	case WARN:
+	case typeWarning:
 		fmt.Print("\033[1m\033[33m[WARN]    \033[0m| ")
-	case ERROR:
+	case typeError:
 		fmt.Print("\033[1m\033[31m[ERROR]   \033[0m| ")
 		go sendHook(false, v...)
-	case PANIC:
+	case typePanic:
 		fmt.Print("\033[1m\033[34m[PANIC]  \033[0m| ")
 		go sendHook(true, v...)
-	case SUCCESS:
+	case typeSuccess:
 		fmt.Print("\033[1m\033[32m[SUCCESS] \033[0m| ")
 	}
 
 	fmt.Println(v...)
-	loggingLock.Unlock()
-}
-
-func sendHookWithFile(ping bool, attachment []byte, content ...interface{}) {
-	if hookURL != "" {
-		var values map[string]string
-		if ping {
-			values = map[string]string{"content": fmt.Sprintf("<@%s> PANIC: %v", PING_ID, fmt.Sprintf("%s", content...))}
-		} else {
-			values = map[string]string{"content": fmt.Sprintf("ERROR: %v", fmt.Sprint(content...))}
-		}
-		json_data, err := json.Marshal(values)
-		sendFile(hookURL, attachment)
-
-		if err != nil {
-			fmt.Print(err)
-		}
-
-		send := bytes.NewBuffer(json_data)
-
-		resp, err := http.Post(hookURL, "application/json", send)
-
-		fmt.Println(send)
-
-		if err != nil {
-			fmt.Print(err)
-		}
-
-		var res map[string]interface{}
-
-		json.NewDecoder(resp.Body).Decode((&res))
-	}
+	logger.Unlock()
 }
 
 func logWithAttachment(messageType MessageType, attachment []byte, message ...interface{}) {
-	loggingLock.Lock()
+	logger.Lock()
 	fmt.Print(time.Now().Format("2006/01/02 15:04:05 "))
 
 	switch messageType {
-	case INFO:
+	case typeInfo:
 		fmt.Print("\033[1m[INFO]    \033[0m| ")
-	case WARN:
+	case typeWarning:
 		fmt.Print("\033[1m\033[33m[WARN]    \033[0m| ")
-	case ERROR:
+	case typeError:
 		fmt.Print("\033[1m\033[31m[ERROR]   \033[0m| ")
-		go sendHookWithFile(false, attachment, message...)
-	case PANIC:
+		go func() {
+			// TODO handle error returned by sendFile
+			sendFile(attachment)
+			sendHook(false, message...)
+		}()
+	case typePanic:
 		fmt.Print("\033[1m\033[34m[PANIC]  \033[0m| ")
-		go sendHookWithFile(true, attachment, message...)
-	case SUCCESS:
+		go func() {
+			// TODO handle error returned by sendFile
+			sendFile(attachment)
+			sendHook(true, message...)
+		}()
+	case typeSuccess:
 		fmt.Print("\033[1m\033[32m[SUCCESS] \033[0m| ")
 	}
 
 	fmt.Println(message...)
-	loggingLock.Unlock()
+	logger.Unlock()
 }
 
 func Info(v ...interface{}) {
-	log(INFO, v...)
+	log(typeInfo, v...)
 }
 
 func Warn(v ...interface{}) {
-	log(WARN, v...)
+	log(typeWarning, v...)
 }
 
 func Error(v ...interface{}) {
-	log(ERROR, v...)
+	log(typeError, v...)
 }
 
 func ErrorWithAttachment(attachment []byte, v ...interface{}) {
-	logWithAttachment(ERROR, attachment, v...)
+	logWithAttachment(typeError, attachment, v...)
 }
 
 func Panic(v ...interface{}) {
-	log(PANIC, v...)
+	log(typePanic, v...)
 }
 
 func PanicWithAttachment(attachment []byte, v ...interface{}) {
-	logWithAttachment(PANIC, attachment, v...)
+	logWithAttachment(typePanic, attachment, v...)
 }
 
 func Success(v ...interface{}) {
-	log(SUCCESS, v...)
+	log(typeSuccess, v...)
 }
