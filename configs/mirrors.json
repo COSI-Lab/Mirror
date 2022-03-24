@@ -109,6 +109,21 @@
       "color": "#0abab5",
       "publicRsync": true
     },
+    "centos9": {
+      "name": "CentOS Stream 9",
+      "page": "Distributions",
+      "rsync": {
+        "host": "rsync.stream.centos.org",
+        "src": "CentOS-Stream-All",
+        "dest": "/storage/centos9",
+        "options": "-aqzH --delete",
+        "syncs_per_day": 4
+      },
+      "official": false,
+      "homepage": "https://centos.org/",
+      "color": "#000000",
+      "publicRsync": true
+    },
     "cpan": {
       "name": "CPAN",
       "page": "Software",
