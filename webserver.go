@@ -6,7 +6,6 @@ import (
 	"html/template"
 	"net"
 	"net/http"
-	"os"
 	"sync"
 	"time"
 
@@ -153,7 +152,8 @@ var cache = map[string]*CacheEntry{}
 var cacheLock = &sync.RWMutex{}
 
 func cachingMiddleware(next func(w http.ResponseWriter, r *http.Request)) http.Handler {
-	if os.Getenv("WEB_SERVER_CACHE") != "1" {
+	if !webServerCache {
+		logging.Info("Caching disabled")
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			logging.Info(r.Method, r.URL.Path)
 			next(w, r)

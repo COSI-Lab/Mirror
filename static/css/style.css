@@ -1,6 +1,7 @@
 body {
   margin: 0;
   background: rgb(40, 104, 40);
+  font-family: "Roboto";
 }
 
 /* For header.gohtml */
@@ -12,7 +13,6 @@ header {
   border-bottom: yellow solid 3px;
 }
 header ul {
-  font-family: "Montserrat", Arial, sans-serif;
   list-style-type: none;
   margin: 0;
   padding: 0;
@@ -23,6 +23,7 @@ header li {
   float: left;
 }
 header li > a {
+  font-size: 20px;
   display: block;
   color: white;
   text-align: center;
@@ -48,9 +49,6 @@ footer a {
 /* For index.gohtml */
 .home {
   padding-top: 20px;
-  padding-left: 25%;
-  padding-right: 25%;
-  /*max-width: 60%;*/
   display: flex;
   min-height: 10vh;
   flex-direction: column;
@@ -93,7 +91,11 @@ body > h1 {
   max-width: 250px;
 }
 
-/* For distributions.gohtml */
+/* For projects.gohtml */
+.projects {
+  padding-left: 5%;
+}
+
 .distro {
   border-bottom: 2px solid #cccccc;
   padding-bottom: 1em;
@@ -127,11 +129,12 @@ body > h1 {
 /* General Use: CHANGE WITH CAUTION */
 main {
   background-color: white;
-  padding-left: 10%;
-  padding-right: 10%;
+  padding-left: 20%;
+  padding-right: 20%;
 }
 p {
   color: black;
+  line-height: 24px;
 }
 a {
   padding: 0;
@@ -139,10 +142,16 @@ a {
 }
 /* For history.gohtml */
 .history {
-  padding-left: 5%;
-  padding-right: 5%;
   display: flex;
-  min-height: 150px;
   flex-direction: column;
-  margin: 50;
+}
+
+.history img {
+  height: 200px;
+  object-fit: contain;
+}
+
+@font-face {
+  font-family: "Roboto";
+  src: url(/fonts/Roboto-Regular.ttf) format("truetype");
 }

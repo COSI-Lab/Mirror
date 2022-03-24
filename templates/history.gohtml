@@ -7,22 +7,37 @@
 <body>
     {{template "nav.gohtml" .}}
     <main class="history">
-        <h2> History </h2>
-        <p>...</p>        
-        <br>   
-        <h2> Sponcers </h2>
-        <p>...</p>
-        <div>
-          <a href="http://www.vmware.com/">
-                    <img src="img/vmware.jpg" alt="Vmwarelogo" style="width: 209.25px; height: 100px"/>
-          </a>
-        </div>
-          <div>
-          <a href="https://www.siegetechnologies.com/">
-                    <img src="img/siege.jpg" alt="Seiege logo" style="width: 209.25px; height: 100px" />
-          </a>
-          </div>
+      <h2> History </h2>
+      <p>
+        According to archived COSI webpages, Mirror has existed as early as October 2002. The current server is the third iteration that has run the mirror service. A longer article on the history of Mirror can currently be found on <a href="https://cosi-lab.github.io/meeting-minutes/news/2016/08/08/Weekly-Newsletter.html">Meeting Minutes</a>.
+      </p>
+      <br>   
+      <h2> Sponsors </h2>
+      <div>
+        <p>
+        We would like to thank everyone that helped out contributing to help make the newest iteration of the mirror possible, including:
+        </p>
+        <ul style="text-align: center; list-style-type: none;">
+          <li>Eric Busse</li>
+          <li>Ted Champagne</li>
+          <li>Steve Evanchik</li>
+          <li>Wenjin Hu</li>
+          <li>Mark Platek</li>
+        </ul>
+        <p>
+        and these corporate sponsors:
+        </p>
+      </div>
 
+      {{/* fit the two sponsor logos horizontally together vmware and siege and vertically center */}}
+      <div style="display: flex; justify-content: space-around; align-items: center;">
+        <a href="https://www.vmware.com/">
+          <img src="/img/vmware.jpg" alt="vmware logo" style="width: 80%; height: auto">
+        </a>
+        <a href="https://www.siege.com/">
+          <img src="/img/siege.jpg" alt="siege logo" style="width: 80%; height: auto">
+        </a>
+      </div>
     </main>
     {{template "footer.gohtml" .}}
 </body>
