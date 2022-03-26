@@ -85,7 +85,8 @@ window.onload = async function () {
         break;
       }
 
-      ctx.fillStyle = distros[circle[2]][1]; // This is ugly but it works
+      // The color is passed from the template
+      ctx.fillStyle = distros[circle[2]][1];
       ctx.beginPath();
       ctx.globalAlpha = 1 - delta / DISPLAY_TIME;
       ctx.arc(
@@ -100,26 +101,25 @@ window.onload = async function () {
       ctx.fill();
     }
 
+    // Print the legend
     ctx.beginPath();
     let incX = 0;
     let incY = 0;
     let startX = 10;
-    let startY = canvas.height * 0.44;
-    let maxPerColumn = (canvas.height * (0.9 - 0.44)) / 15;
-    let numberOfEntries = distros.map((d) => d[3]).reduce((a, b) => a + b);
+    let startY = canvas.height * 0.30;
 
+    let numberOfEntries = distros.map((d) => d[3]).reduce((a, b) => a + b);
     if (numberOfEntries == 0) {
       await new Promise((r) => setTimeout(r, 15));
       continue;
     }
-
-    let numberOfRows = Math.ceil(numberOfEntries / maxPerColumn);
+    console.log(numberOfEntries)
 
     // Show rectangle
-    let height = Math.min(canvas.height * (0.9 - 0.44), 15 * numberOfEntries);
-    let width = numberOfRows * 130;
+    let height = 15 * numberOfEntries;
+    let width = 135;
     ctx.globalAlpha = 1;
-    ctx.fillStyle = "#282828";
+    ctx.fillStyle = "#28282899";
     ctx.rect(5, startY - 40, width, height + 45);
     ctx.fill();
 
