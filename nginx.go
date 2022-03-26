@@ -44,30 +44,30 @@ func ReadLogFile(logFile string, channels ...chan *LogEntry) (err error) {
 		logging.Warn("regexp is nil")
 	}
 
-	f, err := os.Open(logFile)
-	if err != nil {
-		return err
-	}
-
-	defer f.Close()
-
-	scanner := bufio.NewScanner(f)
-	for scanner.Scan() {
-		entry, err := ParseLine(scanner.Text())
-		if err == nil {
-			// Send a pointer to the entry down each channel
-			for ch := range channels {
-				select {
-				case channels[ch] <- entry:
-				default:
-				}
-			}
+	for {
+		f, err := os.Open(logFile)
+		if err != nil {
+			return err
 		}
 
-		time.Sleep(150 * time.Millisecond)
-	}
+		scanner := bufio.NewScanner(f)
+		for scanner.Scan() {
+			entry, err := ParseLine(scanner.Text())
+			if err == nil {
+				// Send a pointer to the entry down each channel
+				for ch := range channels {
+					select {
+					case channels[ch] <- entry:
+					default:
+					}
+				}
+			}
 
-	return nil
+			time.Sleep(100 * time.Millisecond)
+		}
+
+		f.Close()
+	}
 }
 
 // ReadLogs tails a log file and sends the parsed log entries to the specified channels
