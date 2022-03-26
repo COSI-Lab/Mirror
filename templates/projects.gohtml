@@ -35,7 +35,7 @@
         {{/* split screen with a table of contents on left and a list of projects on right */}}
         <div style="display: flex; flex-direction: row; justify-content: space-between;">
             <div style="width: 20%;">
-                <h3 style="text-align: center;">Table of Contents</h3>
+                <h3 class="center">Table of Contents</h3>
                 <hr style="padding: 0px">
                 <ul>
                     {{ range .Distributions }}
@@ -50,15 +50,18 @@
                 </ul>
             </div>
             <div style="width: 75%;">
-                <h2>Linux Distributions</h2>
+                <h1 id="distributions" class="center">Linux Distributions</h1>
+                <hr>
                 {{ range .Distributions }}
                 {{ template "project" . }}
                 {{ end }}
-                <h2>Software Mirrors</h2>
+                <h1 id="software" class="center">Software Mirrors</h1>
+                <hr>
                 {{ range .Software }}
                 {{ template "project" . }}
                 {{ end }}
-                <h2>Miscellaneous</h2>
+                <h1 id="miscellaneous" class="center">Miscellaneous</h1>
+                <hr>
                 {{ range .Miscellaneous }}
                 {{ template "project" . }}
                 {{ end }}

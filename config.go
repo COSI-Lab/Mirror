@@ -55,15 +55,15 @@ func (config *ConfigFile) GetProjectsByPage() ProjectsGrouped {
 	}
 
 	sort.Slice(distributions, func(i, j int) bool {
-		return distributions[i].Name < distributions[j].Name
+		return strings.ToLower(distributions[i].Name) < strings.ToLower(distributions[j].Name)
 	})
 
 	sort.Slice(software, func(i, j int) bool {
-		return software[i].Name < software[j].Name
+		return strings.ToLower(software[i].Name) < strings.ToLower(software[j].Name)
 	})
 
 	sort.Slice(misc, func(i, j int) bool {
-		return misc[i].Name < misc[j].Name
+		return strings.ToLower(misc[i].Name) < strings.ToLower(misc[j].Name)
 	})
 
 	return ProjectsGrouped{

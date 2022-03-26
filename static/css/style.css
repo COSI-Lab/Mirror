@@ -4,6 +4,10 @@ body {
   font-family: "Roboto";
 }
 
+.center {
+  text-align: center;
+}
+
 /* For header.gohtml */
 header {
   background: rgb(40, 104, 40);
