@@ -15,7 +15,7 @@ func InitNGINXStats(projects map[string]*Project) {
 	statisitcsLock.Lock()
 
 	// Query influxdb for the latest stats
-	statisitcs = QueryTotalBytesByDistro(projects)
+	statisitcs = QueryNGINXStatistics(projects)
 	logging.Info("Loaded responses from influxdb")
 
 	statisitcsLock.Unlock()
