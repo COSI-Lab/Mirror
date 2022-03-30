@@ -58,13 +58,19 @@ func NewGeoIPHandler(licenseKey string) *GeoIPHandler {
 
 func (g *GeoIPHandler) GetGeoIP(ip net.IP) (city *geoip2.City, err error) {
 	g.RLock()
-	if g.db == nil {
+
+	defer func() {
 		g.RUnlock()
+		if err := recover(); err != nil {
+			logging.Warn("GeoIP failure to look up:", ip, err)
+		}
+	}()
+
+	if g.db == nil {
 		return nil, nil
 	}
 
 	city, err = g.db.City(ip)
-	g.RUnlock()
 
 	return city, err
 }

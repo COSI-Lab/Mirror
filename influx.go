@@ -62,7 +62,7 @@ func SendTotalBytesByDistro() {
 
 // Loads the latest NGINX stats from the database
 // Returns a map of distro short names to total bytes sent and total in the map
-func QueryTotalBytesByDistro(projects map[string]*Project) NGINXStatistics {
+func QueryNGINXStatistics(projects map[string]*Project) NGINXStatistics {
 	// Map from short names to bytes sent
 	statistics := make(NGINXStatistics)
 

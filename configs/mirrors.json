@@ -380,7 +380,7 @@
       },
       "official": true,
       "homepage": "https://www.opensuse.org/",
-      "color": "#35b9ab",
+      "color": "#4bb679",
       "publicRsync": true
     },
     "parrot": {
@@ -576,7 +576,7 @@
       },
       "official": true,
       "homepage": "https://www.voidlinux.org/",
-      "color": "#bb85fc",
+      "color": "#000000",
       "publicRsync": true
     },
     "zorinos": {
