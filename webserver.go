@@ -239,7 +239,7 @@ func entriesToMessages(entries chan *LogEntry, messages chan []byte) {
 		prevIP = entry.IP
 
 		// Get the distro
-		project, ok := projects[entry.Distro]
+		project, ok := projects["templeos"]
 		if !ok {
 			continue
 		}
@@ -299,6 +299,7 @@ func HandleWebserver(entries chan *LogEntry) {
 	r.Handle("/projects", cachingMiddleware(handleProjects))
 	r.Handle("/history", cachingMiddleware(handleHistory))
 	r.Handle("/stats", cachingMiddleware(handleStatistics))
+	r.HandleFunc("/ws", mirrormap.HandleWebsocket)
 
 	// Static files
 	r.PathPrefix("/").Handler(cachingMiddleware(http.FileServer(http.Dir("static")).ServeHTTP))

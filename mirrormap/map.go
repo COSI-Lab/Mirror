@@ -13,7 +13,7 @@ var upgrader = websocket.Upgrader{}
 var h hub
 
 // Upgrade the connection to a websocket and start the client
-func handleWebsocket(w http.ResponseWriter, r *http.Request) {
+func HandleWebsocket(w http.ResponseWriter, r *http.Request) {
 	// Upgrade the connection to a websocket
 	conn, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
@@ -41,7 +41,7 @@ func handleHealth(w http.ResponseWriter, r *http.Request) {
 }
 
 func MapRouter(r *mux.Router, broadcast chan []byte) {
-	r.HandleFunc("/ws", handleWebsocket)
+	r.HandleFunc("/ws", HandleWebsocket)
 	r.HandleFunc("/health", handleHealth)
 
 	// Create a new hub

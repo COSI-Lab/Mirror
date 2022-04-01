@@ -6,7 +6,7 @@ var circles = [];
 function connect() {
   let ws_scheme = window.location.protocol == "https:" ? "wss://" : "ws://";
 
-  let socket = new WebSocket(ws_scheme + window.location.host + "/map/ws");
+  let socket = new WebSocket(ws_scheme + window.location.host + "/ws");
   socket.binaryType = "arraybuffer";
 
   socket.onopen = function (e) {
