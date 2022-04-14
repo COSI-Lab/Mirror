@@ -126,6 +126,7 @@ func ParseLine(line string) (*LogEntry, error) {
 	}
 
 	var entry LogEntry
+	var err error
 
 	// IPv4 or IPv6 address
 	entry.IP = net.ParseIP(quoteList[0])
@@ -135,7 +136,10 @@ func ParseLine(line string) (*LogEntry, error) {
 
 	// Optional GeoIP lookup
 	if geoip != nil {
-		entry.City, _ = geoip.GetGeoIP(entry.IP)
+		entry.City, err = geoip.GetGeoIP(entry.IP)
+		if err != nil {
+			logging.Warn("Failed to lookup GeoIP: ", err)
+		}
 	} else {
 		entry.City = nil
 	}
