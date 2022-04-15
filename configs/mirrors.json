@@ -14,7 +14,7 @@
       "official": false,
       "homepage": "https://almalinux.org",
       "color": "#7851a9",
-      "publicRsync": true
+      "publicRsync": false
     },
     "alpine": {
       "name": "Alpine Linux",
@@ -30,7 +30,22 @@
       "official": false,
       "homepage": "https://www.alpinelinux.org/",
       "color": "#cd5700",
-      "publicRsync": true
+      "publicRsync": false
+    },
+    "AiryxOS": {
+      "name": "AiryxOS",
+      "page": "Distributions",
+      "rsync": {
+        "host": "mirror2.sandyriver.net",
+        "src": "pub/AiryxOS/",
+        "dest": "/storage/AiryxOS",
+        "options": "-avz --delete --no-inc-recursive",
+        "syncs_per_day": 1
+      },
+      "official": true,
+      "homepage": "https://airyx.org/",
+      "color": "#ff42b0",
+      "publicRsync": false
     },
     "archlinux": {
       "name": "Arch Linux",
@@ -45,7 +60,7 @@
       "official": true,
       "homepage": "http://www.archlinux.org/",
       "color": "#f0d4f0",
-      "publicRsync": true
+      "publicRsync": false
     },
     "archlinux32": {
       "name": "Arch Linux 32",
@@ -60,7 +75,7 @@
       "official": true,
       "homepage": "http://www.archlinux32.org/",
       "color": "#d8bfd8",
-      "publicRsync": true
+      "publicRsync": false
     },
     "artix-linux": {
       "name": "Artix Linux",
@@ -75,7 +90,7 @@
       "official": true,
       "homepage": "https://artixlinux.org/",
       "color": "#de6fa1",
-      "publicRsync": true
+      "publicRsync": false
     },
     "blender": {
       "name": "Blender",
@@ -92,7 +107,7 @@
       "official": true,
       "homepage": " https://www.blender.org",
       "color": "#eb7700",
-      "publicRsync": true
+      "publicRsync": false
     },
     "centos": {
       "name": "CentOS (<8)",
@@ -107,7 +122,7 @@
       "official": true,
       "homepage": " https://www.centos.org/",
       "color": "#0abab5",
-      "publicRsync": true
+      "publicRsync": false
     },
     "centos9": {
       "name": "CentOS Stream 9",
@@ -122,7 +137,7 @@
       "official": false,
       "homepage": "https://centos.org/",
       "color": "#000000",
-      "publicRsync": true
+      "publicRsync": false
     },
     "cpan": {
       "name": "CPAN",
@@ -137,7 +152,7 @@
       "official": false,
       "homepage": "http://www.cpan.org/",
       "color": "#dbd7d2",
-      "publicRsync": true
+      "publicRsync": false
     },
     "cran": {
       "name": "CRAN",
@@ -152,7 +167,7 @@
       "official": false,
       "homepage": " http://cran.r-project.org/",
       "color": "#eee600",
-      "publicRsync": true
+      "publicRsync": false
     },
     "ctan": {
       "name": "CTAN",
@@ -167,7 +182,7 @@
       "official": false,
       "homepage": "http://www.ctan.org/",
       "color": "#ff6347",
-      "publicRsync": true
+      "publicRsync": false
     },
     "cygwin": {
       "name": "Cygwin",
@@ -182,7 +197,7 @@
       "official": true,
       "homepage": "https://www.cygwin.com/",
       "color": "#746cc0",
-      "publicRsync": true
+      "publicRsync": false
     },
     "debian": {
       "name": "Debian",
@@ -198,7 +213,7 @@
       "official": false,
       "homepage": "https://www.debian.org",
       "color": "#ffc87c",
-      "publicRsync": true
+      "publicRsync": false
     },
     "debian-cd": {
       "name": "Debian Images",
@@ -213,7 +228,7 @@
       "official": false,
       "homepage": "https://www.debian.org/CD/",
       "color": "#ffc87c",
-      "publicRsync": true
+      "publicRsync": false
     },
     "eclipse": {
       "name": "Eclipse",
@@ -230,7 +245,7 @@
       "official": true,
       "homepage": "https://www.eclipse.org/",
       "color": "#00755e",
-      "publicRsync": true
+      "publicRsync": false
     },
     "gentoo": {
       "name": "Gentoo",
@@ -245,7 +260,7 @@
       "official": false,
       "homepage": "https://www.gentoo.org/",
       "color": "#30d5c8",
-      "publicRsync": true
+      "publicRsync": false
     },
     "gentoo-portage": {
       "name": "Gentoo Portage",
@@ -260,7 +275,7 @@
       "official": false,
       "homepage": "https://www.gentoo.org/",
       "color": "#30d5c8",
-      "publicRsync": true
+      "publicRsync": false
     },
     "ipfire": {
       "name": "IPFire",
@@ -275,7 +290,7 @@
       "official": true,
       "homepage": "https://www.ipfire.org/",
       "color": "#7c4848",
-      "publicRsync": true
+      "publicRsync": false
     },
     "isabelle": {
       "name": "Isabelle",
@@ -290,7 +305,7 @@
       "official": true,
       "homepage": "https://isabelle.in.tum.de/",
       "color": "#8a496b",
-      "publicRsync": true
+      "publicRsync": false
     },
     "linux": {
       "name": "Linux (including source)",
@@ -305,7 +320,7 @@
       "official": true,
       "homepage": "http://kernel.org",
       "color": "#930056",
-      "publicRsync": true
+      "publicRsync": false
     },
     "linuxmint-images": {
       "name": "LinuxMint (images)",
@@ -320,7 +335,7 @@
       "official": true,
       "homepage": "https://linuxmint.com/",
       "color": "#62b858",
-      "publicRsync": true
+      "publicRsync": false
     },
     "linuxmint-packages": {
       "name": "LinuxMint (packages)",
@@ -336,7 +351,7 @@
       "official": true,
       "homepage": "https://linuxmint.com/",
       "color": "#62b858",
-      "publicRsync": true
+      "publicRsync": false
     },
     "manjaro": {
       "name": "Manjaro",
@@ -351,7 +366,7 @@
       "official": true,
       "homepage": "https://manjaro.org/",
       "color": "#d9004c",
-      "publicRsync": true
+      "publicRsync": false
     },
     "msys2": {
       "name": "msys2",
@@ -366,7 +381,7 @@
       "official": true,
       "homepage": "https://www.msys2.org/",
       "color": "#8878c3",
-      "publicRsync": true
+      "publicRsync": false
     },
     "opensuse": {
       "name": "OpenSUSE",
@@ -381,7 +396,7 @@
       "official": true,
       "homepage": "https://www.opensuse.org/",
       "color": "#4bb679",
-      "publicRsync": true
+      "publicRsync": false
     },
     "parrot": {
       "name": "Parrot Security OS",
@@ -396,7 +411,7 @@
       "official": true,
       "homepage": "https://www.parrotsec.org/",
       "color": "#ff6fff",
-      "publicRsync": true
+      "publicRsync": false
     },
     "raspian": {
       "name": "Raspbian",
@@ -411,7 +426,7 @@
       "official": false,
       "homepage": "https://www.raspbian.org/",
       "color": "#c51d4a",
-      "publicRsync": true
+      "publicRsync": false
     },
     "RebornOS": {
       "name": "RebornOS",
@@ -426,7 +441,7 @@
       "official": true,
       "homepage": "https://rebornos.org/",
       "color": "#1e73be",
-      "publicRsync": true
+      "publicRsync": false
     },
     "slackware": {
       "name": "Slackware",
@@ -441,7 +456,7 @@
       "official": false,
       "homepage": "https://www.slackware.com/",
       "color": "#b78727",
-      "publicRsync": true
+      "publicRsync": false
     },
     "slitaz": {
       "name": "SliTaz Linux",
@@ -456,7 +471,7 @@
       "official": true,
       "homepage": "http://www.slitaz.org/en/",
       "color": "#ffff60",
-      "publicRsync": true
+      "publicRsync": false
     },
     "templeos": {
       "name": "TempleOS",
@@ -468,7 +483,7 @@
       "official": false,
       "homepage": "https://templeos.org/",
       "color": "#efcc00",
-      "publicRsync": true
+      "publicRsync": false
     },
     "tdf": {
       "name": "LibreOffice",
@@ -483,7 +498,7 @@
       "official": true,
       "homepage": "http://www.documentfoundation.org/",
       "color": "#00a500",
-      "publicRsync": true
+      "publicRsync": false
     },
     "ubuntu": {
       "name": "Ubuntu",
@@ -499,7 +514,7 @@
       "official": true,
       "homepage": "https://www.ubuntu.com/",
       "color": "#ffd300",
-      "publicRsync": true
+      "publicRsync": false
     },
     "ubuntu-releases": {
       "name": "Ubuntu Releases",
@@ -514,7 +529,7 @@
       "official": true,
       "homepage": "https://ubuntu.com/#download",
       "color": "#ffd300",
-      "publicRsync": true
+      "publicRsync": false
     },
     "ubuntu-cdimage": {
       "name": "Ubuntu CD Images (Kubuntu, Xubuntu, Mate, etc.)",
@@ -529,7 +544,7 @@
       "official": true,
       "homepage": "https://ubuntu.com/download/flavours",
       "color": "#ffd300",
-      "publicRsync": true
+      "publicRsync": false
     },
     "ubuntu-ports": {
       "name": "Ubuntu Ports",
@@ -545,7 +560,7 @@
       "official": true,
       "homepage": "",
       "color": "#ffd300",
-      "publicRsync": true
+      "publicRsync": false
     },
     "videolan": {
       "name": "VLC",
@@ -560,7 +575,7 @@
       "official": true,
       "homepage": "https://www.videolan.org/index.html",
       "color": "#bb85fc",
-      "publicRsync": true
+      "publicRsync": false
     },
     "voidlinux": {
       "name": "VoidLinux",
@@ -577,7 +592,7 @@
       "official": true,
       "homepage": "https://www.voidlinux.org/",
       "color": "#000000",
-      "publicRsync": true
+      "publicRsync": false
     },
     "zorinos": {
       "name": "Zorin OS",
@@ -592,7 +607,7 @@
       "official": true,
       "homepage": "https://zorinos.com/",
       "color": "#fc6c85",
-      "publicRsync": true
+      "publicRsync": false
     }
   }
 }
