@@ -94,7 +94,7 @@ func (g *GeoIPHandler) updateDatabase() {
 		db, err := g.downloadNewDatabase()
 
 		if err != nil {
-			logging.ErrorToDiscord("Error while downloading new GeoIP database:", err)
+			logging.ErrorToDiscord("**Error** while downloading new GeoIP database:", err)
 		} else {
 			logging.Success("Found new GeoIP database and downloaded it in", time.Since(start))
 
@@ -118,7 +118,7 @@ func (g *GeoIPHandler) checkForNewDatabase() bool {
 	resp, err := http.DefaultClient.Do(&req)
 
 	if err != nil {
-		logging.ErrorToDiscord("Error checking for new database:", err)
+		logging.ErrorToDiscord("**Error** checking for new database:", err)
 		return false
 	}
 
@@ -133,7 +133,7 @@ func (g *GeoIPHandler) checkForNewDatabase() bool {
 		lastModifiedFile, err = os.Create("last_modified")
 
 		if err != nil {
-			logging.ErrorToDiscord("Error creating last_modified file:", err)
+			logging.ErrorToDiscord("**Error** creating last_modified file:", err)
 			return false
 		}
 	}
@@ -144,7 +144,7 @@ func (g *GeoIPHandler) checkForNewDatabase() bool {
 	lastModifiedFileBytes, err := io.ReadAll(lastModifiedFile)
 
 	if err != nil {
-		logging.ErrorToDiscord("Error reading last_modified file:", err)
+		logging.ErrorToDiscord("**Error** reading last_modified file:", err)
 		return false
 	}
 
