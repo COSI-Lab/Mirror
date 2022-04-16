@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"os"
 	"os/signal"
 	"runtime"
@@ -96,7 +97,22 @@ func loadConfig() *ConfigFile {
 	return &config
 }
 
+var restartCount int
+
 func main() {
+	defer func() {
+		if r := recover(); r != nil {
+			restartCount++
+			if restartCount > 3 {
+				logging.PanicWithAttachment([]byte(fmt.Sprint(r)), "Program panicked more than 3 times in an hour! Exiting.")
+				os.Exit(1)
+			}
+
+			logging.PanicWithAttachment([]byte(fmt.Sprint(r)), "Program panicked and attempted to restart itself. Someone should ssh in and restart me :)")
+			main()
+		}
+	}()
+
 	// Setup logging
 	logging.Setup(hookURL, pingID)
 
@@ -174,5 +190,8 @@ func main() {
 	for {
 		logging.Info(runtime.NumGoroutine(), "goroutines")
 		time.Sleep(time.Hour)
+
+		// Reset the restart count
+		restartCount = 0
 	}
 }

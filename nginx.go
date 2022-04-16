@@ -115,7 +115,7 @@ func ReadLogs(logFile string, lastUpdated time.Time, channels ...chan *LogEntry)
 	}
 
 	// Tailing this file should never end
-	logging.Panic("No longer reading log file", tail.Err())
+	logging.PanicToDiscord("No longer reading log file", tail.Err())
 }
 
 // findOffset returns the offset of the log entry which has the smallest date past lastUpdated

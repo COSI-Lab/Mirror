@@ -84,7 +84,7 @@ func QueryNGINXStatistics(projects map[string]*Project) (statistics NGINXStatist
 	result, err := reader.Query(context.Background(), "from(bucket: \"stats\") |> range(start: 0, stop: now()) |> filter(fn: (r) => r[\"_measurement\"] == \"mirror\") |> filter(fn: (r) => r[\"_field\"] == \"bytes_sent\" or r[\"_field\"] == \"bytes_recv\" or r[\"_field\"] == \"requests\") |> last() |> group(columns: [\"distro\"], mode: \"by\")")
 
 	if err != nil {
-		logging.Error("Error querying influxdb", err)
+		logging.ErrorToDiscord("Error querying influxdb", err)
 	}
 
 	for result.Next() {

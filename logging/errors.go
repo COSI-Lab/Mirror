@@ -30,8 +30,8 @@ type threadSafeLogger struct {
 }
 
 // Setup initialize the variables for calling webhooks
-// TODO: Make this threadsafe so it can be reloadable with sighup
-func Setup(hookURL string, pingID string) {
+// TODO: Make this so it can be reloadable with sighup
+func Setup(hookURL, pingID string) {
 	logger.Lock()
 	logger.discordHookURL = hookURL
 	logger.discordPingID = pingID
@@ -119,10 +119,8 @@ func log(messageType MessageType, v ...interface{}) {
 		fmt.Print("\033[1m\033[33m[WARN]    \033[0m| ")
 	case typeError:
 		fmt.Print("\033[1m\033[31m[ERROR]   \033[0m| ")
-		go sendHook(false, v...)
 	case typePanic:
-		fmt.Print("\033[1m\033[34m[PANIC]  \033[0m| ")
-		go sendHook(true, v...)
+		fmt.Print("\033[1m\033[34m[PANIC]   \033[0m| ")
 	case typeSuccess:
 		fmt.Print("\033[1m\033[32m[SUCCESS] \033[0m| ")
 	}
@@ -131,61 +129,92 @@ func log(messageType MessageType, v ...interface{}) {
 	logger.Unlock()
 }
 
-func logWithAttachment(messageType MessageType, attachment []byte, message ...interface{}) {
-	logger.Lock()
-	fmt.Print(time.Now().Format("2006/01/02 15:04:05 "))
-
-	switch messageType {
-	case typeInfo:
-		fmt.Print("\033[1m[INFO]    \033[0m| ")
-	case typeWarning:
-		fmt.Print("\033[1m\033[33m[WARN]    \033[0m| ")
-	case typeError:
-		fmt.Print("\033[1m\033[31m[ERROR]   \033[0m| ")
-		go func() {
-			// TODO handle error returned by sendFile
-			sendFile(attachment)
-			sendHook(false, message...)
-		}()
-	case typePanic:
-		fmt.Print("\033[1m\033[34m[PANIC]  \033[0m| ")
-		go func() {
-			// TODO handle error returned by sendFile
-			sendFile(attachment)
-			sendHook(true, message...)
-		}()
-	case typeSuccess:
-		fmt.Print("\033[1m\033[32m[SUCCESS] \033[0m| ")
-	}
-
-	fmt.Println(message...)
-	logger.Unlock()
-}
-
 func Info(v ...interface{}) {
 	log(typeInfo, v...)
+}
+
+func InfoToDiscord(v ...interface{}) {
+	log(typeInfo, v...)
+	go sendHook(false, v...)
+}
+
+func InfoWithAttachment(attachment []byte, v ...interface{}) {
+	log(typeInfo, v...)
+	go func() {
+		// TODO handle error returned by sendFile
+		sendFile(attachment)
+		sendHook(false, v...)
+	}()
 }
 
 func Warn(v ...interface{}) {
 	log(typeWarning, v...)
 }
 
+func WarnToDiscord(v ...interface{}) {
+	log(typeWarning, v...)
+	go sendHook(false, v...)
+}
+
+func WarnWithAttachment(attachment []byte, v ...interface{}) {
+	log(typeWarning, v...)
+	go func() {
+		// TODO handle error returned by sendFile
+		sendFile(attachment)
+		sendHook(false, v...)
+	}()
+}
+
 func Error(v ...interface{}) {
 	log(typeError, v...)
 }
 
+func ErrorToDiscord(v ...interface{}) {
+	log(typeError, v...)
+	go sendHook(false, v...)
+}
+
 func ErrorWithAttachment(attachment []byte, v ...interface{}) {
-	logWithAttachment(typeError, attachment, v...)
+	log(typeError, v...)
+	go func() {
+		// TODO handle error returned by sendFile
+		sendFile(attachment)
+		sendHook(false, v...)
+	}()
 }
 
 func Panic(v ...interface{}) {
 	log(typePanic, v...)
 }
 
+func PanicToDiscord(v ...interface{}) {
+	log(typePanic, v...)
+	go sendHook(true, v...)
+}
+
 func PanicWithAttachment(attachment []byte, v ...interface{}) {
-	logWithAttachment(typePanic, attachment, v...)
+	log(typePanic, v...)
+	go func() {
+		// TODO handle error returned by sendFile
+		sendFile(attachment)
+		sendHook(true, v...)
+	}()
 }
 
 func Success(v ...interface{}) {
 	log(typeSuccess, v...)
+}
+
+func SuccessToDiscord(v ...interface{}) {
+	log(typeSuccess, v...)
+	go sendHook(false, v...)
+}
+
+func SuccessWithAttachment(attachment []byte, v ...interface{}) {
+	log(typeSuccess, v...)
+	go func() {
+		// TODO handle error returned by sendFile
+		sendFile(attachment)
+		sendHook(false, v...)
+	}()
 }
