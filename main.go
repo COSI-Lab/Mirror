@@ -92,7 +92,7 @@ func init() {
 }
 
 func loadConfig() *ConfigFile {
-	config := ParseConfig("configs/mirrors.json", "configs/mirrors.schema.json")
+	config := ParseConfig("configs/mirrors.json", "configs/mirrors.schema.json", "configs/tokens.txt")
 	return &config
 }
 
@@ -129,8 +129,6 @@ func main() {
 		lastUpdated := InitNGINXStats(config.Mirrors)
 		go HandleNGINXStats(nginx_entries)
 
-		logging.Info("Last updated:", lastUpdated)
-
 		if nginxTail != "" {
 			go ReadLogs(nginxTail, lastUpdated, nginx_entries, map_entries)
 		} else {
@@ -144,8 +142,9 @@ func main() {
 
 	// rsync scheduler
 	stop := make(chan struct{})
+	manual := make(chan string)
 	rsyncStatus := make(RSYNCStatus)
-	go handleRSYNC(config, rsyncStatus, stop)
+	go handleRSYNC(config, rsyncStatus, manual, stop)
 
 	go func() {
 		for {
@@ -164,13 +163,13 @@ func main() {
 
 			// restart the rsync scheduler
 			rsyncStatus := make(RSYNCStatus)
-			go handleRSYNC(config, rsyncStatus, stop)
+			go handleRSYNC(config, rsyncStatus, manual, stop)
 		}
 	}()
 
 	// Webserver
 	WebserverLoadConfig(config)
-	go HandleWebserver(map_entries)
+	go HandleWebserver(manual, map_entries)
 
 	for {
 		logging.Info(runtime.NumGoroutine(), "goroutines")

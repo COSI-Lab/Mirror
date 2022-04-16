@@ -79,6 +79,7 @@ func ReadLogs(logFile string, lastUpdated time.Time, channels ...chan *LogEntry)
 
 	if err != nil {
 		logging.Warn("ReadLogs failed to find offset", err)
+		return
 	} else {
 		logging.Info("Found log file offset in", time.Since(start))
 	}
@@ -164,6 +165,7 @@ func findOffset(logFile string, lastUpdated time.Time) (offset int64, err error)
 	return lines[start], nil
 }
 
+// ParseDate parses a single line of the nginx log file and returns the time.Time of the line
 func ParseDate(line string) (time.Time, error) {
 	// "$remote_addr" "$time_local" "$request" "$status" "$body_bytes_sent" "$request_length" "$http_user_agent";
 	quoteList := reQuotes.FindAllString(line, -1)
@@ -172,13 +174,8 @@ func ParseDate(line string) (time.Time, error) {
 		return time.Time{}, errors.New("invalid number of quotes")
 	}
 
-	// Trim quotation marks
-	for i := 0; i < len(quoteList); i++ {
-		quoteList[i] = quoteList[i][1 : len(quoteList[i])-1]
-	}
-
 	// Time
-	t := "02/Jan/2006:15:04:05 -0700"
+	t := "\"02/Jan/2006:15:04:05 -0700\""
 	tm, err := time.Parse(t, quoteList[1])
 	if err != nil {
 		return time.Time{}, err
