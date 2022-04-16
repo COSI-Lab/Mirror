@@ -56,23 +56,26 @@ func NewGeoIPHandler(licenseKey string) *GeoIPHandler {
 	return g
 }
 
-func (g *GeoIPHandler) GetGeoIP(ip net.IP) (city *geoip2.City, err error) {
+func (g *GeoIPHandler) GetGeoIP(ip net.IP) (city *geoip2.City) {
 	g.RLock()
 
 	defer func() {
 		g.RUnlock()
 		if err := recover(); err != nil {
-			logging.Warn("GeoIP failure to look up:", ip, err)
+			logging.Warn("GeoIP caused panic while looking up:", ip)
 		}
 	}()
 
 	if g.db == nil {
-		return nil, nil
+		return nil
 	}
 
-	city, err = g.db.City(ip)
+	city, err := g.db.City(ip)
+	if err != nil {
+		return nil
+	}
 
-	return city, err
+	return city
 }
 
 // handleDatabases checks for new databases and downloads them

@@ -11,14 +11,16 @@ var statisitcs NGINXStatistics
 var statisitcsLock = &sync.RWMutex{}
 
 // Loads the latest NGINX stats from the database
-func InitNGINXStats(projects map[string]*Project) {
+func InitNGINXStats(projects map[string]*Project) (lastUpdated time.Time) {
 	statisitcsLock.Lock()
 
 	// Query influxdb for the latest stats
-	statisitcs = QueryNGINXStatistics(projects)
+	statisitcs, lastUpdated = QueryNGINXStatistics(projects)
 	logging.Info("Loaded responses from influxdb")
 
 	statisitcsLock.Unlock()
+
+	return lastUpdated
 }
 
 // NGINX statisitcs

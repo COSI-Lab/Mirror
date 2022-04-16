@@ -61,10 +61,10 @@ func SendTotalBytesByDistro() {
 }
 
 // Loads the latest NGINX stats from the database
-// Returns a map of distro short names to total bytes sent and total in the map
-func QueryNGINXStatistics(projects map[string]*Project) NGINXStatistics {
+// Returns a map of distro short names to total bytes sent and the timestamp of the data
+func QueryNGINXStatistics(projects map[string]*Project) (statistics NGINXStatistics, lastUpdated time.Time) {
 	// Map from short names to bytes sent
-	statistics := make(NGINXStatistics)
+	statistics = make(NGINXStatistics)
 
 	for short := range projects {
 		statistics[short] = &DistroStat{}
@@ -91,6 +91,9 @@ func QueryNGINXStatistics(projects map[string]*Project) NGINXStatistics {
 		if result.Err() == nil {
 			// Get the data point
 			dp := result.Record()
+
+			// Update the time of the measurement
+			lastUpdated = dp.Time()
 
 			// Get the distro short name
 			distro, ok := dp.ValueByKey("distro").(string)
@@ -144,7 +147,7 @@ func QueryNGINXStatistics(projects map[string]*Project) NGINXStatistics {
 		}
 	}
 
-	return statistics
+	return statistics, lastUpdated
 }
 
 // Gets the bytes sent for each project in the last 24 hours
