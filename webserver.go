@@ -111,26 +111,27 @@ func handleStatistics(w http.ResponseWriter, r *http.Request) {
 // /sync/{project}?token={token}
 func handleManualSyncs(manual chan<- string) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		// log
-		logging.Info("handleManualSyncs;", r.URL)
-
 		// Get the project name
 		vars := mux.Vars(r)
 		projectName := vars["project"]
 
 		// Get the access token
 		token := r.URL.Query().Get("token")
+		if token == "" {
+			http.Error(w, "No token provided", http.StatusBadRequest)
+			return
+		}
 
 		// Get the project
 		project, ok := projects[projectName]
 		if !ok {
-			logging.Warn("handleManualSyncs; project not found", projectName)
+			http.NotFound(w, r)
 			return
 		}
 
 		// Check that the access token matches
 		if project.AccessToken != "" && project.AccessToken != token {
-			logging.Warn("handleManualSyncs; invalid access token", projectName, token)
+			http.Error(w, "Invalid access token", http.StatusForbidden)
 			return
 		}
 
