@@ -135,6 +135,8 @@ func handleManualSyncs(manual chan<- string) http.HandlerFunc {
 			return
 		}
 
+		logging.InfoToDiscord("Manual sync requested for project", projectName)
+
 		// Sync the project
 		manual <- projectName
 	}

@@ -51,7 +51,7 @@ func init() {
 		err := os.MkdirAll(rsyncLogs, 0755)
 
 		if err != nil {
-			logging.Error("failed to create RSYNC_LOGS directory", rsyncLogs, err, "not saving rsync logs")
+			logging.Warn("failed to create RSYNC_LOGS directory", rsyncLogs, err, "not saving rsync logs")
 			rsyncLogs = ""
 		} else {
 			logging.Success("opened RSYNC_LOGS directory", rsyncLogs)

@@ -49,7 +49,6 @@ gin --all -p 3002 -b Mirror -i
 # Discord Webhook URL and id to ping when things panic
 # Omit either and the bot will not communicate with discord
 #HOOK_URL=url
-#PING_ID=id
 
 # Maxmind DB token to update the database, omit and we'll only use a local copy if it exists
 MAXMIND_LICENSE_KEY=key
