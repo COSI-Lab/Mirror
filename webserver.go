@@ -1,13 +1,11 @@
 package main
 
 import (
-	"bytes"
 	"fmt"
 	"html/template"
 	"net"
 	"net/http"
 	"sync"
-	"time"
 
 	"github.com/COSI_Lab/Mirror/logging"
 	"github.com/COSI_Lab/Mirror/mirrormap"
@@ -108,102 +106,37 @@ func handleStatistics(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-type ProxyWriter struct {
-	header http.Header
-	buffer bytes.Buffer
-	status int
-}
+// handleManualSyncs is a endpoint that allows a privileged user to manually cause a project to sync
+// Access token is included in the query string. The http method is not considered.
+// /sync/{project}?token={token}
+func handleManualSyncs(manual chan<- string) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		// log
+		logging.Info("handleManualSyncs;", r.URL)
 
-func (p *ProxyWriter) Header() http.Header {
-	return p.header
-}
+		// Get the project name
+		vars := mux.Vars(r)
+		projectName := vars["project"]
 
-func (p *ProxyWriter) Write(bytes []byte) (int, error) {
-	return p.buffer.Write(bytes)
-}
+		// Get the access token
+		token := r.URL.Query().Get("token")
 
-func (p *ProxyWriter) WriteHeader(status int) {
-	p.status = status
-}
-
-type CacheEntry struct {
-	header http.Header
-	body   []byte
-	status int
-	time   time.Time
-}
-
-func (c *CacheEntry) WriteTo(w http.ResponseWriter) (int, error) {
-	header := w.Header()
-
-	for k, v := range c.header {
-		header[k] = v
-	}
-
-	if c.status != 0 {
-		w.WriteHeader(c.status)
-	}
-
-	return w.Write(c.body)
-}
-
-// Caches the responses from the webserver
-var cache = map[string]*CacheEntry{}
-var cacheLock = &sync.RWMutex{}
-
-func cachingMiddleware(next func(w http.ResponseWriter, r *http.Request)) http.Handler {
-	if !webServerCache {
-		logging.Info("Caching disabled")
-		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			logging.Info(r.Method, r.URL.Path)
-			next(w, r)
-		})
-	}
-
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		start := time.Now()
-
-		// Check if the request is cached
-		cacheLock.RLock()
-		if entry, ok := cache[r.RequestURI]; ok && r.Method == "GET" {
-			// Check that the cache entry is still valid
-			if time.Since(entry.time) < time.Hour {
-				// Send the cached response
-				entry.WriteTo(w)
-				cacheLock.RUnlock()
-				logging.Info(r.Method, r.RequestURI, "in", time.Since(start), "; cached")
-				return
-			}
-		}
-		cacheLock.RUnlock()
-
-		// Create a new response writer
-		proxyWriter := &ProxyWriter{
-			header: make(http.Header),
+		// Get the project
+		project, ok := projects[projectName]
+		if !ok {
+			logging.Warn("handleManualSyncs; project not found", projectName)
+			return
 		}
 
-		// Call the next handler
-		next(proxyWriter, r)
-
-		// Create the response cache entry
-		entry := &CacheEntry{
-			header: proxyWriter.header,
-			body:   proxyWriter.buffer.Bytes(),
-			status: proxyWriter.status,
-			time:   time.Now(),
+		// Check that the access token matches
+		if project.AccessToken != "" && project.AccessToken != token {
+			logging.Warn("handleManualSyncs; invalid access token", projectName, token)
+			return
 		}
 
-		// Cache the response
-		go func() {
-			cacheLock.Lock()
-			cache[r.RequestURI] = entry
-			cacheLock.Unlock()
-		}()
-
-		// Send the response to client
-		entry.WriteTo(w)
-		logging.Info(r.Method, r.RequestURI, "in", time.Since(start))
-	})
+		// Sync the project
+		manual <- projectName
+	}
 }
 
 func entriesToMessages(entries chan *LogEntry, messages chan []byte) {
@@ -281,7 +214,10 @@ func WebserverLoadConfig(config *ConfigFile) {
 	dataLock.Unlock()
 }
 
-func HandleWebserver(entries chan *LogEntry) {
+// HandleWebserver starts the webserver and listens for incoming connections
+// manual is a channel that project short names are sent down to manually trigger a projects rsync
+// entries is a channel that contains log entries that are disabled by the mirror map
+func HandleWebserver(manual chan<- string, entries chan *LogEntry) {
 	r := mux.NewRouter()
 
 	cache = make(map[string]*CacheEntry)
@@ -299,6 +235,7 @@ func HandleWebserver(entries chan *LogEntry) {
 	r.Handle("/projects", cachingMiddleware(handleProjects))
 	r.Handle("/history", cachingMiddleware(handleHistory))
 	r.Handle("/stats", cachingMiddleware(handleStatistics))
+	r.Handle("/sync/{project}", handleManualSyncs(manual))
 	r.HandleFunc("/ws", mirrormap.HandleWebsocket)
 
 	// Static files

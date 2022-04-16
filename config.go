@@ -1,11 +1,13 @@
 package main
 
 import (
+	"bufio"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"log"
 	"os"
+	"regexp"
 	"sort"
 	"strings"
 
@@ -76,7 +78,7 @@ func (config *ConfigFile) GetProjectsByPage() ProjectsGrouped {
 type Project struct {
 	Name      string `json:"name"`
 	Short     string // Copied from key
-	Id        byte   // Id is given out in alphabetical order of short (yes only 255 are supported)
+	Id        byte   // Id is given out in alphabetical order of short (only 255 are supported)
 	SyncStyle string // "script" "rsync" or "static"
 	Script    struct {
 		Command     string `json:"command"`
@@ -104,9 +106,10 @@ type Project struct {
 	Page        string `json:"page"`
 	HomePage    string `json:"homepage"`
 	PublicRsync bool   `json:"publicRsync"`
+	AccessToken string // Loaded from the access tokens file
 }
 
-func ParseConfig(configFile, schemaFile string) (config ConfigFile) {
+func ParseConfig(configFile, schemaFile, tokensFile string) (config ConfigFile) {
 	// Parse the schema file
 	schemaBytes, err := ioutil.ReadFile(schemaFile)
 	if err != nil {
@@ -166,6 +169,32 @@ func ParseConfig(configFile, schemaFile string) (config ConfigFile) {
 		i++
 	}
 
+	// Parse access tokens
+	if tokensFile != "" {
+		// Read line by line
+		file, err := os.Open(tokensFile)
+		if err != nil {
+			log.Fatal("Could not open access tokens file: ", tokensFile, err.Error())
+		}
+		defer file.Close()
+
+		scanner := bufio.NewScanner(file)
+		for scanner.Scan() {
+			line := scanner.Text()
+
+			// The format is "project:token" and we ignore lines that don't match
+			reg := regexp.MustCompile(`^([^:]+):([^:]+)$`)
+			if reg.MatchString(line) {
+				// Get the project name and the token
+				projectName := reg.FindStringSubmatch(line)[1]
+				token := reg.FindStringSubmatch(line)[2]
+
+				// Add the token to the project
+				config.Mirrors[projectName].AccessToken = token
+			}
+		}
+	}
+
 	return config
 }
 
@@ -173,7 +202,7 @@ func getPassword(filename string) string {
 	bytes, err := os.ReadFile(filename)
 
 	if err != nil {
-		log.Fatal("Could not read password file: ", filename, err.Error())
+		log.Fatal("Could not read password file: ", filename, " ", err.Error())
 	}
 
 	// trim whitespace from the end

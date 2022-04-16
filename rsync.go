@@ -12,8 +12,6 @@ import (
 	"github.com/COSI_Lab/Mirror/logging"
 )
 
-var rysncErrorCodes map[int]string
-
 type Status struct {
 	StartTime int64 `json:"startTime"`
 	EndTime   int64 `json:"endTime"`
@@ -21,9 +19,11 @@ type Status struct {
 }
 type RSYNCStatus map[string]*datarithms.CircularQueue[Status]
 
-func init() {
-	logging.Info("Initializing rsync error codes")
+var rysncErrorCodes map[int]string
+var rsyncLock sync.Mutex
+var rsyncLocks = make(map[string]bool)
 
+func init() {
 	rysncErrorCodes = make(map[int]string)
 	rysncErrorCodes[0] = "Success"
 	rysncErrorCodes[1] = "Syntax or usage error"
@@ -110,11 +110,73 @@ func appendToLogFile(short string, data []byte) {
 	}
 }
 
+func syncProject(config *ConfigFile, status RSYNCStatus, short string) {
+	logging.Info("Running job: rsync", short)
+
+	// Lock the project
+	rsyncLock.Lock() // start critical section
+	if rsyncLocks[short] {
+		rsyncLock.Unlock() // end critical section
+		logging.Warn("rsync is already running for ", short)
+		return
+	}
+	rsyncLocks[short] = true
+	rsyncLock.Unlock() // end critical section
+
+	start := time.Now()
+
+	// 1 stage syncs are the norm
+	output1, state1 := rsync(config.Mirrors[short], config.Mirrors[short].Rsync.Options)
+	status[short].Push(Status{StartTime: start.Unix(), EndTime: time.Now().Unix(), ExitCode: state1.ExitCode()})
+
+	// append stage 1 to its log file
+	if rsyncLogs != "" {
+		appendToLogFile(short, []byte("\n\n"+start.Format(time.RFC1123)+"\n"))
+		appendToLogFile(short, output1)
+	}
+
+	checkState(short, state1, output1)
+
+	// 2 stage syncs happen sometimes
+	if config.Mirrors[short].Rsync.Second != "" {
+		start = time.Now()
+		output2, state2 := rsync(config.Mirrors[short], config.Mirrors[short].Rsync.Second)
+		status[short].Push(Status{StartTime: start.Unix(), EndTime: time.Now().Unix(), ExitCode: state2.ExitCode()})
+
+		if rsyncLogs != "" {
+			appendToLogFile(short, []byte("\n\n"+start.Format(time.RFC1123)+"\n"))
+			appendToLogFile(short, output2)
+		}
+
+		checkState(short, state2, output2)
+	}
+
+	// A few mirrors are 3 stage syncs
+	if config.Mirrors[short].Rsync.Third != "" {
+		start = time.Now()
+		output3, state3 := rsync(config.Mirrors[short], config.Mirrors[short].Rsync.Third)
+		status[short].Push(Status{StartTime: start.Unix(), EndTime: time.Now().Unix(), ExitCode: state3.ExitCode()})
+
+		if rsyncLogs != "" {
+			appendToLogFile(short, []byte("\n\n"+start.Format(time.RFC1123)+"\n"))
+			appendToLogFile(short, output3)
+		}
+
+		checkState(short, state3, output3)
+	}
+
+	// Unlock the project
+	rsyncLock.Lock()
+	rsyncLocks[short] = false
+	rsyncLock.Unlock()
+}
+
 // handleRSYNC is the main rsync scheduler
 // It builds a schedule of when to sync projects in such a way they are equaly spaced across the day
-// rsync tasks are run in a separate goroutine to avoid blocking this one
-// Status for the API is saved `status`
-func handleRSYNC(config *ConfigFile, status RSYNCStatus, stop chan struct{}) {
+// rsync tasks are run in a separate goroutine and there is a lock to prevent the same project from being synced simultaneously
+// the stop channel gracefully stops the scheduler after all active rsync tasks have completed
+// the manual channel is used to manually sync a project, assuming it is not already currently syncing
+func handleRSYNC(config *ConfigFile, status RSYNCStatus, manual <-chan string, stop chan struct{}) {
 	for _, mirror := range config.Mirrors {
 		if mirror.Rsync.SyncsPerDay > 0 {
 			// Store a weeks worth of status messages
@@ -143,8 +205,8 @@ func handleRSYNC(config *ConfigFile, status RSYNCStatus, stop chan struct{}) {
 	}
 
 	// a project can only be syncing once at a time
-	rsyncLock := sync.Mutex{}
-	rsyncLocks := make(map[string]bool)
+	rsyncLock = sync.Mutex{}
+	rsyncLocks = make(map[string]bool)
 	for _, project := range config.Mirrors {
 		rsyncLocks[project.Short] = false
 	}
@@ -190,66 +252,9 @@ func handleRSYNC(config *ConfigFile, status RSYNCStatus, stop chan struct{}) {
 			short, sleep := schedule.NextJob()
 			timer.Reset(sleep + time.Second)
 
-			go func() {
-				logging.Info("Running job: rsync", short)
-
-				// Lock the project
-				rsyncLock.Lock() // start critical section
-				if rsyncLocks[short] {
-					rsyncLock.Unlock() // end critical section
-					logging.Warn("rsync is already running for ", short)
-					return
-				}
-				rsyncLocks[short] = true
-				rsyncLock.Unlock() // end critical section
-
-				start := time.Now()
-
-				// 1 stage syncs are the norm
-				output1, state1 := rsync(config.Mirrors[short], config.Mirrors[short].Rsync.Options)
-				status[short].Push(Status{StartTime: start.Unix(), EndTime: time.Now().Unix(), ExitCode: state1.ExitCode()})
-
-				// append stage 1 to its log file
-				if rsyncLogs != "" {
-					appendToLogFile(short, []byte("\n\n"+start.Format(time.RFC1123)+"\n"))
-					appendToLogFile(short, output1)
-				}
-
-				checkState(short, state1, output1)
-
-				// 2 stage syncs happen sometimes
-				if config.Mirrors[short].Rsync.Second != "" {
-					start = time.Now()
-					output2, state2 := rsync(config.Mirrors[short], config.Mirrors[short].Rsync.Second)
-					status[short].Push(Status{StartTime: start.Unix(), EndTime: time.Now().Unix(), ExitCode: state2.ExitCode()})
-
-					if rsyncLogs != "" {
-						appendToLogFile(short, []byte("\n\n"+start.Format(time.RFC1123)+"\n"))
-						appendToLogFile(short, output2)
-					}
-
-					checkState(short, state2, output2)
-				}
-
-				// A few mirrors are 3 stage syncs
-				if config.Mirrors[short].Rsync.Third != "" {
-					start = time.Now()
-					output3, state3 := rsync(config.Mirrors[short], config.Mirrors[short].Rsync.Third)
-					status[short].Push(Status{StartTime: start.Unix(), EndTime: time.Now().Unix(), ExitCode: state3.ExitCode()})
-
-					if rsyncLogs != "" {
-						appendToLogFile(short, []byte("\n\n"+start.Format(time.RFC1123)+"\n"))
-						appendToLogFile(short, output3)
-					}
-
-					checkState(short, state3, output3)
-				}
-
-				// Unlock the project
-				rsyncLock.Lock()
-				rsyncLocks[short] = false
-				rsyncLock.Unlock()
-			}()
+			go syncProject(config, status, short)
+		case short := <-manual:
+			go syncProject(config, status, short)
 		}
 	}
 }
