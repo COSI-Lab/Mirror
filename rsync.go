@@ -254,6 +254,17 @@ func handleRSYNC(config *ConfigFile, status RSYNCStatus, manual <-chan string, s
 
 			go syncProject(config, status, short)
 		case short := <-manual:
+			// wait for the project to be unlocked
+			for {
+				rsyncLock.Lock()
+				if !rsyncLocks[short] {
+					rsyncLock.Unlock()
+					break
+				}
+				rsyncLock.Unlock()
+				time.Sleep(time.Second)
+			}
+
 			go syncProject(config, status, short)
 		}
 	}
