@@ -113,7 +113,9 @@ func main() {
 	if influxToken == "" {
 		// File to tail NGINX access logs, if empty then we read the static ./access.log file
 		if nginxTail != "" {
-			go ReadLogs(nginxTail, map_entries)
+			// zero date
+			var zero time.Time
+			go ReadLogs(nginxTail, zero, map_entries)
 		} else {
 			go ReadLogFile("access.log", map_entries)
 		}
@@ -124,11 +126,13 @@ func main() {
 		// Stats handling
 		nginx_entries := make(chan *LogEntry, 100)
 
-		InitNGINXStats(config.Mirrors)
+		lastUpdated := InitNGINXStats(config.Mirrors)
 		go HandleNGINXStats(nginx_entries)
 
+		logging.Info("Last updated:", lastUpdated)
+
 		if nginxTail != "" {
-			go ReadLogs(nginxTail, nginx_entries, map_entries)
+			go ReadLogs(nginxTail, lastUpdated, nginx_entries, map_entries)
 		} else {
 			go ReadLogFile("access.log", nginx_entries, map_entries)
 		}

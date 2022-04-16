@@ -1,6 +1,21 @@
 {
   "$schema": "./mirrors.schema.json",
   "mirrors": {
+    "AiryxOS": {
+      "name": "AiryxOS",
+      "page": "Distributions",
+      "rsync": {
+        "host": "mirror2.sandyriver.net",
+        "src": "pub/AiryxOS/",
+        "dest": "/storage/AiryxOS",
+        "options": "-avz --delete --no-inc-recursive",
+        "syncs_per_day": 1
+      },
+      "official": true,
+      "homepage": "https://airyx.org/",
+      "color": "#ff42b0",
+      "publicRsync": false
+    },
     "almalinux": {
       "name": "AlmaLinux",
       "page": "Distributions",
@@ -30,21 +45,6 @@
       "official": false,
       "homepage": "https://www.alpinelinux.org/",
       "color": "#cd5700",
-      "publicRsync": false
-    },
-    "AiryxOS": {
-      "name": "AiryxOS",
-      "page": "Distributions",
-      "rsync": {
-        "host": "mirror2.sandyriver.net",
-        "src": "pub/AiryxOS/",
-        "dest": "/storage/AiryxOS",
-        "options": "-avz --delete --no-inc-recursive",
-        "syncs_per_day": 1
-      },
-      "official": true,
-      "homepage": "https://airyx.org/",
-      "color": "#ff42b0",
       "publicRsync": false
     },
     "archlinux": {

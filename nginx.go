@@ -3,6 +3,7 @@ package main
 import (
 	"bufio"
 	"errors"
+	"io"
 	"net"
 	"os"
 	"regexp"
@@ -71,13 +72,20 @@ func ReadLogFile(logFile string, channels ...chan *LogEntry) (err error) {
 }
 
 // ReadLogs tails a log file and sends the parsed log entries to the specified channels
-func ReadLogs(logFile string, channels ...chan *LogEntry) {
-	// TODO - Right now we're skipping to the end of the file
-	// We could save some persistent state and continue parsing from there
-	// For example save the date and time of the last entry
+func ReadLogs(logFile string, lastUpdated time.Time, channels ...chan *LogEntry) {
+	// Find the offset of the line in which the date is past lastUpdated
+	start := time.Now()
+	offset, err := findOffset(logFile, lastUpdated)
+
+	if err != nil {
+		logging.Warn("ReadLogs failed to find offset", err)
+	} else {
+		logging.Info("Found log file offset in", time.Since(start))
+	}
+
 	seek := tail.SeekInfo{
-		Offset: 0,
-		Whence: os.SEEK_END,
+		Offset: offset,
+		Whence: io.SeekStart,
 	}
 
 	// Tail the log file `tail -F`
@@ -91,6 +99,7 @@ func ReadLogs(logFile string, channels ...chan *LogEntry) {
 
 	for line := range tail.Lines {
 		entry, err := ParseLine(line.Text)
+
 		if err == nil {
 			// Send a pointer to the entry down each channel
 			for _, ch := range channels {
@@ -106,6 +115,76 @@ func ReadLogs(logFile string, channels ...chan *LogEntry) {
 
 	// Tailing this file should never end
 	logging.Panic("No longer reading log file", tail.Err())
+}
+
+// findOffset returns the offset of the log entry which has the smallest date past lastUpdated
+// Since parsing a line is very expensive we use a memory vs time tradeoff
+// First we quickly scan the file line by line to calculate each line's seek offset
+// Then we preform a binary search on the first line that has a date after lastUpdated
+func findOffset(logFile string, lastUpdated time.Time) (offset int64, err error) {
+	f, err := os.Open(logFile)
+	if err != nil {
+		return 0, err
+	}
+
+	// Load all of the line offsets into memory
+	lines := make([]int64, 0)
+
+	// Precalculate the seek offset of each line
+	scanner := bufio.NewScanner(f)
+	for scanner.Scan() {
+		lines = append(lines, offset)
+		offset += int64(len(scanner.Bytes())) + 1
+	}
+
+	// Run a binary search for the first line which is past the lastUpdated
+	start := 0
+	end := len(lines) - 1
+	for start < end {
+		mid := (start + end) / 2
+
+		// Get the text of the line
+		f.Seek(lines[mid], io.SeekStart)
+		scanner := bufio.NewScanner(f)
+		scanner.Scan()
+		line := scanner.Text()
+
+		tm, err := ParseDate(line)
+		if err != nil {
+			return 0, err
+		}
+
+		if tm.After(lastUpdated) {
+			end = mid
+		} else {
+			start = mid + 1
+		}
+	}
+
+	return lines[start], nil
+}
+
+func ParseDate(line string) (time.Time, error) {
+	// "$remote_addr" "$time_local" "$request" "$status" "$body_bytes_sent" "$request_length" "$http_user_agent";
+	quoteList := reQuotes.FindAllString(line, -1)
+
+	if len(quoteList) != 7 {
+		return time.Time{}, errors.New("invalid number of quotes")
+	}
+
+	// Trim quotation marks
+	for i := 0; i < len(quoteList); i++ {
+		quoteList[i] = quoteList[i][1 : len(quoteList[i])-1]
+	}
+
+	// Time
+	t := "02/Jan/2006:15:04:05 -0700"
+	tm, err := time.Parse(t, quoteList[1])
+	if err != nil {
+		return time.Time{}, err
+	}
+
+	return tm, nil
 }
 
 // ParseLine parses a single line of the nginx log file
@@ -136,10 +215,7 @@ func ParseLine(line string) (*LogEntry, error) {
 
 	// Optional GeoIP lookup
 	if geoip != nil {
-		entry.City, err = geoip.GetGeoIP(entry.IP)
-		if err != nil {
-			logging.Warn("Failed to lookup GeoIP: ", err)
-		}
+		entry.City = geoip.GetGeoIP(entry.IP)
 	} else {
 		entry.City = nil
 	}
