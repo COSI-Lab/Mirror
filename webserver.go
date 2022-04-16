@@ -175,7 +175,7 @@ func entriesToMessages(entries chan *LogEntry, messages chan []byte) {
 		prevIP = entry.IP
 
 		// Get the distro
-		project, ok := projects["templeos"]
+		project, ok := projects[entry.Distro]
 		if !ok {
 			continue
 		}
