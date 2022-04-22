@@ -36,15 +36,6 @@ WIP monolithic software for [mirror](https://mirror.clarkson.edu) that handles
 - [x] please use a nicer font
 - [ ] On the stats page please put "construction tux" :)
 
-## Development
-
-First you need to install the latest version of [golang](https://golang.org/doc/install). Then make sure `~/go/bin` is in your `$PATH`. Now you build and run the project using [gin](https://github.com/codegangsta/gin).
-
-```
-go install github.com/codegangsta/gin@latest
-gin --all -p 3002 -b Mirror -i
-```
-
 ## Env File Formatting
 ```
 # Discord Webhook URL and id to ping when things panic

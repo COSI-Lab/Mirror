@@ -6,6 +6,11 @@
     <h2>
         {{ .Name }} {{if .Official }} (Official Mirror) {{ end }}
     </h2>
+    {{ if eq (.SyncStyle) ("static") }} (STATIC) 
+    <p>
+        This project is no longer recieving updates.
+    </p>
+    {{ end }}
     <p>
         HTTP: <a href=http://mirror.clarkson.edu/{{ .Short }}>http://mirror.clarkson.edu/{{ .Short }}</a>
         <br>
@@ -15,11 +20,14 @@
         RSYNC: rsync://mirror.clarkson.edu/{{ .Short }}
         {{ end }}
     </p>
+    {{ if eq (.SyncStyle) ("rsync") }}
     <p>
-        {{ if eq (.SyncStyle) ("rsync") }}
         Upstream Mirror: rsync://{{ .Rsync.Host }}/{{ .Rsync.Src }}
-        {{ end }}
         <br>
+        Syncs per day: {{ .Rsync.SyncsPerDay }}
+    </p>
+    {{ end }}
+    <p>
         Homepage: <a href={{ .HomePage }}>{{ .HomePage }}</a>
     </p>
 </div>
@@ -34,19 +42,27 @@
     <main class="projects">
         {{/* split screen with a table of contents on left and a list of projects on right */}}
         <div style="display: flex; flex-direction: row; justify-content: space-between;">
-            <div style="width: 20%;">
+            <div class="toc" style="width: 20%;">
                 <h3 class="center">Table of Contents</h3>
                 <hr style="padding: 0px">
+                <b> Distributions </b>
                 <ul>
                     {{ range .Distributions }}
                     <li><a href="#{{ .Short }}">{{ .Name }}</a></li>
                     {{ end }}
+                </ul>
+                <b> Software </b>
+                <ul>
                     {{ range .Software }}
                     <li><a href="#{{ .Short }}">{{ .Name }}</a></li>
                     {{ end }}
+                </ul>
+                <b> Miscellaneous </b>
+                <ul>
                     {{ range .Miscellaneous }}
                     <li><a href="#{{ .Short }}">{{ .Name }}</a></li>
                     {{ end }}
+                </ul>
                 </ul>
             </div>
             <div style="width: 75%;">
