@@ -1,10 +1,10 @@
 package main
 
 import (
-	"fmt"
 	"os"
 	"os/signal"
 	"runtime"
+	"runtime/debug"
 	"syscall"
 	"time"
 
@@ -25,6 +25,8 @@ var (
 	influxReadOnly bool
 	// NGINX_TAIL
 	nginxTail string
+	// RSYNCD_TAIL
+	rsyncdTail string
 	// RSYNC_DRY_RUN
 	rsyncDryRun bool
 	// RSYNC_LOGS
@@ -52,6 +54,7 @@ func init() {
 	influxToken = os.Getenv("INFLUX_TOKEN")
 	influxReadOnly = os.Getenv("INFLUX_READ_ONLY") == "true"
 	nginxTail = os.Getenv("NGINX_TAIL")
+	rsyncdTail = os.Getenv("RSYNCD_TAIL")
 	rsyncDryRun = os.Getenv("RSYNC_DRY_RUN") == "true"
 	rsyncLogs = os.Getenv("RSYNC_LOGS")
 	webServerCache = os.Getenv("WEB_SERVER_CACHE") == "true"
@@ -73,6 +76,10 @@ func init() {
 
 	if nginxTail == "" {
 		logging.Warn("No NGINX_TAIL environment variable found. Live tail will not be used and will instead attempt to read ./access.log")
+	}
+
+	if rsyncdTail == "" {
+		logging.Warn("No RSYNCD_TAIL environment variable found. Live tail will not be used and will instead attempt to read ./rsyncd.log")
 	}
 
 	if rsyncDryRun {
@@ -104,11 +111,11 @@ func main() {
 		if r := recover(); r != nil {
 			restartCount++
 			if restartCount > 3 {
-				logging.PanicWithAttachment([]byte(fmt.Sprint(r)), "Program panicked more than 3 times in an hour! Exiting.")
+				logging.PanicWithAttachment(debug.Stack(), "Program panicked more than 3 times in an hour! Exiting.")
 				os.Exit(1)
 			}
 
-			logging.PanicWithAttachment([]byte(fmt.Sprint(r)), "Program panicked and attempted to restart itself. Someone should ssh in and restart me :)")
+			logging.PanicWithAttachment(debug.Stack(), "Program panicked and attempted to restart itself. Someone should ssh in and check it out.")
 			main()
 		}
 	}()
@@ -116,39 +123,57 @@ func main() {
 	// Setup logging
 	logging.Setup(hookURL, pingID)
 
-	// Load environment variables and parse the config file
+	// Parse the config file
 	config := loadConfig()
 
+	// Update the rsyncd.conf file based on the config file
+	createRsyncdConfig(config)
+
 	// We will always run the mirror map
-	map_entries := make(chan *LogEntry, 100)
+	map_entries := make(chan *NginxLogEntry, 100)
 
 	// GeoIP lookup
 	geoip = NewGeoIPHandler(maxmindLicenseKey)
 
 	// Connect to the database
 	if influxToken == "" {
-		// File to tail NGINX access logs, if empty then we read the static ./access.log file
 		if nginxTail != "" {
 			// zero date
 			var zero time.Time
-			go ReadLogs(nginxTail, zero, map_entries)
+			go TailNginxLogFile(nginxTail, zero, map_entries)
 		} else {
-			go ReadLogFile("access.log", map_entries)
+			// if nginxTail is empty we attempt to read a local access log for testing
+			go ReadNginxLogFile("access.log", map_entries)
 		}
 	} else {
 		SetupInfluxClients(influxToken)
 		logging.Success("Connected to InfluxDB")
 
 		// Stats handling
-		nginx_entries := make(chan *LogEntry, 100)
+		nginxEntries := make(chan *NginxLogEntry, 100)
+		rsyncdEntries := make(chan *RsyncdLogEntry, 100)
 
-		lastUpdated := InitNGINXStats(config.Mirrors)
-		go HandleNGINXStats(nginx_entries)
+		lastUpdated, err := InitStatistics(config.Mirrors)
 
-		if nginxTail != "" {
-			go ReadLogs(nginxTail, lastUpdated, nginx_entries, map_entries)
+		if err != nil {
+			logging.Error("Failed to initialize statistics. Not tracking statistics", err)
 		} else {
-			go ReadLogFile("access.log", nginx_entries, map_entries)
+			logging.Success("Initialized statistics")
+			go HandleStatistics(nginxEntries, rsyncdEntries)
+
+			if nginxTail != "" {
+				go TailNginxLogFile(nginxTail, lastUpdated, nginxEntries, map_entries)
+			} else {
+				// if nginxTail is empty we attempt to read a local file for testing
+				go ReadNginxLogFile("access.log", nginxEntries, map_entries)
+			}
+
+			if rsyncdTail != "" {
+				go TailRSyncdLogFile(rsyncdTail, lastUpdated, rsyncdEntries)
+			} else {
+				// if rsyncdTail is empty we attempt to read a local file for testing
+				go ReadRsyncdLogFile("rsyncd.log", rsyncdEntries)
+			}
 		}
 	}
 

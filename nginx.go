@@ -11,6 +11,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/COSI_Lab/Mirror/datarithms"
 	"github.com/COSI_Lab/Mirror/logging"
 	"github.com/nxadm/tail"
 	"github.com/oschwald/geoip2-golang"
@@ -22,8 +23,8 @@ import (
  * access_log /var/log/nginx/access.log config;
  */
 
-// LogEntry is a struct that represents a parsed nginx log entry
-type LogEntry struct {
+// NginxLogEntry is a struct that represents a parsed nginx log entry
+type NginxLogEntry struct {
 	IP        net.IP
 	City      *geoip2.City
 	Time      time.Time
@@ -39,12 +40,8 @@ type LogEntry struct {
 
 var reQuotes = regexp.MustCompile(`"(.*?)"`)
 
-// ReadLogFile is a testing function that simulates tailing a log file by reading it line by line with some delay between lines
-func ReadLogFile(logFile string, channels ...chan *LogEntry) (err error) {
-	if reQuotes == nil {
-		logging.Warn("regexp is nil")
-	}
-
+// ReadNginxLogFile is a testing function that simulates tailing a log file by reading it line by line with some delay between lines
+func ReadNginxLogFile(logFile string, channels ...chan *NginxLogEntry) (err error) {
 	for {
 		f, err := os.Open(logFile)
 		if err != nil {
@@ -53,14 +50,11 @@ func ReadLogFile(logFile string, channels ...chan *LogEntry) (err error) {
 
 		scanner := bufio.NewScanner(f)
 		for scanner.Scan() {
-			entry, err := ParseLine(scanner.Text())
+			entry, err := parseNginxLine(scanner.Text())
 			if err == nil {
 				// Send a pointer to the entry down each channel
 				for ch := range channels {
-					select {
-					case channels[ch] <- entry:
-					default:
-					}
+					channels[ch] <- entry
 				}
 			}
 
@@ -71,102 +65,45 @@ func ReadLogFile(logFile string, channels ...chan *LogEntry) (err error) {
 	}
 }
 
-// ReadLogs tails a log file and sends the parsed log entries to the specified channels
-func ReadLogs(logFile string, lastUpdated time.Time, channels ...chan *LogEntry) {
-	// Find the offset of the line in which the date is past lastUpdated
+// TailNginxLogFile tails a log file and sends the parsed log entries to the specified channels
+func TailNginxLogFile(logFile string, lastUpdated time.Time, channels ...chan *NginxLogEntry) {
+	// Find the offset of the line where the date is past lastUpdated
 	start := time.Now()
-	offset, err := findOffset(logFile, lastUpdated)
-
+	offset, err := datarithms.BinarySearchFileByDate(logFile, lastUpdated, parseNginxDate)
 	if err != nil {
-		logging.Warn("ReadLogs failed to find offset", err)
+		logging.Error(err)
 		return
-	} else {
-		logging.Info("Found log file offset in", time.Since(start))
 	}
+	logging.Info("Found nginx log offset in", time.Since(start))
 
+	// Tail the log file `tail -F` starting at the offset
 	seek := tail.SeekInfo{
 		Offset: offset,
 		Whence: io.SeekStart,
 	}
-
-	// Tail the log file `tail -F`
 	tail, err := tail.TailFile(logFile, tail.Config{Follow: true, ReOpen: true, MustExist: true, Location: &seek})
 	if err != nil {
-		logging.Warn("TailFile failed to start: ", err)
+		logging.Error("Failed to start tailing `nginx.log`:", err)
 		return
 	}
 
 	logging.Success("Tailing nginx log file")
 
+	// Parse each line as we receive it
 	for line := range tail.Lines {
-		entry, err := ParseLine(line.Text)
+		entry, err := parseNginxLine(line.Text)
 
 		if err == nil {
 			// Send a pointer to the entry down each channel
-			for _, ch := range channels {
-				select {
-				case ch <- entry:
-				default:
-					// TODO - right now we're just dropping the log entries if the channels are full.
-					// We should probably do something more intelligent here.
-				}
+			for ch := range channels {
+				channels[ch] <- entry
 			}
 		}
 	}
-
-	// Tailing this file should never end
-	logging.PanicToDiscord("No longer reading log file", tail.Err())
 }
 
-// findOffset returns the offset of the log entry which has the smallest date past lastUpdated
-// Since parsing a line is very expensive we use a memory vs time tradeoff
-// First we quickly scan the file line by line to calculate each line's seek offset
-// Then we preform a binary search on the first line that has a date after lastUpdated
-func findOffset(logFile string, lastUpdated time.Time) (offset int64, err error) {
-	f, err := os.Open(logFile)
-	if err != nil {
-		return 0, err
-	}
-
-	// Load all of the line offsets into memory
-	lines := make([]int64, 0)
-
-	// Precalculate the seek offset of each line
-	scanner := bufio.NewScanner(f)
-	for scanner.Scan() {
-		lines = append(lines, offset)
-		offset += int64(len(scanner.Bytes())) + 1
-	}
-
-	// Run a binary search for the first line which is past the lastUpdated
-	start := 0
-	end := len(lines) - 1
-	for start < end {
-		mid := (start + end) / 2
-
-		// Get the text of the line
-		f.Seek(lines[mid], io.SeekStart)
-		scanner := bufio.NewScanner(f)
-		scanner.Scan()
-		line := scanner.Text()
-
-		tm, err := ParseDate(line)
-		if err != nil {
-			return 0, err
-		}
-
-		if tm.After(lastUpdated) {
-			end = mid
-		} else {
-			start = mid + 1
-		}
-	}
-
-	return lines[start], nil
-}
-
-// ParseDate parses a single line of the nginx log file and returns the time.Time of the line
-func ParseDate(line string) (time.Time, error) {
+// parseNginxDate parses a single line of the nginx log file and returns the time.Time of the line
+func parseNginxDate(line string) (time.Time, error) {
 	// "$remote_addr" "$time_local" "$request" "$status" "$body_bytes_sent" "$request_length" "$http_user_agent";
 	quoteList := reQuotes.FindAllString(line, -1)
 
@@ -184,11 +121,11 @@ func ParseDate(line string) (time.Time, error) {
 	return tm, nil
 }
 
-// ParseLine parses a single line of the nginx log file
+// parseNginxLine parses a single line of the nginx log file
 // It's critical the log file uses the correct format found at the top of this file
 // If the log file is not in the correct format or if some other part of the parsing fails
 // this function will return an error
-func ParseLine(line string) (*LogEntry, error) {
+func parseNginxLine(line string) (*NginxLogEntry, error) {
 	// "$remote_addr" "$time_local" "$request" "$status" "$body_bytes_sent" "$request_length" "$http_user_agent";
 	quoteList := reQuotes.FindAllString(line, -1)
 
@@ -201,7 +138,7 @@ func ParseLine(line string) (*LogEntry, error) {
 		quoteList[i] = quoteList[i][1 : len(quoteList[i])-1]
 	}
 
-	var entry LogEntry
+	var entry NginxLogEntry
 	var err error
 
 	// IPv4 or IPv6 address
