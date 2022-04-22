@@ -3,17 +3,17 @@
 WIP monolithic software for [mirror](https://mirror.clarkson.edu) that handles
 - [x] Defining what projects we host from a centralized config
 - [x] Parsing passwords from config
-- [ ] Generating rsyncd.conf from config
+- [x] Generating rsyncd.conf from config
 - [ ] Manage torrents using config
 - [x] Config reloading using SIGHUP
 - [x] Recording nginx bandwidth per repo
 - [ ] Recording rsync bandwidth
 - [ ] Recording rsyncd bandwidth
 - [ ] Recording tranmission bittorrent bandwidth
-- [x] Exposing nginx bandwidth per repo (pie chart)
+- [ ] Exposing nginx bandwidth per repo (pie chart)
 - [ ] Exposing rsync bandwidth
 - [ ] Exposing tranmission bittorrent bandwidth
-- [x] Exposing total network bandwidth
+- [ ] Exposing total network bandwidth
 - [x] Mirror map of real time downloads
 - [x] Mirror map generated from project config
 - [x] Map pulls the latest version of GeoIP database every day
@@ -27,28 +27,21 @@ WIP monolithic software for [mirror](https://mirror.clarkson.edu) that handles
 - [x] Highlight nav links on hover
 - [x] "Welcome to Mirror" on home page
 - [ ] Mobile friendly navbar
-- [ ] Table of contents on distro and software pages
+- [x] Table of contents on distro and software pages
 - [x] "Designed By: COSI", mirror contact "mirroradmin@clarkson.edu"
-- [ ] Somehow make the map look nice on mobile devices
+- [ ] Make the map look nice on mobile devices
 - [ ] Move the "longer mirror history" off of Meeting Minutes
-- [ ] Need new content about reporting errors and requesting new projects through github issues
+- [ ] New content about reporting errors on github
+- [x] New content on requesting new projects through github issues and email
 - [x] please use a nicer font
 - [ ] On the stats page please put "construction tux" :)
-
-## Development
-
-First you need to install the latest version of [golang](https://golang.org/doc/install). Then make sure `~/go/bin` is in your `$PATH`. Now you build and run the project using [gin](https://github.com/codegangsta/gin).
-
-```
-go install github.com/codegangsta/gin@latest
-gin --all -p 3002 -b Mirror -i
-```
 
 ## Env File Formatting
 ```
 # Discord Webhook URL and id to ping when things panic
 # Omit either and the bot will not communicate with discord
 #HOOK_URL=url
+#PING_ID=id
 
 # Maxmind DB token to update the database, omit and we'll only use a local copy if it exists
 MAXMIND_LICENSE_KEY=key
