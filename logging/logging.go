@@ -10,10 +10,10 @@ import (
 	"time"
 )
 
-type MessageType int
+type messageType int
 
 const (
-	typeInfo MessageType = iota
+	typeInfo messageType = iota
 	typeWarning
 	typeError
 	typePanic
@@ -108,11 +108,11 @@ func sendHook(ping bool, content ...interface{}) {
 	}
 }
 
-func log(messageType MessageType, v ...interface{}) {
+func log(mt messageType, v ...interface{}) {
 	logger.Lock()
 	fmt.Print(time.Now().Format("2006/01/02 15:04:05 "))
 
-	switch messageType {
+	switch mt {
 	case typeInfo:
 		fmt.Print("\033[1m[INFO]    \033[0m| ")
 	case typeWarning:
@@ -140,11 +140,15 @@ func InfoToDiscord(v ...interface{}) {
 
 func InfoWithAttachment(attachment []byte, v ...interface{}) {
 	log(typeInfo, v...)
-	go func() {
-		// TODO handle error returned by sendFile
-		sendFile(attachment)
-		sendHook(false, v...)
-	}()
+	if !logger.sendHooks {
+		log(typeInfo, string(attachment))
+	} else {
+		go func() {
+			// TODO handle error returned by sendFile
+			sendFile(attachment)
+			sendHook(true, v...)
+		}()
+	}
 }
 
 func Warn(v ...interface{}) {
@@ -158,11 +162,15 @@ func WarnToDiscord(v ...interface{}) {
 
 func WarnWithAttachment(attachment []byte, v ...interface{}) {
 	log(typeWarning, v...)
-	go func() {
-		// TODO handle error returned by sendFile
-		sendFile(attachment)
-		sendHook(false, v...)
-	}()
+	if !logger.sendHooks {
+		log(typeWarning, string(attachment))
+	} else {
+		go func() {
+			// TODO handle error returned by sendFile
+			sendFile(attachment)
+			sendHook(true, v...)
+		}()
+	}
 }
 
 func Error(v ...interface{}) {
@@ -176,11 +184,15 @@ func ErrorToDiscord(v ...interface{}) {
 
 func ErrorWithAttachment(attachment []byte, v ...interface{}) {
 	log(typeError, v...)
-	go func() {
-		// TODO handle error returned by sendFile
-		sendFile(attachment)
-		sendHook(false, v...)
-	}()
+	if !logger.sendHooks {
+		log(typeError, string(attachment))
+	} else {
+		go func() {
+			// TODO handle error returned by sendFile
+			sendFile(attachment)
+			sendHook(true, v...)
+		}()
+	}
 }
 
 func Panic(v ...interface{}) {
@@ -194,11 +206,15 @@ func PanicToDiscord(v ...interface{}) {
 
 func PanicWithAttachment(attachment []byte, v ...interface{}) {
 	log(typePanic, v...)
-	go func() {
-		// TODO handle error returned by sendFile
-		sendFile(attachment)
-		sendHook(true, v...)
-	}()
+	if !logger.sendHooks {
+		log(typePanic, string(attachment))
+	} else {
+		go func() {
+			// TODO handle error returned by sendFile
+			sendFile(attachment)
+			sendHook(true, v...)
+		}()
+	}
 }
 
 func Success(v ...interface{}) {
@@ -212,9 +228,13 @@ func SuccessToDiscord(v ...interface{}) {
 
 func SuccessWithAttachment(attachment []byte, v ...interface{}) {
 	log(typeSuccess, v...)
-	go func() {
-		// TODO handle error returned by sendFile
-		sendFile(attachment)
-		sendHook(false, v...)
-	}()
+	if !logger.sendHooks {
+		log(typeSuccess, string(attachment))
+	} else {
+		go func() {
+			// TODO handle error returned by sendFile
+			sendFile(attachment)
+			sendHook(false, v...)
+		}()
+	}
 }

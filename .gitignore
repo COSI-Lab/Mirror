@@ -9,4 +9,5 @@ Mirror
 gin-bin
 
 access.log
+rsyncd.log
 GeoLite2-City.mmdb

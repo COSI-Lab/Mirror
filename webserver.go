@@ -142,7 +142,7 @@ func handleManualSyncs(manual chan<- string) http.HandlerFunc {
 	}
 }
 
-func entriesToMessages(entries chan *LogEntry, messages chan []byte) {
+func entriesToMessages(entries chan *NginxLogEntry, messages chan []byte) {
 	// Send groups of 8 messages
 	ch := make(chan []byte)
 	go func() {
@@ -220,7 +220,7 @@ func WebserverLoadConfig(config *ConfigFile) {
 // HandleWebserver starts the webserver and listens for incoming connections
 // manual is a channel that project short names are sent down to manually trigger a projects rsync
 // entries is a channel that contains log entries that are disabled by the mirror map
-func HandleWebserver(manual chan<- string, entries chan *LogEntry) {
+func HandleWebserver(manual chan<- string, entries chan *NginxLogEntry) {
 	r := mux.NewRouter()
 
 	cache = make(map[string]*CacheEntry)

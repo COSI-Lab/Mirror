@@ -2,6 +2,7 @@ package main
 
 import (
 	"bufio"
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
@@ -10,7 +11,9 @@ import (
 	"regexp"
 	"sort"
 	"strings"
+	"text/template"
 
+	"github.com/COSI_Lab/Mirror/logging"
 	"github.com/xeipuuv/gojsonschema"
 )
 
@@ -209,4 +212,41 @@ func getPassword(filename string) string {
 	password := strings.TrimSpace(string(bytes))
 
 	return string(password)
+}
+
+func createRsyncdConfig(config *ConfigFile) {
+	tmpl := `# This is a generated file. Do not edit manually.
+uid = nobody
+gid = nogroup
+use chroot = yes
+max connections = 40
+pid file = /var/run/rsyncd.pid
+motd file = /etc/rsyncd.motd
+log file = /var/log/rsyncd.log
+log format = %t %o %a %m %f %b
+dont compress = *.gz *.tgz *.zip *.z *.Z *.rpm *.deb *.bz2 *.tbz2 *.xz *.txz *.rar
+refuse options = checksum delete
+{{ range .Mirrors }}
+[{{ .Short }}]
+	comment = {{ .Name }}
+	path = /storage/{{ .Short }}
+	exclude = lost+found/
+	read only = true
+	ignore nonreadable = yes{{ end }}
+`
+
+	// Apply the template
+	t := template.Must(template.New("rsyncd.conf").Parse(tmpl))
+	var buf bytes.Buffer
+	err := t.Execute(&buf, config)
+
+	if err != nil {
+		log.Fatal("Could not create rsyncd.conf: ", err.Error())
+	}
+
+	// save to rsyncd.conf
+	err = os.WriteFile("/etc/rsyncd.conf", buf.Bytes(), 0644)
+	if err != nil {
+		logging.Error("Could not write rsyncd.conf: ", err.Error())
+	}
 }
