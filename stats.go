@@ -25,6 +25,7 @@ type Statistics struct {
 	rsyncd struct {
 		BytesSent int
 		BytesRecv int
+		Requests  int
 	}
 }
 
@@ -63,6 +64,7 @@ func HandleStatistics(nginxEntries chan *NginxLogEntry, rsyncdEntries chan *Rsyn
 			statistics.Lock()
 			statistics.rsyncd.BytesSent += entry.sent
 			statistics.rsyncd.BytesRecv += entry.recv
+			statistics.rsyncd.Requests++
 			statistics.Unlock()
 		}
 	}
@@ -80,6 +82,8 @@ func Sendstatistics() {
 
 	// Create and send points
 	statistics.RLock()
+	defer statistics.RUnlock()
+
 	for short, stat := range statistics.nginx {
 		p := influxdb2.NewPoint("nginx",
 			map[string]string{"distro": short},
@@ -94,9 +98,9 @@ func Sendstatistics() {
 	p := influxdb2.NewPoint("rsyncd", map[string]string{}, map[string]interface{}{
 		"bytes_sent": statistics.rsyncd.BytesSent,
 		"bytes_recv": statistics.rsyncd.BytesRecv,
+		"requests":   statistics.rsyncd.Requests,
 	}, t)
 	writer.WritePoint(p)
-	statistics.RUnlock()
 
 	logging.Info("Sent statistics")
 }
@@ -219,6 +223,14 @@ func QueryStatistics(projects map[string]*Project) (lastUpdated time.Time, err e
 					continue
 				}
 				statistics.rsyncd.BytesRecv = int(received)
+			case "requests":
+				requests, ok := dp.ValueByKey("_value").(int64)
+				if !ok {
+					logging.Warn("Error getting requests")
+					fmt.Printf("%T %v\n", dp.ValueByKey("_value"), dp.ValueByKey("_value"))
+					continue
+				}
+				statistics.rsyncd.Requests = int(requests)
 			}
 		} else {
 			logging.Warn("InitNGINXStats Flux Query Error", result.Err())
@@ -261,7 +273,7 @@ func QueryRsyncdStatistics() (result *api.QueryTableResult, err error) {
 		from(bucket: "stats")
 		    |> range(start: 0, stop: now())
 		    |> filter(fn: (r) => r["_measurement"] == "rsyncd")
-		    |> filter(fn: (r) => r["_field"] == "bytes_sent" or r["_field"] == "bytes_recv")
+		    |> filter(fn: (r) => r["_field"] == "bytes_sent" or r["_field"] == "bytes_recv" or r["_field"] == "requests")
 		    |> last()
 	*/
 	const request = "from(bucket: \"stats\") |> range(start: 0, stop: now()) |> filter(fn: (r) => r[\"_measurement\"] == \"rsyncd\") |> filter(fn: (r) => r[\"_field\"] == \"bytes_sent\" or r[\"_field\"] == \"bytes_recv\") |> last()"
