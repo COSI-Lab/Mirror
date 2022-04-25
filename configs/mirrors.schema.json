@@ -122,6 +122,11 @@
           "publicRsync": {
             "type": "boolean",
             "description": "true if we want rsyncd to serve this repo"
+          },
+          "alternative": {
+            "type": "string",
+            "description": "HTTP Url to another nearby site that hosts the same content that we can forward to incase there is an interruption to Mirror",
+            "pattern": "http?://.*/"
           }
         },
         "required": [
@@ -130,7 +135,8 @@
           "page",
           "homepage",
           "color",
-          "publicRsync"
+          "publicRsync",
+          "alternative"
         ],
         "oneOf": [
           {

@@ -14,7 +14,8 @@
       "official": true,
       "homepage": "https://airyx.org/",
       "color": "#ff42b0",
-      "publicRsync": false
+      "publicRsync": false,
+      "alternative": "http://mirror2.sandyriver.net/pub/AiryxOS/"
     },
     "almalinux": {
       "name": "AlmaLinux",
@@ -29,7 +30,8 @@
       "official": false,
       "homepage": "https://almalinux.org",
       "color": "#7851a9",
-      "publicRsync": false
+      "publicRsync": false,
+      "alternative": "http://mirror.lshiy.com/almalinux/"
     },
     "alpine": {
       "name": "Alpine Linux",
@@ -42,10 +44,11 @@
         "sync_file": "last-updated",
         "syncs_per_day": 4
       },
-      "official": false,
+      "official": true,
       "homepage": "https://www.alpinelinux.org/",
       "color": "#cd5700",
-      "publicRsync": false
+      "publicRsync": false,
+      "alternative": "http://ewr.edge.kernel.org/alpine/"
     },
     "archlinux": {
       "name": "Arch Linux",
@@ -60,7 +63,8 @@
       "official": true,
       "homepage": "http://www.archlinux.org/",
       "color": "#f0d4f0",
-      "publicRsync": false
+      "publicRsync": false,
+      "alternative": "http://mirrors.rit.edu/archlinux/"
     },
     "archlinux32": {
       "name": "Arch Linux 32",
@@ -75,7 +79,8 @@
       "official": true,
       "homepage": "http://www.archlinux32.org/",
       "color": "#d8bfd8",
-      "publicRsync": false
+      "publicRsync": false,
+      "alternative": "http://mirror.math.princeton.edu/pub/archlinux32/"
     },
     "artix-linux": {
       "name": "Artix Linux",
@@ -90,7 +95,8 @@
       "official": true,
       "homepage": "https://artixlinux.org/",
       "color": "#de6fa1",
-      "publicRsync": false
+      "publicRsync": false,
+      "alternative": "http://mirrors.dotsrc.org/artix-linux/"
     },
     "blender": {
       "name": "Blender",
@@ -107,7 +113,8 @@
       "official": true,
       "homepage": " https://www.blender.org",
       "color": "#eb7700",
-      "publicRsync": false
+      "publicRsync": false,
+      "alternative": "http://mirrors.ocf.berkeley.edu/blender/"
     },
     "centos": {
       "name": "CentOS (<8)",
@@ -122,7 +129,8 @@
       "official": true,
       "homepage": " https://www.centos.org/",
       "color": "#0abab5",
-      "publicRsync": false
+      "publicRsync": false,
+      "alternative": "http://mirrors.rit.edu/centos/"
     },
     "centos9": {
       "name": "CentOS Stream 9",
@@ -137,7 +145,8 @@
       "official": false,
       "homepage": "https://centos.org/",
       "color": "#000000",
-      "publicRsync": false
+      "publicRsync": false,
+      "alternative": "http://mirror.siena.edu/centos-stream/"
     },
     "cpan": {
       "name": "CPAN",
@@ -152,7 +161,8 @@
       "official": false,
       "homepage": "http://www.cpan.org/",
       "color": "#dbd7d2",
-      "publicRsync": false
+      "publicRsync": false,
+      "alternative": "http://mirrors.rit.edu/CPAN/"
     },
     "cran": {
       "name": "CRAN",
@@ -167,7 +177,8 @@
       "official": false,
       "homepage": " http://cran.r-project.org/",
       "color": "#eee600",
-      "publicRsync": false
+      "publicRsync": false,
+      "alternative": "http://mirror.las.iastate.edu/CRAN/"
     },
     "ctan": {
       "name": "CTAN",
@@ -182,7 +193,8 @@
       "official": false,
       "homepage": "http://www.ctan.org/",
       "color": "#ff6347",
-      "publicRsync": false
+      "publicRsync": false,
+      "alternative": "http://mirrors.rit.edu/CTAN/"
     },
     "cygwin": {
       "name": "Cygwin",
@@ -197,7 +209,8 @@
       "official": true,
       "homepage": "https://www.cygwin.com/",
       "color": "#746cc0",
-      "publicRsync": false
+      "publicRsync": false,
+      "alternative": "http://mirrors.rit.edu/cygwin/"
     },
     "debian": {
       "name": "Debian",
@@ -213,7 +226,8 @@
       "official": false,
       "homepage": "https://www.debian.org",
       "color": "#ffc87c",
-      "publicRsync": false
+      "publicRsync": false,
+      "alternative": "http://mirrors.rit.edu/debian/"
     },
     "debian-cd": {
       "name": "Debian Images",
@@ -228,7 +242,8 @@
       "official": false,
       "homepage": "https://www.debian.org/CD/",
       "color": "#ffc87c",
-      "publicRsync": false
+      "publicRsync": false,
+      "alternative": "http://debian.osuosl.org/debian-cdimage/"
     },
     "eclipse": {
       "name": "Eclipse",
@@ -245,7 +260,8 @@
       "official": true,
       "homepage": "https://www.eclipse.org/",
       "color": "#00755e",
-      "publicRsync": false
+      "publicRsync": false,
+      "alternative": "http://mirror.umd.edu/eclipse/"
     },
     "gentoo": {
       "name": "Gentoo",
@@ -260,7 +276,8 @@
       "official": false,
       "homepage": "https://www.gentoo.org/",
       "color": "#30d5c8",
-      "publicRsync": false
+      "publicRsync": false,
+      "alternative": "http://mirrors.rit.edu/gentoo/"
     },
     "gentoo-portage": {
       "name": "Gentoo Portage",
@@ -275,7 +292,8 @@
       "official": false,
       "homepage": "https://www.gentoo.org/",
       "color": "#30d5c8",
-      "publicRsync": false
+      "publicRsync": false,
+      "alternative": "http://mirrors.rit.edu/gentoo-rsync/"
     },
     "ipfire": {
       "name": "IPFire",
@@ -290,7 +308,8 @@
       "official": true,
       "homepage": "https://www.ipfire.org/",
       "color": "#7c4848",
-      "publicRsync": false
+      "publicRsync": false,
+      "alternative": "http://mirrors.rit.edu/ipfire/"
     },
     "isabelle": {
       "name": "Isabelle",
@@ -305,7 +324,8 @@
       "official": true,
       "homepage": "https://isabelle.in.tum.de/",
       "color": "#8a496b",
-      "publicRsync": false
+      "publicRsync": false,
+      "alternative": "http://mirror.cse.unsw.edu.au/pub/isabelle/"
     },
     "linux": {
       "name": "Linux (including source)",
@@ -320,7 +340,8 @@
       "official": true,
       "homepage": "http://kernel.org",
       "color": "#930056",
-      "publicRsync": false
+      "publicRsync": false,
+      "alternative": "http://mirrors.edge.kernel.org/pub/"
     },
     "linuxmint-images": {
       "name": "LinuxMint (images)",
@@ -328,14 +349,15 @@
       "rsync": {
         "host": "pub.linuxmint.com",
         "src": "pub",
-        "dest": "/storage/linuxmint-iso/images",
+        "dest": "/storage/linuxmint-images",
         "options": "-avzrH --no-owner --no-group --delete --delete-delay --delay-updates --ignore-errors --exclude \".~tmp~\"",
         "syncs_per_day": 1
       },
       "official": true,
       "homepage": "https://linuxmint.com/",
       "color": "#62b858",
-      "publicRsync": false
+      "publicRsync": false,
+      "alternative": "http://mirrors.advancedhosters.com/linuxmint/isos/"
     },
     "linuxmint-packages": {
       "name": "LinuxMint (packages)",
@@ -351,7 +373,8 @@
       "official": true,
       "homepage": "https://linuxmint.com/",
       "color": "#62b858",
-      "publicRsync": false
+      "publicRsync": false,
+      "alternative": "http://mirror.csclub.uwaterloo.ca/linuxmint-packages/"
     },
     "manjaro": {
       "name": "Manjaro",
@@ -366,7 +389,8 @@
       "official": true,
       "homepage": "https://manjaro.org/",
       "color": "#d9004c",
-      "publicRsync": false
+      "publicRsync": false,
+      "alternative": "http://mirror.math.princeton.edu/pub/manjaro/"
     },
     "msys2": {
       "name": "msys2",
@@ -381,7 +405,8 @@
       "official": true,
       "homepage": "https://www.msys2.org/",
       "color": "#8878c3",
-      "publicRsync": false
+      "publicRsync": false,
+      "alternative": "http://mirror.umd.edu/msys2/"
     },
     "opensuse": {
       "name": "OpenSUSE",
@@ -396,7 +421,8 @@
       "official": true,
       "homepage": "https://www.opensuse.org/",
       "color": "#4bb679",
-      "publicRsync": false
+      "publicRsync": false,
+      "alternative": "http://mirrors.rit.edu/opensuse/"
     },
     "parrot": {
       "name": "Parrot Security OS",
@@ -411,7 +437,8 @@
       "official": true,
       "homepage": "https://www.parrotsec.org/",
       "color": "#ff6fff",
-      "publicRsync": false
+      "publicRsync": false,
+      "alternative": "http://mirrors.mit.edu/parrot/"
     },
     "raspian": {
       "name": "Raspbian",
@@ -426,7 +453,8 @@
       "official": false,
       "homepage": "https://www.raspbian.org/",
       "color": "#c51d4a",
-      "publicRsync": false
+      "publicRsync": false,
+      "alternative": "http://mirrors.mit.edu/raspbian/"
     },
     "RebornOS": {
       "name": "RebornOS",
@@ -441,7 +469,8 @@
       "official": true,
       "homepage": "https://rebornos.org/",
       "color": "#1e73be",
-      "publicRsync": false
+      "publicRsync": false,
+      "alternative": "http://repo.rebornos.org/RebornOS/"
     },
     "slackware": {
       "name": "Slackware",
@@ -456,7 +485,8 @@
       "official": false,
       "homepage": "https://www.slackware.com/",
       "color": "#b78727",
-      "publicRsync": false
+      "publicRsync": false,
+      "alternative": "http://mirror.math.princeton.edu/pub/slackware/"
     },
     "slitaz": {
       "name": "SliTaz Linux",
@@ -471,19 +501,21 @@
       "official": true,
       "homepage": "http://www.slitaz.org/en/",
       "color": "#ffff60",
-      "publicRsync": false
+      "publicRsync": false,
+      "alternative": "http://mirror1.slitaz.org/"
     },
     "templeos": {
       "name": "TempleOS",
       "page": "Software",
       "static": {
         "location": "/storage/templeos",
-        "source": "https://templeos.org/Downloads/"
+        "source": "https://templeos.org/"
       },
       "official": false,
       "homepage": "https://templeos.org/",
       "color": "#efcc00",
-      "publicRsync": false
+      "publicRsync": false,
+      "alternative": "http://templeos.org/"
     },
     "tdf": {
       "name": "LibreOffice",
@@ -498,7 +530,8 @@
       "official": true,
       "homepage": "http://www.documentfoundation.org/",
       "color": "#00a500",
-      "publicRsync": false
+      "publicRsync": false,
+      "alternative": "http://ftp.osuosl.org/pub/tdf/"
     },
     "ubuntu": {
       "name": "Ubuntu",
@@ -514,7 +547,8 @@
       "official": true,
       "homepage": "https://www.ubuntu.com/",
       "color": "#ffd300",
-      "publicRsync": false
+      "publicRsync": false,
+      "alternative": "http://mirrors.mit.edu/ubuntu/"
     },
     "ubuntu-releases": {
       "name": "Ubuntu Releases",
@@ -529,7 +563,8 @@
       "official": true,
       "homepage": "https://ubuntu.com/#download",
       "color": "#ffd300",
-      "publicRsync": false
+      "publicRsync": false,
+      "alternative": "http://mirrors.mit.edu/ubuntu-releases/"
     },
     "ubuntu-cdimage": {
       "name": "Ubuntu CD Images (Kubuntu, Xubuntu, Mate, etc.)",
@@ -544,7 +579,8 @@
       "official": true,
       "homepage": "https://ubuntu.com/download/flavours",
       "color": "#ffd300",
-      "publicRsync": false
+      "publicRsync": false,
+      "alternative": "http://mirrors.mit.edu/ubuntu-cdimage/"
     },
     "ubuntu-ports": {
       "name": "Ubuntu Ports",
@@ -560,7 +596,8 @@
       "official": true,
       "homepage": "",
       "color": "#ffd300",
-      "publicRsync": false
+      "publicRsync": false,
+      "alternative": "http://mirrors.mit.edu/ubuntu-ports/"
     },
     "videolan": {
       "name": "VLC",
@@ -575,7 +612,8 @@
       "official": true,
       "homepage": "https://www.videolan.org/index.html",
       "color": "#bb85fc",
-      "publicRsync": false
+      "publicRsync": false,
+      "alternative": "http://ftp.osuosl.org/pub/videolan/"
     },
     "voidlinux": {
       "name": "VoidLinux",
@@ -592,7 +630,8 @@
       "official": true,
       "homepage": "https://www.voidlinux.org/",
       "color": "#000000",
-      "publicRsync": false
+      "publicRsync": false,
+      "alternative": "http://mirrors.servercentral.com/voidlinux/"
     },
     "zorinos": {
       "name": "Zorin OS",
@@ -607,7 +646,8 @@
       "official": true,
       "homepage": "https://zorinos.com/",
       "color": "#fc6c85",
-      "publicRsync": false
+      "publicRsync": false,
+      "alternative": "http://mirror.umd.edu/zorin/"
     }
   }
 }
