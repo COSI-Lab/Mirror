@@ -130,7 +130,7 @@ func handleManualSyncs(manual chan<- string) http.HandlerFunc {
 		}
 
 		// Check that the access token matches
-		if project.AccessToken != "" && project.AccessToken != token {
+		if (project.AccessToken != "" && project.AccessToken != token) || (pullToken != "" && token == pullToken) {
 			http.Error(w, "Invalid access token", http.StatusForbidden)
 			return
 		}

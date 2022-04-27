@@ -8,7 +8,7 @@ WIP monolithic software for [mirror](https://mirror.clarkson.edu) that handles
 - [x] Config reloading using SIGHUP
 - [x] Recording nginx bandwidth per repo
 - [ ] Recording rsync bandwidth
-- [ ] Recording rsyncd bandwidth
+- [x] Recording rsyncd bandwidth
 - [ ] Recording tranmission bittorrent bandwidth
 - [ ] Exposing nginx bandwidth per repo (pie chart)
 - [ ] Exposing rsync bandwidth
@@ -55,6 +55,9 @@ INFLUX_READ_ONLY=true
 # File to tail NGINX access logs, if empty then we read the static ./access.log file
 NGINX_TAIL=/var/log/nginx/access.log
 
+# File to tail rsyncd log file. If empty then we read a local ./rsyncd.log file
+RSYNCD_TAIL=/var/log/rsyncd.log
+
 # "true" if the --dry-run flag to the rsync jobs
 RSYNC_DRY_RUN=true
 
@@ -63,6 +66,9 @@ RSYNC_LOGS=/tmp/mirror/
 
 # If we should cache the result of executing templates
 WEB_SERVER_CACHE=true
+
+# Secret push token
+PULL_TOKEN=RK8LsZdMfCqYjCks
 ```
 
 ## GeoLite2 Attribution
