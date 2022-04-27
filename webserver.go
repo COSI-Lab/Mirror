@@ -129,13 +129,18 @@ func handleManualSyncs(manual chan<- string) http.HandlerFunc {
 			return
 		}
 
-		if (pullToken != "" && pullToken == token) || (project.AccessToken != "" && token == project.AccessToken) {
+		if token == "" {
+			http.Error(w, "Invalid access token", http.StatusForbidden)
+			return
+		}
+
+		if token == pullToken || token == project.AccessToken {
+			// Return a success message
+			fmt.Fprintf(w, "Sync requested for project: %s", projectName)
+
 			// Sync the project
 			logging.InfoToDiscord("**INFO** Manual sync requested for project: _", projectName, "_")
 			manual <- projectName
-
-			// Return a success message
-			fmt.Fprintf(w, "Sync requested for project: %s", projectName)
 		} else {
 			http.Error(w, "Invalid access token", http.StatusForbidden)
 		}
