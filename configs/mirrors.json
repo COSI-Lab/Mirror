@@ -8,13 +8,14 @@
         "host": "mirror2.sandyriver.net",
         "src": "pub/AiryxOS/",
         "dest": "/storage/AiryxOS",
-        "options": "-avz --delete --no-inc-recursive",
+        "options": "-avz --no-perms --no-owner --no-group --delete --no-inc-recursive",
         "syncs_per_day": 1
       },
       "official": true,
       "homepage": "https://airyx.org/",
       "color": "#ff42b0",
-      "publicRsync": false
+      "publicRsync": false,
+      "alternative": "http://mirror2.sandyriver.net/pub/AiryxOS/"
     },
     "almalinux": {
       "name": "AlmaLinux",
@@ -23,13 +24,14 @@
         "host": "rsync.repo.almalinux.org",
         "src": "almalinux",
         "dest": "/storage/almalinux",
-        "options": "-avzrH --no-owner --no-group --delete --delete-delay --delay-updates --ignore-errors --exclude \".~tmp~\"",
+        "options": "-avzrH --no-perms --no-owner --no-group --delete --delete-delay --delay-updates --ignore-errors --exclude \".~tmp~\"",
         "syncs_per_day": 8
       },
       "official": false,
       "homepage": "https://almalinux.org",
       "color": "#7851a9",
-      "publicRsync": false
+      "publicRsync": false,
+      "alternative": "http://mirror.lshiy.com/almalinux/"
     },
     "alpine": {
       "name": "Alpine Linux",
@@ -38,14 +40,15 @@
         "host": "rsync.alpinelinux.org",
         "src": "alpine",
         "dest": "/storage/alpine",
-        "options": "-avzrH --no-owner --no-group --delete --delete-delay --delay-updates --ignore-errors --exclude \".~tmp~\"",
+        "options": "-avzrH --no-perms --no-owner --no-group --delete --delete-delay --delay-updates --ignore-errors --exclude \".~tmp~\"",
         "sync_file": "last-updated",
         "syncs_per_day": 4
       },
-      "official": false,
+      "official": true,
       "homepage": "https://www.alpinelinux.org/",
       "color": "#cd5700",
-      "publicRsync": false
+      "publicRsync": false,
+      "alternative": "http://ewr.edge.kernel.org/alpine/"
     },
     "archlinux": {
       "name": "Arch Linux",
@@ -54,13 +57,14 @@
         "host": "mirrors.rit.edu",
         "src": "archlinux",
         "dest": "/storage/archlinux",
-        "options": "-vrlptH --no-owner --no-group --safe-links --delete-delay --delay-updates",
+        "options": "-vrlptH --no-perms --no-owner --no-group --safe-links --delete-delay --delay-updates",
         "syncs_per_day": 12
       },
       "official": true,
       "homepage": "http://www.archlinux.org/",
       "color": "#f0d4f0",
-      "publicRsync": false
+      "publicRsync": false,
+      "alternative": "http://mirrors.rit.edu/archlinux/"
     },
     "archlinux32": {
       "name": "Arch Linux 32",
@@ -69,13 +73,14 @@
         "host": "mirror.archlinux32.org",
         "src": "archlinux32",
         "dest": "/storage/archlinux32",
-        "options": "-rtlvH --no-owner --no-group --delete-after --delay-updates --safe-links",
+        "options": "-rtlvH --no-perms --no-owner --no-group --delete-after --delay-updates --safe-links",
         "syncs_per_day": 4
       },
       "official": true,
       "homepage": "http://www.archlinux32.org/",
       "color": "#d8bfd8",
-      "publicRsync": false
+      "publicRsync": false,
+      "alternative": "http://mirror.math.princeton.edu/pub/archlinux32/"
     },
     "artix-linux": {
       "name": "Artix Linux",
@@ -84,13 +89,14 @@
         "host": "mirror1.artixlinux.org",
         "src": "artix-linux",
         "dest": "/storage/artix-linux/repos",
-        "options": "-rtlvH --no-owner --no-group --delete-after --delay-updates --safe-links",
+        "options": "-rtlvH --no-perms --no-owner --no-group --delete-after --delay-updates --safe-links",
         "syncs_per_day": 3
       },
       "official": true,
       "homepage": "https://artixlinux.org/",
       "color": "#de6fa1",
-      "publicRsync": false
+      "publicRsync": false,
+      "alternative": "http://mirrors.dotsrc.org/artix-linux/"
     },
     "blender": {
       "name": "Blender",
@@ -100,14 +106,15 @@
         "host": "download.blender.org",
         "src": "blender",
         "dest": "/storage/blender",
-        "options": "-avzrH --no-owner --no-group --exclude \".~tmp~\"",
+        "options": "-avzrH --no-perms --no-owner --no-group --exclude \".~tmp~\"",
         "syncs_per_day": 6,
         "password_file": "blender.secret"
       },
       "official": true,
       "homepage": " https://www.blender.org",
       "color": "#eb7700",
-      "publicRsync": false
+      "publicRsync": false,
+      "alternative": "http://mirrors.ocf.berkeley.edu/blender/"
     },
     "centos": {
       "name": "CentOS (<8)",
@@ -116,13 +123,14 @@
         "host": "msync.centos.org",
         "src": "CentOS",
         "dest": "/storage/centos",
-        "options": "-avzrH -4 --no-owner --no-group --delete --delete-delay --delay-updates --ignore-errors --exclude \".~tmp~\"",
+        "options": "-avzrH -4 --no-perms --no-owner --no-group --delete --delete-delay --delay-updates --ignore-errors --exclude \".~tmp~\"",
         "syncs_per_day": 2
       },
       "official": true,
       "homepage": " https://www.centos.org/",
       "color": "#0abab5",
-      "publicRsync": false
+      "publicRsync": false,
+      "alternative": "http://mirrors.rit.edu/centos/"
     },
     "centos9": {
       "name": "CentOS Stream 9",
@@ -131,13 +139,14 @@
         "host": "rsync.stream.centos.org",
         "src": "CentOS-Stream-All",
         "dest": "/storage/centos9",
-        "options": "-aqzH --delete",
+        "options": "-aqzH --no-perms --no-owner --no-group --delete",
         "syncs_per_day": 4
       },
       "official": false,
       "homepage": "https://centos.org/",
       "color": "#000000",
-      "publicRsync": false
+      "publicRsync": false,
+      "alternative": "http://mirror.siena.edu/centos-stream/"
     },
     "cpan": {
       "name": "CPAN",
@@ -146,13 +155,14 @@
         "host": "mirrors.rit.edu",
         "src": "cpan",
         "dest": "/storage/cpan",
-        "options": "-avzrH --no-owner --no-group --delete --delete-delay --delay-updates --ignore-errors --exclude \".~tmp~\"",
+        "options": "-avzrH --no-perms --no-owner --no-group --delete --delete-delay --delay-updates --ignore-errors --exclude \".~tmp~\"",
         "syncs_per_day": 2
       },
       "official": false,
       "homepage": "http://www.cpan.org/",
       "color": "#dbd7d2",
-      "publicRsync": false
+      "publicRsync": false,
+      "alternative": "http://mirrors.rit.edu/CPAN/"
     },
     "cran": {
       "name": "CRAN",
@@ -161,13 +171,14 @@
         "host": "cran.r-project.org",
         "src": "CRAN",
         "dest": "/storage/cran",
-        "options": "-rtlzv --no-owner --no-group --delete",
+        "options": "-rtlzv --no-perms --no-owner --no-group --delete",
         "syncs_per_day": 1
       },
       "official": false,
       "homepage": " http://cran.r-project.org/",
       "color": "#eee600",
-      "publicRsync": false
+      "publicRsync": false,
+      "alternative": "http://mirror.las.iastate.edu/CRAN/"
     },
     "ctan": {
       "name": "CTAN",
@@ -176,13 +187,14 @@
         "host": "ctan.math.utah.edu",
         "src": "CTAN",
         "dest": "/storage/ctan",
-        "options": "-avzrH --no-owner --no-group --delete --delete-delay --delay-updates --ignore-errors --exclude \".~tmp~\"",
+        "options": "-avzrH --no-perms --no-owner --no-group --delete --delete-delay --delay-updates --ignore-errors --exclude \".~tmp~\"",
         "syncs_per_day": 2
       },
       "official": false,
       "homepage": "http://www.ctan.org/",
       "color": "#ff6347",
-      "publicRsync": false
+      "publicRsync": false,
+      "alternative": "http://mirrors.rit.edu/CTAN/"
     },
     "cygwin": {
       "name": "Cygwin",
@@ -191,13 +203,14 @@
         "host": "cygwin.org",
         "src": "cygwin-ftp",
         "dest": "/storage/cygwin",
-        "options": "-avzrH --no-owner --no-group --delete --delete-delay --delay-updates --ignore-errors --exclude \".~tmp~\"",
+        "options": "-avzrH --no-perms --no-owner --no-group --delete --delete-delay --delay-updates --ignore-errors --exclude \".~tmp~\"",
         "syncs_per_day": 2
       },
       "official": true,
       "homepage": "https://www.cygwin.com/",
       "color": "#746cc0",
-      "publicRsync": false
+      "publicRsync": false,
+      "alternative": "http://mirrors.rit.edu/cygwin/"
     },
     "debian": {
       "name": "Debian",
@@ -206,14 +219,15 @@
         "host": "rsync.osuosl.org",
         "src": "debian",
         "dest": "/storage/debian",
-        "options": "--no-owner --no-group --exclude Packages* --exclude Sources* --exclude Release* --exclude=InRelease --include=i18n/by-hash/** --exclude=i18n/* --exclude ls-lR*",
-        "second": "-vrtlH --no-owner --no-group --safe-links --delete --delete-after",
+        "options": "--no-perms --no-owner --no-group --exclude Packages* --exclude Sources* --exclude Release* --exclude=InRelease --include=i18n/by-hash/** --exclude=i18n/* --exclude ls-lR*",
+        "second": "-vrtlH --no-perms --no-owner --no-group --safe-links --delete --delete-after",
         "syncs_per_day": 4
       },
       "official": false,
       "homepage": "https://www.debian.org",
       "color": "#ffc87c",
-      "publicRsync": false
+      "publicRsync": false,
+      "alternative": "http://mirrors.rit.edu/debian/"
     },
     "debian-cd": {
       "name": "Debian Images",
@@ -222,13 +236,14 @@
         "host": "cdimage.debian.org",
         "src": "debian-cd",
         "dest": "/storage/debian-cd",
-        "options": "-avzrH --no-owner --no-group --delete --delete-delay --delay-updates --ignore-errors --exclude \".~tmp~\"",
+        "options": "-avzrH --no-perms --no-owner --no-group --delete --delete-delay --delay-updates --ignore-errors --exclude \".~tmp~\"",
         "syncs_per_day": 4
       },
       "official": false,
       "homepage": "https://www.debian.org/CD/",
       "color": "#ffc87c",
-      "publicRsync": false
+      "publicRsync": false,
+      "alternative": "http://debian.osuosl.org/debian-cdimage/"
     },
     "eclipse": {
       "name": "Eclipse",
@@ -237,15 +252,16 @@
         "host": "download.eclipse.org",
         "src": "eclipseMirror",
         "dest": "/storage/eclipse",
-        "options": "-tlvp --no-owner --no-group --include='TIME' --exclude='*'",
-        "second": "-rtvp --delete --no-owner --no-group",
-        "third": "-tvp --no-owner --no-group --include='ztime' --include='ztime/*' --exclude='*'",
+        "options": "-tlvp --no-perms --no-owner --no-group --include='TIME' --exclude='*'",
+        "second": "-rtvp --delete --no-perms --no-owner --no-group",
+        "third": "-tvp --no-perms --no-owner --no-group --include='ztime' --include='ztime/*' --exclude='*'",
         "syncs_per_day": 1
       },
       "official": true,
       "homepage": "https://www.eclipse.org/",
       "color": "#00755e",
-      "publicRsync": false
+      "publicRsync": false,
+      "alternative": "http://mirror.umd.edu/eclipse/"
     },
     "gentoo": {
       "name": "Gentoo",
@@ -254,13 +270,14 @@
         "host": "masterdistfiles.gentoo.org",
         "src": "gentoo",
         "dest": "/storage/gentoo",
-        "options": "-avzrH --no-owner --no-group --delete --delete-delay --delay-updates --ignore-errors --exclude \".~tmp~\" --exclude \"/releases/historical\"",
+        "options": "-avzrH --no-perms --no-owner --no-group --delete --delete-delay --delay-updates --ignore-errors --exclude \".~tmp~\" --exclude \"/releases/historical\"",
         "syncs_per_day": 6
       },
       "official": false,
       "homepage": "https://www.gentoo.org/",
       "color": "#30d5c8",
-      "publicRsync": false
+      "publicRsync": false,
+      "alternative": "http://mirrors.rit.edu/gentoo/"
     },
     "gentoo-portage": {
       "name": "Gentoo Portage",
@@ -269,13 +286,14 @@
         "host": "rsync11.us.gentoo.org",
         "src": "gentoo-portage",
         "dest": "/storage/gentoo-portage",
-        "options": "-avzrH --no-owner --no-group --delete --delete-delay --delay-updates --ignore-errors --exclude \".~tmp~\"",
+        "options": "-avzrH --no-perms --no-owner --no-group --delete --delete-delay --delay-updates --ignore-errors --exclude \".~tmp~\"",
         "syncs_per_day": 24
       },
       "official": false,
       "homepage": "https://www.gentoo.org/",
       "color": "#30d5c8",
-      "publicRsync": false
+      "publicRsync": false,
+      "alternative": "http://mirrors.rit.edu/gentoo-rsync/"
     },
     "ipfire": {
       "name": "IPFire",
@@ -284,13 +302,14 @@
         "host": "rsync.ipfire.org",
         "src": "full",
         "dest": "/storage/ipfire",
-        "options": "-avzrH --no-owner --no-group --delete --delete-delay --delay-updates --ignore-errors --exclude \".~tmp~\"",
+        "options": "-avzrH --no-perms --no-owner --no-group --delete --delete-delay --delay-updates --ignore-errors --exclude \".~tmp~\"",
         "syncs_per_day": 24
       },
       "official": true,
       "homepage": "https://www.ipfire.org/",
       "color": "#7c4848",
-      "publicRsync": false
+      "publicRsync": false,
+      "alternative": "http://mirrors.rit.edu/ipfire/"
     },
     "isabelle": {
       "name": "Isabelle",
@@ -299,13 +318,14 @@
         "host": "isabelle.in.tum.de",
         "src": "isabelle-website",
         "dest": "/storage/isabelle",
-        "options": "-avzrH --no-owner --no-group --delete --delete-delay --delay-updates --ignore-errors --exclude \".~tmp~\"",
+        "options": "-avzrH --no-perms --no-owner --no-group --delete --delete-delay --delay-updates --ignore-errors --exclude \".~tmp~\"",
         "syncs_per_day": 2
       },
       "official": true,
       "homepage": "https://isabelle.in.tum.de/",
       "color": "#8a496b",
-      "publicRsync": false
+      "publicRsync": false,
+      "alternative": "http://mirror.cse.unsw.edu.au/pub/isabelle/"
     },
     "linux": {
       "name": "Linux (including source)",
@@ -314,13 +334,14 @@
         "host": "rsync.kernel.org",
         "src": "pub/linux",
         "dest": "/storage/linux",
-        "options": "-avzrH --no-owner --no-group --delete --delete-delay --delay-updates --ignore-errors --exclude \".~tmp~\"",
+        "options": "-avzrH --no-perms --no-owner --no-group --delete --delete-delay --delay-updates --ignore-errors --exclude \".~tmp~\"",
         "syncs_per_day": 4
       },
       "official": true,
       "homepage": "http://kernel.org",
       "color": "#930056",
-      "publicRsync": false
+      "publicRsync": false,
+      "alternative": "http://mirrors.edge.kernel.org/pub/"
     },
     "linuxmint-images": {
       "name": "LinuxMint (images)",
@@ -328,14 +349,15 @@
       "rsync": {
         "host": "pub.linuxmint.com",
         "src": "pub",
-        "dest": "/storage/linuxmint-iso/images",
-        "options": "-avzrH --no-owner --no-group --delete --delete-delay --delay-updates --ignore-errors --exclude \".~tmp~\"",
+        "dest": "/storage/linuxmint-images",
+        "options": "-avzrH --no-perms --no-owner --no-group --delete --delete-delay --delay-updates --ignore-errors --exclude \".~tmp~\"",
         "syncs_per_day": 1
       },
       "official": true,
       "homepage": "https://linuxmint.com/",
       "color": "#62b858",
-      "publicRsync": false
+      "publicRsync": false,
+      "alternative": "http://mirrors.advancedhosters.com/linuxmint/isos/"
     },
     "linuxmint-packages": {
       "name": "LinuxMint (packages)",
@@ -344,14 +366,15 @@
         "host": "rsync-packages.linuxmint.com",
         "src": "packages",
         "dest": "/storage/linuxmint-packages",
-        "options": "--verbose --no-owner --no-group --recursive --times --links --safe-links --hard-links --stats --exclude 'Packages*' --exclude 'Sources*' --exclude 'Release*' --exclude 'InRelease'",
-        "second": "--verbose --no-owner --no-group --recursive --times --links --safe-links --hard-links --stats --delete",
+        "options": "--verbose --no-perms --no-owner --no-group --recursive --times --links --safe-links --hard-links --stats --exclude 'Packages*' --exclude 'Sources*' --exclude 'Release*' --exclude 'InRelease'",
+        "second": "--verbose --no-perms --no-owner --no-group --recursive --times --links --safe-links --hard-links --stats --delete",
         "syncs_per_day": 4
       },
       "official": true,
       "homepage": "https://linuxmint.com/",
       "color": "#62b858",
-      "publicRsync": false
+      "publicRsync": false,
+      "alternative": "http://mirror.csclub.uwaterloo.ca/linuxmint-packages/"
     },
     "manjaro": {
       "name": "Manjaro",
@@ -360,13 +383,14 @@
         "host": "mirror.netcologne.de",
         "src": "manjaro",
         "dest": "/storage/manjaro",
-        "options": "-avzrH --no-owner --no-group --delete --delete-delay --delay-updates --ignore-errors --exclude \".~tmp~\"",
+        "options": "-avzrH --no-perms --no-owner --no-group --delete --delete-delay --delay-updates --ignore-errors --exclude \".~tmp~\"",
         "syncs_per_day": 6
       },
       "official": true,
       "homepage": "https://manjaro.org/",
       "color": "#d9004c",
-      "publicRsync": false
+      "publicRsync": false,
+      "alternative": "http://mirror.math.princeton.edu/pub/manjaro/"
     },
     "msys2": {
       "name": "msys2",
@@ -375,13 +399,14 @@
         "host": "repo.msys2.org",
         "src": "builds",
         "dest": "/storage/msys2",
-        "options": "-avzrH --no-owner --no-group --delete --delete-delay --delay-updates --ignore-errors --exclude \".~tmp~\"",
+        "options": "-avzrH --no-perms --no-owner --no-group --delete --delete-delay --delay-updates --ignore-errors --exclude \".~tmp~\"",
         "syncs_per_day": 1
       },
       "official": true,
       "homepage": "https://www.msys2.org/",
       "color": "#8878c3",
-      "publicRsync": false
+      "publicRsync": false,
+      "alternative": "http://mirror.umd.edu/msys2/"
     },
     "opensuse": {
       "name": "OpenSUSE",
@@ -390,13 +415,14 @@
         "host": "stage.opensuse.org",
         "src": "opensuse-full-with-factory",
         "dest": "/storage/opensuse",
-        "options": "-4 -avzrH --no-owner --no-group --delete --delete-delay --delay-updates --ignore-errors --exclude \".~tmp~\"",
+        "options": "-4 -avzrH --no-perms --no-owner --no-group --delete --delete-delay --delay-updates --ignore-errors --exclude \".~tmp~\"",
         "syncs_per_day": 4
       },
       "official": true,
       "homepage": "https://www.opensuse.org/",
       "color": "#4bb679",
-      "publicRsync": false
+      "publicRsync": false,
+      "alternative": "http://mirrors.rit.edu/opensuse/"
     },
     "parrot": {
       "name": "Parrot Security OS",
@@ -406,12 +432,13 @@
         "src": "parrot",
         "dest": "/storage/parrot",
         "syncs_per_day": 4,
-        "options": "-avzrH --no-owner --no-group --delete --delete-delay --delay-updates --ignore-errors --exclude \".~tmp~\""
+        "options": "-avzrH --no-perms --no-owner --no-group --delete --delete-delay --delay-updates --ignore-errors --exclude \".~tmp~\""
       },
       "official": true,
       "homepage": "https://www.parrotsec.org/",
       "color": "#ff6fff",
-      "publicRsync": false
+      "publicRsync": false,
+      "alternative": "http://mirrors.mit.edu/parrot/"
     },
     "raspian": {
       "name": "Raspbian",
@@ -426,7 +453,8 @@
       "official": false,
       "homepage": "https://www.raspbian.org/",
       "color": "#c51d4a",
-      "publicRsync": false
+      "publicRsync": false,
+      "alternative": "http://mirrors.mit.edu/raspbian/"
     },
     "RebornOS": {
       "name": "RebornOS",
@@ -435,13 +463,14 @@
         "host": "mirrors.dotsrc.org",
         "src": "osdn/storage/g/r/re/rebornos/repo/RebornOS",
         "dest": "/storage/RebornOS",
-        "options": "-avzrH --no-owner --no-group --delete --delete-delay --delay-updates --ignore-errors --exclude \".~tmp~\"",
+        "options": "-avzrH --no-perms --no-owner --no-group --delete --delete-delay --delay-updates --ignore-errors --exclude \".~tmp~\"",
         "syncs_per_day": 1
       },
       "official": true,
       "homepage": "https://rebornos.org/",
       "color": "#1e73be",
-      "publicRsync": false
+      "publicRsync": false,
+      "alternative": "http://repo.rebornos.org/RebornOS/"
     },
     "slackware": {
       "name": "Slackware",
@@ -451,12 +480,13 @@
         "src": "slackware",
         "dest": "/storage/slackware",
         "syncs_per_day": 12,
-        "options": "-avzrH --no-owner --no-group --delete --delete-delay --delay-updates --ignore-errors --exclude \".~tmp~\""
+        "options": "-avzrH --no-perms --no-owner --no-group --delete --delete-delay --delay-updates --ignore-errors --exclude \".~tmp~\""
       },
       "official": false,
       "homepage": "https://www.slackware.com/",
       "color": "#b78727",
-      "publicRsync": false
+      "publicRsync": false,
+      "alternative": "http://mirror.math.princeton.edu/pub/slackware/"
     },
     "slitaz": {
       "name": "SliTaz Linux",
@@ -466,24 +496,26 @@
         "src": "slitaz",
         "dest": "/storage/slitaz",
         "syncs_per_day": 2,
-        "options": "-avzrH --no-owner --no-group --delete --delete-delay --delay-updates --ignore-errors --exclude \".~tmp~\""
+        "options": "-avzrH --no-perms --no-owner --no-group --delete --delete-delay --delay-updates --ignore-errors --exclude \".~tmp~\""
       },
       "official": true,
       "homepage": "http://www.slitaz.org/en/",
       "color": "#ffff60",
-      "publicRsync": false
+      "publicRsync": false,
+      "alternative": "http://mirror1.slitaz.org/"
     },
     "templeos": {
       "name": "TempleOS",
       "page": "Software",
       "static": {
         "location": "/storage/templeos",
-        "source": "https://templeos.org/Downloads/"
+        "source": "https://templeos.org/"
       },
       "official": false,
       "homepage": "https://templeos.org/",
       "color": "#efcc00",
-      "publicRsync": false
+      "publicRsync": false,
+      "alternative": "http://templeos.org/"
     },
     "tdf": {
       "name": "LibreOffice",
@@ -492,13 +524,14 @@
         "host": "rsync.documentfoundation.org",
         "src": "tdf-pub",
         "dest": "/storage/tdf",
-        "options": "-avzrH --no-owner --no-group --delete --delete-delay --delay-updates --ignore-errors --exclude \".~tmp~\"",
+        "options": "-avzrH --no-perms --no-owner --no-group --delete --delete-delay --delay-updates --ignore-errors --exclude \".~tmp~\"",
         "syncs_per_day": 4
       },
       "official": true,
       "homepage": "http://www.documentfoundation.org/",
       "color": "#00a500",
-      "publicRsync": false
+      "publicRsync": false,
+      "alternative": "http://ftp.osuosl.org/pub/tdf/"
     },
     "ubuntu": {
       "name": "Ubuntu",
@@ -507,14 +540,15 @@
         "host": "mirrors.rit.edu",
         "src": "ubuntu",
         "dest": "/storage/ubuntu",
-        "options": "-vrtlH --no-owner --no-group --safe-links --exclude \"Packages*\" --exclude \"Sources*\" --exclude \"Release*\" --exclude \"InRelease\"",
-        "second": "-vrtlH --no-owner --no-group --safe-links --delete --delete-after",
+        "options": "-vrtlH --no-perms --no-owner --no-group --safe-links --exclude \"Packages*\" --exclude \"Sources*\" --exclude \"Release*\" --exclude \"InRelease\"",
+        "second": "-vrtlH --no-perms --no-owner --no-group --safe-links --delete --delete-after",
         "syncs_per_day": 4
       },
       "official": true,
       "homepage": "https://www.ubuntu.com/",
       "color": "#ffd300",
-      "publicRsync": false
+      "publicRsync": false,
+      "alternative": "http://mirrors.mit.edu/ubuntu/"
     },
     "ubuntu-releases": {
       "name": "Ubuntu Releases",
@@ -523,13 +557,14 @@
         "host": "mirrors.rit.edu",
         "src": "releases",
         "dest": "/storage/ubuntu-releases",
-        "options": "-avzrH --no-owner --no-group --delete --delete-delay --delay-updates --ignore-errors --exclude \".~tmp~\"",
+        "options": "-avzrH --no-perms --no-owner --no-group --delete --delete-delay --delay-updates --ignore-errors --exclude \".~tmp~\"",
         "syncs_per_day": 6
       },
       "official": true,
       "homepage": "https://ubuntu.com/#download",
       "color": "#ffd300",
-      "publicRsync": false
+      "publicRsync": false,
+      "alternative": "http://mirrors.mit.edu/ubuntu-releases/"
     },
     "ubuntu-cdimage": {
       "name": "Ubuntu CD Images (Kubuntu, Xubuntu, Mate, etc.)",
@@ -538,13 +573,14 @@
         "host": "mirrors.rit.edu",
         "src": "cdimage",
         "dest": "/storage/ubuntu-cdimage",
-        "options": "-avzrH --no-owner --no-group --delete --delete-delay --delay-updates --ignore-errors --exclude \".~tmp~\"",
+        "options": "-avzrH --no-perms --no-owner --no-group --delete --delete-delay --delay-updates --ignore-errors --exclude \".~tmp~\"",
         "syncs_per_day": 6
       },
       "official": true,
       "homepage": "https://ubuntu.com/download/flavours",
       "color": "#ffd300",
-      "publicRsync": false
+      "publicRsync": false,
+      "alternative": "http://mirrors.mit.edu/ubuntu-cdimage/"
     },
     "ubuntu-ports": {
       "name": "Ubuntu Ports",
@@ -553,14 +589,15 @@
         "host": "mirrors.rit.edu",
         "src": "ubuntu-ports",
         "dest": "/storage/ubuntu-ports",
-        "options": "-vrtlH --no-owner --no-group --safe-links --exclude \"Packages*\" --exclude \"Sources*\" --exclude \"Release*\" --exclude \"InRelease\"",
-        "second": "-vrtlH --no-owner --no-group --safe-links --delete --delete-after",
+        "options": "-vrtlH --no-perms --no-owner --no-group --safe-links --exclude \"Packages*\" --exclude \"Sources*\" --exclude \"Release*\" --exclude \"InRelease\"",
+        "second": "-vrtlH --no-perms --no-owner --no-group --safe-links --delete --delete-after",
         "syncs_per_day": 4
       },
       "official": true,
       "homepage": "",
       "color": "#ffd300",
-      "publicRsync": false
+      "publicRsync": false,
+      "alternative": "http://mirrors.mit.edu/ubuntu-ports/"
     },
     "videolan": {
       "name": "VLC",
@@ -570,12 +607,13 @@
         "src": "videolan-ftp",
         "dest": "/storage/videolan",
         "syncs_per_day": 24,
-        "options": "--verbose --no-owner --no-group --recursive --times --links --hard-links --perms --stats --delete-after --timeout=300"
+        "options": "--verbose --no-perms --no-owner --no-group --recursive --times --links --hard-links --perms --stats --delete-after --timeout=300"
       },
       "official": true,
       "homepage": "https://www.videolan.org/index.html",
       "color": "#bb85fc",
-      "publicRsync": false
+      "publicRsync": false,
+      "alternative": "http://ftp.osuosl.org/pub/videolan/"
     },
     "voidlinux": {
       "name": "VoidLinux",
@@ -587,12 +625,13 @@
         "src": "voidmirror",
         "dest": "/storage/voidlinux",
         "syncs_per_day": 4,
-        "options": "-avzrH --no-owner --no-group --delete --delete-delay --delay-updates --ignore-errors --exclude \".~tmp~\" --exclude=\".*\" --exclude=\"*.lock\" --exclude=\"*.XXXX*\""
+        "options": "-avzrH --no-perms --no-owner --no-group --delete --delete-delay --delay-updates --ignore-errors --exclude \".~tmp~\" --exclude=\".*\" --exclude=\"*.lock\" --exclude=\"*.XXXX*\""
       },
       "official": true,
       "homepage": "https://www.voidlinux.org/",
       "color": "#000000",
-      "publicRsync": false
+      "publicRsync": false,
+      "alternative": "http://mirrors.servercentral.com/voidlinux/"
     },
     "zorinos": {
       "name": "Zorin OS",
@@ -602,12 +641,13 @@
         "src": "isos",
         "dest": "/storage/zorinos/isos",
         "syncs_per_day": 4,
-        "options": "-avzrH --no-owner --no-group --delete --delete-delay --delay-updates --ignore-errors --exclude \".~tmp~\""
+        "options": "-avzrH --no-perms --no-owner --no-group --delete --delete-delay --delay-updates --ignore-errors --exclude \".~tmp~\""
       },
       "official": true,
       "homepage": "https://zorinos.com/",
       "color": "#fc6c85",
-      "publicRsync": false
+      "publicRsync": false,
+      "alternative": "http://mirror.umd.edu/zorin/"
     }
   }
 }
