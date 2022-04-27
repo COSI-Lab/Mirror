@@ -504,7 +504,7 @@
       "name": "Ubuntu",
       "page": "Distributions",
       "rsync": {
-        "host": "us.archive.ubuntu.com",
+        "host": "mirrors.rit.edu",
         "src": "ubuntu",
         "dest": "/storage/ubuntu",
         "options": "-vrtlH --no-owner --no-group --safe-links --exclude \"Packages*\" --exclude \"Sources*\" --exclude \"Release*\" --exclude \"InRelease\"",
@@ -520,7 +520,7 @@
       "name": "Ubuntu Releases",
       "page": "Distributions",
       "rsync": {
-        "host": "releases.ubuntu.com",
+        "host": "mirrors.rit.edu",
         "src": "releases",
         "dest": "/storage/ubuntu-releases",
         "options": "-avzrH --no-owner --no-group --delete --delete-delay --delay-updates --ignore-errors --exclude \".~tmp~\"",
@@ -535,7 +535,7 @@
       "name": "Ubuntu CD Images (Kubuntu, Xubuntu, Mate, etc.)",
       "page": "Distributions",
       "rsync": {
-        "host": "cdimage.ubuntu.com",
+        "host": "mirrors.rit.edu",
         "src": "cdimage",
         "dest": "/storage/ubuntu-cdimage",
         "options": "-avzrH --no-owner --no-group --delete --delete-delay --delay-updates --ignore-errors --exclude \".~tmp~\"",
@@ -550,7 +550,7 @@
       "name": "Ubuntu Ports",
       "page": "Distributions",
       "rsync": {
-        "host": "ports.ubuntu.com",
+        "host": "mirrors.rit.edu",
         "src": "ubuntu-ports",
         "dest": "/storage/ubuntu-ports",
         "options": "-vrtlH --no-owner --no-group --safe-links --exclude \"Packages*\" --exclude \"Sources*\" --exclude \"Release*\" --exclude \"InRelease\"",
