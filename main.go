@@ -37,7 +37,7 @@ var (
 	hookURL string
 	// PING_ID
 	pingID string
-	// PUSH_TOKEN
+	// PULL_TOKEN
 	pullToken string
 )
 
@@ -62,7 +62,7 @@ func init() {
 	webServerCache = os.Getenv("WEB_SERVER_CACHE") == "true"
 	hookURL = os.Getenv("HOOK_URL")
 	pingID = os.Getenv("PING_ID")
-	pullToken = os.Getenv("PUSH_TOKEN")
+	pullToken = os.Getenv("PULL_TOKEN")
 
 	// Check if the environment variables are set
 	if maxmindLicenseKey == "" {
