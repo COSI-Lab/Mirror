@@ -109,6 +109,7 @@ type Project struct {
 	Page        string `json:"page"`
 	HomePage    string `json:"homepage"`
 	PublicRsync bool   `json:"publicRsync"`
+	Alternative string `json:"alternative"`
 	AccessToken string // Loaded from the access tokens file
 }
 
@@ -248,5 +249,51 @@ refuse options = checksum delete
 	err = os.WriteFile("/etc/rsyncd.conf", buf.Bytes(), 0644)
 	if err != nil {
 		logging.Error("Could not write rsyncd.conf: ", err.Error())
+	}
+}
+
+// In case of emergencies this can generate a nginx config file to redirect to alternative mirrors
+func createNginxRedirects(config *ConfigFile) {
+	//rewrite ^{{short}}/(.*)$ {{Alternative}}/$1 permanent;
+	tmpl := `# This is a generated file. Do not edit manually.
+server {
+	listen 80 default;
+	listen [::]:80 default;
+	server_name _;
+
+	# SSL configuration
+	listen 443 ssl;
+	listen [::]:443 ssl;
+	ssl_certificate /etc/letsencrypt/live/mirror.clarkson.edu/fullchain.pem;
+	ssl_certificate_key /etc/letsencrypt/live/mirror.clarkson.edu/privkey.pem;
+	
+	# Linuxmint redirection
+	rewrite ^/linuxmint/iso/images/(.*)$ /linuxmint-images/$1 permanent;
+	rewrite ^/linuxmint/packages/(.*)$ /linuxmint-packages/$1 permanent;	
+	
+	# Redirect all projects to other mirrors{{ range .Mirrors }}
+	rewrite ^/{{ .Short }}/(.*)$ {{ .Alternative }}$1 redirect;{{ end }}
+
+	# Other wise redirect 404 to 503.html
+	error_page 404 403 500 503 /503.html;
+	location = /503.html {
+		root /var/www;
+	}
+}
+`
+
+	// Apply the template
+	t := template.Must(template.New("nginx.conf").Parse(tmpl))
+	var buf bytes.Buffer
+	err := t.Execute(&buf, config)
+
+	if err != nil {
+		log.Fatal("Could not create nginx.conf: ", err.Error())
+	}
+
+	// save to nginx.conf
+	err = os.WriteFile("/tmp/nginx.conf", buf.Bytes(), 0644)
+	if err != nil {
+		logging.Error("Could not write nginx.conf: ", err.Error())
 	}
 }
