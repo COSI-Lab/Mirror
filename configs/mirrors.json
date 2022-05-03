@@ -1,22 +1,6 @@
 {
   "$schema": "./mirrors.schema.json",
   "mirrors": {
-    "AiryxOS": {
-      "name": "AiryxOS",
-      "page": "Distributions",
-      "rsync": {
-        "host": "mirror2.sandyriver.net",
-        "src": "pub/AiryxOS/",
-        "dest": "/storage/AiryxOS",
-        "options": "-avz --no-perms --no-owner --no-group --delete --no-inc-recursive",
-        "syncs_per_day": 1
-      },
-      "official": true,
-      "homepage": "https://airyx.org/",
-      "color": "#ff42b0",
-      "publicRsync": false,
-      "alternative": "http://mirror2.sandyriver.net/pub/AiryxOS/"
-    },
     "almalinux": {
       "name": "AlmaLinux",
       "page": "Distributions",
@@ -455,6 +439,22 @@
       "color": "#c51d4a",
       "publicRsync": false,
       "alternative": "http://mirrors.mit.edu/raspbian/"
+    },
+    "ravynos": {
+      "name": "ravynOS",
+      "page": "Distributions",
+      "rsync": {
+        "host": "mirror2.sandyriver.net",
+        "src": "pub/ravynos/",
+        "dest": "/storage/ravynos",
+        "options": "-avz --no-perms --no-owner --no-group --delete --no-inc-recursive --safe-links",
+        "syncs_per_day": 1
+      },
+      "official": true,
+      "homepage": "https://ravynos.org/",
+      "color": "#ff42b0",
+      "publicRsync": false,
+      "alternative": "http://mirror2.sandyriver.net/pub/ravynos/"
     },
     "RebornOS": {
       "name": "RebornOS",
