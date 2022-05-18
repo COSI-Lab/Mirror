@@ -90,7 +90,7 @@ func sendHook(ping bool, content ...interface{}) {
 
 	var values map[string]string
 	if ping {
-		values = map[string]string{"content": fmt.Sprintf("<@%s> %v", logger.discordPingID, fmt.Sprintf("%s", content...))}
+		values = map[string]string{"content": fmt.Sprintf("<@%s> %v", logger.discordPingID, fmt.Sprint(content...))}
 	} else {
 		values = map[string]string{"content": fmt.Sprintf("%v", fmt.Sprint(content...))}
 	}
