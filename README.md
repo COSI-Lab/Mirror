@@ -68,7 +68,7 @@ RSYNC_LOGS=/tmp/mirror/
 WEB_SERVER_CACHE=true
 
 # Secret push token
-PULL_TOKEN=RK8LsZdMfCqYjCks
+PULL_TOKEN=token
 ```
 
 ## Hardware
