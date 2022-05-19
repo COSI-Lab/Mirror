@@ -633,6 +633,22 @@
       "publicRsync": true,
       "alternative": "http://mirrors.servercentral.com/voidlinux/"
     },
+    "wikimedia": {
+      "name": "Wikimedia XML Dumps",
+      "page": "Miscellaneous",
+      "rsync": {
+        "host": "dumps.wikimedia.org",
+        "src": "dumpslasttwo",
+        "dest": "/storage/wikimedia",
+        "options": "-avzrH --no-owner --delete --delete-delay --delay-updates --ignore-errors --exclude \".~tmp~\"",
+        "syncs_per_day": 1
+      },
+      "official": true,
+      "homepage": "https://dumps.wikimedia.org/",
+      "color": "#ffffff",
+      "publicRsync": false,
+      "alternative": "http://dumps.wikimedia.your.org/"
+    },
     "zorinos": {
       "name": "Zorin OS",
       "page": "Distributions",
