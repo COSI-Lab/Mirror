@@ -48,19 +48,31 @@
                 <b> Distributions </b>
                 <ul>
                     {{ range .Distributions }}
+                    {{if .Official}}
+                    <li><a class="bold" href="#{{ .Short }}">{{ .Name }}</a></li>
+                    {{ else }}
                     <li><a href="#{{ .Short }}">{{ .Name }}</a></li>
+                    {{ end }}
                     {{ end }}
                 </ul>
                 <b> Software </b>
                 <ul>
                     {{ range .Software }}
+                    {{if .Official}}
+                    <li><a class="bold" href="#{{ .Short }}">{{ .Name }}</a></li>
+                    {{ else }}
                     <li><a href="#{{ .Short }}">{{ .Name }}</a></li>
+                    {{ end }}
                     {{ end }}
                 </ul>
                 <b> Miscellaneous </b>
                 <ul>
                     {{ range .Miscellaneous }}
+                    {{ if .Official }}
+                    <li><a class="bold" href="#{{ .Short }}">{{ .Name }}</a></li>
+                    {{ else }}
                     <li><a href="#{{ .Short }}">{{ .Name }}</a></li>
+                    {{ end }}
                     {{ end }}
                 </ul>
                 </ul>
