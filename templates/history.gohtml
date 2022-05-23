@@ -7,15 +7,10 @@
 <body>
     {{template "nav.gohtml" .}}
     <main class="history">
-      <h2> History </h2>
-      <p>
-        According to archived COSI webpages, Mirror has existed as early as October 2002. The current server is the third iteration that has run the mirror service. A longer article on the history of Mirror can currently be found on <a href="https://cosi-lab.github.io/meeting-minutes/news/2016/08/08/Weekly-Newsletter.html">Meeting Minutes</a>.
-      </p>
-      <br>   
-      <h2> Sponsors </h2>
+      <h1> Sponsors </h1>
       <div>
         <p>
-        We would like to thank everyone that helped out contributing to help make the newest iteration of the mirror possible, including:
+        We would like to thank everyone that helped out contributing to help make our mirror possible, including:
         </p>
         <ul style="text-align: center; list-style-type: none;">
           <li>Eric Busse</li>
@@ -38,6 +33,36 @@
           <img src="/img/siege.jpg" alt="siege logo" style="width: 80%; height: auto">
         </a>
       </div>
+
+      <br>   
+
+      <h1> History </h1>
+      <p>
+        Mirror has been one of our longest running services, and as of today, we can be fairly certain that it now has existed for about 20 years with the earliest knowledge of it existing in October 2002.
+        As part of a COSI History project, we have gone through the history of different pages, including past presentations, and websites archived on the wayback machine. With this, let’s take a journey back all the way to the beginning of Mirror and see it’s progress over the years.
+      </p>
+      <p>
+        We start in December 2001. In this archive of <a href="https://web.archive.org/web/20011205100928/http://cosi.clarkson.edu/">cosi.clarkson.edu</a>, there is a section on the right titled Distributions which lists a few distros as well as plans of wanting to make a Clarkson University Linux distro. 
+        Below that it states that COSI would like to pursue mirroring other distributions on the same server as the website. This is the first time that we have evidence of people wanting to have a Mirror in COSI.
+      </p>
+      <p>
+        Jump forward to February 2003 with this archive on <a href="https://web.archive.org/web/20030213164427/http://mirror.clarkson.edu/">mirror.clarkson.edu</a>. At this time, we see that there is now a set of machines actually running just for mirroring. 
+        According to the site, the storage was donated by Winchester Systems while the website was running on a SUN Ultra 60 workstaion which was loaned out by Mathematics Prof. Scott Fulton. Looking through the site, we were hosting a decent amount of versions of Linux, BSD, and even the kernel (v2.6).
+      </p>
+      <p>
+        Jump ahead to 2009, and the labs have looked at getting a new server for Mirror. On <a href="http://web2.clarkson.edu/projects/cosi/sp2009/students/mccarrms/">Mathew McCarrell’s MP* Page</a>, it was recorded that the server had been obtained and he and Roger Ignazio had worked on trying to install CentOS onto the machine, but ran into some issues. 
+        They then tried going over to Open Solaris so they could use ZFS as the filesystem for Mirror, we still use ZFS today. After a bit of tweaking they got CentOS working on Mirror and begun syncing again. Through the history, we can consider this the 2nd iteration of Mirror.
+      </p>
+      <p>
+        Progressing into the 2010s and there were minor software tweaks and changes where we eventually switched over to Debian around 2013. And this brings us up to the fairly modern day. The end of Mirror 2 had about 8TB of usuable storage, and we were filling it up to almost max capacity. The drives were aging as well, and around Spring 2015, we begun plans on the 3rd iteration of Mirror.
+        After successfully fundraising for the new mirror in Fall 2015, we purchased the hardware for the machine in December 2015. Through spring 2016, we set up the machine and retired the 2nd iteration of Mirror. At this point Mirror has ~30TB of usuable space in the ZFS pool.
+      </p>
+      <p>
+        The 4th iteration of Mirror is the most recent. In Spring 2022 we installed Debian 11 and upgraded the cache ssd, operating system ssd, and created a ZFS pool with eight 16 TB drives. With RAID we have about 60TB of usuable space, and potentially more if we continue using the previous drives. We also overhalled the website, tracking, and scheduling subsystems with our own custom code.
+      </p>
+      <p>
+        As servers come and go, there has always been one server for almost the entirety of COSI’s existence that has been used as our Mirror.
+      </p>
     </main>
     {{template "footer.gohtml" .}}
 </body>
