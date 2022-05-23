@@ -1,40 +1,20 @@
 # Mirror
 
-WIP monolithic software for [mirror](https://mirror.clarkson.edu) that handles
-- [x] Defining what projects we host from a centralized config
-- [x] Parsing passwords from config
-- [x] Generating rsyncd.conf from config
+Monolithic software for our [mirror](https://mirror.clarkson.edu) that handles the website, tracking, and scheduling systems. We use an influxdb time series database for storage.
+
+## TODO LIST
+- [ ] The Mirror "book" documentation
 - [ ] Manage torrents using config
-- [x] Config reloading using SIGHUP
-- [x] Recording nginx bandwidth per repo
 - [ ] Recording rsync bandwidth
-- [x] Recording rsyncd bandwidth
 - [ ] Recording tranmission bittorrent bandwidth
+- [ ] Make the map look nice on mobile devices
+- [ ] Mobile friendly navbar
+
+**Statistics Page**
 - [ ] Exposing nginx bandwidth per repo (pie chart)
 - [ ] Exposing rsync bandwidth
 - [ ] Exposing tranmission bittorrent bandwidth
 - [ ] Exposing total network bandwidth
-- [x] Mirror map of real time downloads
-- [x] Mirror map generated from project config
-- [x] Map pulls the latest version of GeoIP database every day
-- [x] Periodically syncing projects
-- [x] Exposing sync status per project
-- [x] Discord webhook integration
-- [x] Notifies our discord server when things fail
-
-## Frontend
-
-- [x] Highlight nav links on hover
-- [x] "Welcome to Mirror" on home page
-- [ ] Mobile friendly navbar
-- [x] Table of contents on distro and software pages
-- [x] "Designed By: COSI", mirror contact "mirroradmin@clarkson.edu"
-- [ ] Make the map look nice on mobile devices
-- [ ] Move the "longer mirror history" off of Meeting Minutes
-- [ ] New content about reporting errors on github
-- [x] New content on requesting new projects through github issues and email
-- [x] please use a nicer font
-- [ ] On the stats page please put "construction tux" :)
 
 ## Env File Formatting
 ```
