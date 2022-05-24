@@ -119,7 +119,7 @@ window.onload = async function () {
     let height = 15 * numberOfEntries;
     let width = 135;
     ctx.globalAlpha = 1;
-    ctx.fillStyle = "#28282899";
+    ctx.fillStyle = "#383838";
     ctx.rect(5, startY - 40, width, height + 45);
     ctx.fill();
 
