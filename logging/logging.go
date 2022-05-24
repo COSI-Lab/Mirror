@@ -190,7 +190,7 @@ func ErrorWithAttachment(attachment []byte, v ...interface{}) {
 		go func() {
 			// TODO handle error returned by sendFile
 			sendFile(attachment)
-			sendHook(true, v...)
+			sendHook(false, v...)
 		}()
 	}
 }
