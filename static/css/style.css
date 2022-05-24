@@ -4,11 +4,17 @@ body {
   font-family: "Roboto";
 }
 
+@media screen and (max-width: 600px) {
+  :root * {
+    text-align: center;
+  }
+}
+
 .center {
   text-align: center;
 }
 
-/* For header.gohtml */
+/* For nav.gohtml */
 header {
   background: rgb(40, 104, 40);
   color: white;
@@ -23,9 +29,19 @@ header ul {
   overflow: hidden;
   background-color: rgb(40, 104, 40);
 }
-header li {
-  float: left;
+/* mobile */
+@media screen and (max-width: 600px) {
+  header li {
+    float: none;
+  }
 }
+/* desktop */
+@media screen and (min-width: 600px) {
+  header li {
+    float: left;
+  }
+}
+
 header li > a {
   font-size: 20px;
   display: block;
@@ -68,12 +84,28 @@ body > h1 {
   justify-content: center;
   color: white;
 }
-.horlist {
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
-  margin-top: 25px;
+
+/* mobile */
+@media screen and (max-width: 600px) {
+  .horlist {
+    display: flex;
+    /* justify-content: center; */
+    /* align-items: flex-start; */
+    flex-direction: column;
+    margin-top: 25px;
+  }
 }
+
+/* desktop */
+@media screen and (min-width: 600px) {
+  .horlist {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    margin-top: 25px;
+  }
+}
+
 .vertlist {
   display: flex;
   flex-direction: column;
