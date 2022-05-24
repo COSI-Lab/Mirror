@@ -147,8 +147,43 @@ body > h1 {
 }
 
 /* For projects.gohtml */
-.projects {
-  padding-left: 5%;
+@media screen and (min-width: 800px) {
+  .projects-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+  }
+
+  .projects-container > .toc {
+    width: 20%;
+  }
+
+  .projects-container > .list {
+    width: 75%;
+  }
+
+  .projects {
+    padding-left: 5%;
+  }  
+}
+
+@media screen and (max-width: 800px) {
+  .projects {
+    margin-top: 0;
+  }
+
+  .projects-container {
+    display: flex;
+  }
+
+  .projects-container > .toc {
+    /* remove from flexbox and hide */
+    display: none;
+  }
+
+  .projects-container > .list {
+    width: 100%;
+  }
 }
 
 .projects .toc h3 {
