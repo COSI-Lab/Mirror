@@ -629,7 +629,7 @@
       },
       "official": true,
       "homepage": "https://www.voidlinux.org/",
-      "color": "#222222",
+      "color": "#000000",
       "publicRsync": true,
       "alternative": "http://mirrors.servercentral.com/voidlinux/"
     },
