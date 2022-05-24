@@ -328,7 +328,7 @@
       "alternative": "http://mirrors.edge.kernel.org/pub/"
     },
     "linuxmint-images": {
-      "name": "LinuxMint (images)",
+      "name": "LinuxMint Images",
       "page": "Distributions",
       "rsync": {
         "host": "pub.linuxmint.com",
@@ -344,7 +344,7 @@
       "alternative": "http://mirrors.advancedhosters.com/linuxmint/isos/"
     },
     "linuxmint-packages": {
-      "name": "LinuxMint (packages)",
+      "name": "LinuxMint Packages",
       "page": "Distributions",
       "rsync": {
         "host": "rsync-packages.linuxmint.com",
