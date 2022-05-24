@@ -231,11 +231,23 @@ body > h1 {
 }
 
 /* General Use: CHANGE WITH CAUTION */
-main {
-  background-color: white;
-  padding-left: 20%;
-  padding-right: 20%;
+/* mobile */
+@media screen and (max-width: 800px) {
+  main {
+    background-color: white;
+    padding-left: 5%;
+    padding-right: 5%;
+  }
 }
+/* desktop */
+@media screen and (min-width: 800px) {
+  main {
+    background-color: white;
+    padding-left: 20%;
+    padding-right: 20%;
+  }
+}
+
 p {
   color: black;
   line-height: 24px;
