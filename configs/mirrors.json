@@ -534,21 +534,21 @@
       "alternative": "http://ftp.osuosl.org/pub/tdf/"
     },
     "ubuntu": {
-      "name": "Ubuntu",
-      "page": "Distributions",
+      "name": "Ubuntu", 
+      "page": "Distributions", 
       "rsync": {
-        "host": "mirrors.rit.edu",
-        "src": "ubuntu",
-        "dest": "/storage/ubuntu",
-        "options": "-vrtlH --no-perms --no-owner --no-group --safe-links --exclude \"Packages*\" --exclude \"Sources*\" --exclude \"Release*\" --exclude \"InRelease\"",
+        "host": "mirrors.rit.edu", 
+        "src": "ubuntu", 
+        "dest": "/storage/ubuntu", 
+	"options": "-vrtlH --no-perms --no-owner --no-group --safe-links --exclude \"Packages*\" --exclude \"Sources*\" --exclude \"Release*\" --exclude \"InRelease\"",
         "second": "-vrtlH --no-perms --no-owner --no-group --safe-links --delete --delete-after",
-        "syncs_per_day": 4
+        "syncs_per_day": 4 
       },
-      "official": true,
-      "homepage": "https://www.ubuntu.com/",
-      "color": "#ffd300",
-      "publicRsync": true,
-      "alternative": "http://mirrors.mit.edu/ubuntu/"
+      "official": true, 
+      "homepage": "https://www.ubuntu.com/", 
+      "color": "#ffd300", 
+      "publicRsync": true, 
+      "alternative": "http://mirrors.mit.edu/ubuntu/" 
     },
     "ubuntu-releases": {
       "name": "Ubuntu Releases",
@@ -565,39 +565,6 @@
       "color": "#ffd300",
       "publicRsync": true,
       "alternative": "http://mirrors.mit.edu/ubuntu-releases/"
-    },
-    "ubuntu-cdimage": {
-      "name": "Ubuntu CD Images (Kubuntu, Xubuntu, Mate, etc.)",
-      "page": "Distributions",
-      "rsync": {
-        "host": "cdimage.ubuntu.com",
-        "src": "cdimage",
-        "dest": "/storage/ubuntu-cdimage",
-        "options": "-avzrH --no-perms --no-owner --no-group --delete --delete-delay --delay-updates --ignore-errors --exclude \".~tmp~\"",
-        "syncs_per_day": 6
-      },
-      "official": true,
-      "homepage": "https://ubuntu.com/download/flavours",
-      "color": "#ffd300",
-      "publicRsync": true,
-      "alternative": "http://mirrors.mit.edu/ubuntu-cdimage/"
-    },
-    "ubuntu-ports": {
-      "name": "Ubuntu Ports",
-      "page": "Distributions",
-      "rsync": {
-        "host": "ports.ubuntu.com",
-        "src": "ubuntu-ports",
-        "dest": "/storage/ubuntu-ports",
-        "options": "-vrtlH --no-perms --no-owner --no-group --safe-links --exclude \"Packages*\" --exclude \"Sources*\" --exclude \"Release*\" --exclude \"InRelease\"",
-        "second": "-vrtlH --no-perms --no-owner --no-group --safe-links --delete --delete-after",
-        "syncs_per_day": 4
-      },
-      "official": true,
-      "homepage": "",
-      "color": "#ffd300",
-      "publicRsync": true,
-      "alternative": "http://mirrors.mit.edu/ubuntu-ports/"
     },
     "videolan": {
       "name": "VLC",
