@@ -147,6 +147,11 @@ func handleManualSyncs(manual chan<- string) http.HandlerFunc {
 	}
 }
 
+// Always returns status OK with no other content
+func handleHealth(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusOK)
+}
+
 func entriesToMessages(entries chan *NginxLogEntry, messages chan []byte) {
 	// Send groups of 8 messages
 	ch := make(chan []byte)
@@ -244,6 +249,7 @@ func HandleWebserver(manual chan<- string, entries chan *NginxLogEntry) {
 	r.Handle("/history", cachingMiddleware(handleHistory))
 	r.Handle("/stats", cachingMiddleware(handleStatistics))
 	r.Handle("/sync/{project}", handleManualSyncs(manual))
+	r.HandleFunc("/health", handleHealth)
 	r.HandleFunc("/ws", mirrormap.HandleWebsocket)
 
 	// Static files
