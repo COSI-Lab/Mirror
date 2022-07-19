@@ -20,8 +20,8 @@ type Status struct {
 type RSYNCStatus map[string]*datarithms.CircularQueue[Status]
 
 var rysncErrorCodes map[int]string
-var rsyncLock sync.Mutex
-var rsyncLocks = make(map[string]bool)
+var syncLock sync.Mutex
+var syncLocks = make(map[string]bool)
 
 func init() {
 	rysncErrorCodes = make(map[int]string)
@@ -47,14 +47,14 @@ func init() {
 	rysncErrorCodes[35] = "Timeout waiting for daemon connection"
 
 	// Create the log directory
-	if rsyncLogs != "" {
-		err := os.MkdirAll(rsyncLogs, 0755)
+	if syncLogs != "" {
+		err := os.MkdirAll(syncLogs, 0755)
 
 		if err != nil {
-			logging.Warn("failed to create RSYNC_LOGS directory", rsyncLogs, err, "not saving rsync logs")
-			rsyncLogs = ""
+			logging.Warn("failed to create RSYNC_LOGS directory", syncLogs, err, "not saving rsync logs")
+			syncLogs = ""
 		} else {
-			logging.Success("opened RSYNC_LOGS directory", rsyncLogs)
+			logging.Success("opened RSYNC_LOGS directory", syncLogs)
 		}
 	}
 }
@@ -65,7 +65,7 @@ func rsync(project *Project, options string) ([]byte, *os.ProcessState) {
 	args := strings.Split(options, " ")
 
 	// Run with dry run if specified
-	if rsyncDryRun {
+	if syncDryRun {
 		args = append(args, "--dry-run")
 		logging.Info("Syncing", project.Short, "with --dry-run")
 	}
@@ -97,7 +97,7 @@ func appendToLogFile(short string, data []byte) {
 	month := fmt.Sprintf("%02d", time.Now().UTC().Month())
 
 	// Open the log file
-	path := rsyncLogs + "/" + short + "-" + month + ".log"
+	path := syncLogs + "/" + short + "-" + month + ".log"
 	file, err := os.OpenFile(path, os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0644)
 	if err != nil {
 		logging.Warn("failed to open log file ", path, err)
@@ -111,75 +111,92 @@ func appendToLogFile(short string, data []byte) {
 }
 
 func syncProject(config *ConfigFile, status RSYNCStatus, short string) {
-	logging.Info("Running job: rsync", short)
+	logging.Info("Running job: SYNC", short)
 
 	// Lock the project
-	rsyncLock.Lock() // start critical section
-	if rsyncLocks[short] {
-		rsyncLock.Unlock() // end critical section
-		logging.Warn("rsync is already running for ", short)
+	syncLock.Lock()
+	if syncLocks[short] {
+		syncLock.Unlock()
+		logging.Warn("Sync is already running for ", short)
 		return
 	}
-	rsyncLocks[short] = true
-	rsyncLock.Unlock() // end critical section
+	syncLocks[short] = true
+	syncLock.Unlock()
 
 	start := time.Now()
 
-	// 1 stage syncs are the norm
-	output1, state1 := rsync(config.Mirrors[short], config.Mirrors[short].Rsync.Options)
-	status[short].Push(Status{StartTime: start.Unix(), EndTime: time.Now().Unix(), ExitCode: state1.ExitCode()})
+	if config.Mirrors[short].SyncStyle == "rsync" {
+		// 1 stage syncs are the norm
+		output1, state1 := rsync(config.Mirrors[short], config.Mirrors[short].Rsync.Options)
+		status[short].Push(Status{StartTime: start.Unix(), EndTime: time.Now().Unix(), ExitCode: state1.ExitCode()})
 
-	// append stage 1 to its log file
-	if rsyncLogs != "" {
-		appendToLogFile(short, []byte("\n\n"+start.Format(time.RFC1123)+"\n"))
-		appendToLogFile(short, output1)
-	}
-
-	checkState(short, state1, output1)
-
-	// 2 stage syncs happen sometimes
-	if config.Mirrors[short].Rsync.Second != "" {
-		start = time.Now()
-		output2, state2 := rsync(config.Mirrors[short], config.Mirrors[short].Rsync.Second)
-		status[short].Push(Status{StartTime: start.Unix(), EndTime: time.Now().Unix(), ExitCode: state2.ExitCode()})
-
-		if rsyncLogs != "" {
+		// append stage 1 to its log file
+		if syncLogs != "" {
 			appendToLogFile(short, []byte("\n\n"+start.Format(time.RFC1123)+"\n"))
-			appendToLogFile(short, output2)
+			appendToLogFile(short, output1)
 		}
 
-		checkState(short, state2, output2)
-	}
+		checkRSYNCState(short, state1, output1)
 
-	// A few mirrors are 3 stage syncs
-	if config.Mirrors[short].Rsync.Third != "" {
-		start = time.Now()
-		output3, state3 := rsync(config.Mirrors[short], config.Mirrors[short].Rsync.Third)
-		status[short].Push(Status{StartTime: start.Unix(), EndTime: time.Now().Unix(), ExitCode: state3.ExitCode()})
+		// 2 stage syncs happen sometimes
+		if config.Mirrors[short].Rsync.Second != "" {
+			start = time.Now()
+			output2, state2 := rsync(config.Mirrors[short], config.Mirrors[short].Rsync.Second)
+			status[short].Push(Status{StartTime: start.Unix(), EndTime: time.Now().Unix(), ExitCode: state2.ExitCode()})
 
-		if rsyncLogs != "" {
-			appendToLogFile(short, []byte("\n\n"+start.Format(time.RFC1123)+"\n"))
-			appendToLogFile(short, output3)
+			if syncLogs != "" {
+				appendToLogFile(short, []byte("\n\n"+start.Format(time.RFC1123)+"\n"))
+				appendToLogFile(short, output2)
+			}
+
+			checkRSYNCState(short, state2, output2)
 		}
 
-		checkState(short, state3, output3)
+		// A few mirrors are 3 stage syncs
+		if config.Mirrors[short].Rsync.Third != "" {
+			start = time.Now()
+			output3, state3 := rsync(config.Mirrors[short], config.Mirrors[short].Rsync.Third)
+			status[short].Push(Status{StartTime: start.Unix(), EndTime: time.Now().Unix(), ExitCode: state3.ExitCode()})
+
+			if syncLogs != "" {
+				appendToLogFile(short, []byte("\n\n"+start.Format(time.RFC1123)+"\n"))
+				appendToLogFile(short, output3)
+			}
+
+			checkRSYNCState(short, state3, output3)
+		}
+	} else if config.Mirrors[short].SyncStyle == "script" {
+		if syncDryRun {
+			logging.Info("Did not sync", short, "because --dry-run was specified")
+			return
+		}
+
+		// Execute the script
+		logging.Info(config.Mirrors[short].Script.Command, config.Mirrors[short].Script.Arguments)
+		command := exec.Command(config.Mirrors[short].Script.Command, config.Mirrors[short].Script.Arguments...)
+		output, _ := command.CombinedOutput()
+
+		if syncLogs != "" {
+			appendToLogFile(short, []byte("\n\n"+start.Format(time.RFC1123)+"\n"))
+			appendToLogFile(short, output)
+		}
 	}
 
 	// Unlock the project
-	rsyncLock.Lock()
-	rsyncLocks[short] = false
-	rsyncLock.Unlock()
+	syncLock.Lock()
+	syncLocks[short] = false
+	syncLock.Unlock()
 }
 
-// handleRSYNC is the main rsync scheduler
+// handleSyncs is the main scheduler
 // It builds a schedule of when to sync projects in such a way they are equaly spaced across the day
-// rsync tasks are run in a separate goroutine and there is a lock to prevent the same project from being synced simultaneously
+// tasks are run in a separate goroutine and there is a lock to prevent the same project from being synced simultaneously
 // the stop channel gracefully stops the scheduler after all active rsync tasks have completed
 // the manual channel is used to manually sync a project, assuming it is not already currently syncing
-func handleRSYNC(config *ConfigFile, status RSYNCStatus, manual <-chan string, stop chan struct{}) {
+func handleSyncs(config *ConfigFile, status RSYNCStatus, manual <-chan string, stop chan struct{}) {
 	for _, mirror := range config.Mirrors {
 		if mirror.Rsync.SyncsPerDay > 0 {
-			// Store a weeks worth of status messages
+			// Store a weeks worth of status messages in memory
 			status[mirror.Short] = datarithms.CircularQueueInit[Status](7 * mirror.Rsync.SyncsPerDay)
 		}
 	}
@@ -187,10 +204,15 @@ func handleRSYNC(config *ConfigFile, status RSYNCStatus, manual <-chan string, s
 	// prepare the tasks
 	tasks := make([]datarithms.Task, 0, len(config.Mirrors))
 	for _, mirror := range config.Mirrors {
-		if mirror.Rsync.Host != "" {
+		if mirror.SyncStyle == "rsync" {
 			tasks = append(tasks, datarithms.Task{
 				Short: mirror.Short,
 				Syncs: mirror.Rsync.SyncsPerDay,
+			})
+		} else if mirror.SyncStyle == "script" {
+			tasks = append(tasks, datarithms.Task{
+				Short: mirror.Short,
+				Syncs: mirror.Script.SyncsPerDay,
 			})
 		}
 	}
@@ -205,10 +227,10 @@ func handleRSYNC(config *ConfigFile, status RSYNCStatus, manual <-chan string, s
 	}
 
 	// a project can only be syncing once at a time
-	rsyncLock = sync.Mutex{}
-	rsyncLocks = make(map[string]bool)
+	syncLock = sync.Mutex{}
+	syncLocks = make(map[string]bool)
 	for _, project := range config.Mirrors {
-		rsyncLocks[project.Short] = false
+		syncLocks[project.Short] = false
 	}
 
 	// skip the first job
@@ -227,15 +249,15 @@ func handleRSYNC(config *ConfigFile, status RSYNCStatus, manual <-chan string, s
 			// Wait for all the rsync tasks to finish
 			for {
 				// Check if all the rsync tasks are done
-				rsyncLock.Lock()
+				syncLock.Lock()
 				allDone := true
-				for _, running := range rsyncLocks {
+				for _, running := range syncLocks {
 					if running {
 						allDone = false
 						break
 					}
 				}
-				rsyncLock.Unlock()
+				syncLock.Unlock()
 
 				// If all the rsync tasks are done, break
 				if allDone {
@@ -256,12 +278,12 @@ func handleRSYNC(config *ConfigFile, status RSYNCStatus, manual <-chan string, s
 		case short := <-manual:
 			// wait for the project to be unlocked
 			for {
-				rsyncLock.Lock()
-				if !rsyncLocks[short] {
-					rsyncLock.Unlock()
+				syncLock.Lock()
+				if !syncLocks[short] {
+					syncLock.Unlock()
 					break
 				}
-				rsyncLock.Unlock()
+				syncLock.Unlock()
 				time.Sleep(time.Second)
 			}
 
@@ -270,11 +292,11 @@ func handleRSYNC(config *ConfigFile, status RSYNCStatus, manual <-chan string, s
 	}
 }
 
-func checkState(short string, state *os.ProcessState, output []byte) {
+func checkRSYNCState(short string, state *os.ProcessState, output []byte) {
 	if state != nil && state.Success() {
 		logging.Success("Job rsync:", short, "finished successfully")
 	} else {
-		if state.ExitCode() != 23 && state.ExitCode() != 24 {
+		if state.ExitCode() == 23 || state.ExitCode() == 24 {
 			// states 23 "Partial transfer due to error" and 24 "Partial transfer" are not considered important enough to message discord
 			logging.Error(output, "Job rsync: ", short, " failed. Exit code: ", state.ExitCode(), " ", rysncErrorCodes[state.ExitCode()])
 		} else {

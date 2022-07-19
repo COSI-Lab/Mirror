@@ -26,6 +26,11 @@
               "description": "Command to execute",
               "type": "string"
             },
+            "arguments": {
+              "description": "Arguments to pass to the command",
+              "type": "array",
+              "items": { "type": "string" }
+            },
             "syncs_per_day": {
               "description": "How many times a day to sync",
               "type": "number",

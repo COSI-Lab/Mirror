@@ -28,9 +28,9 @@ var (
 	// RSYNCD_TAIL
 	rsyncdTail string
 	// RSYNC_DRY_RUN
-	rsyncDryRun bool
+	syncDryRun bool
 	// RSYNC_LOGS
-	rsyncLogs string
+	syncLogs string
 	// WEB_SERVER_CACHE
 	webServerCache bool
 	// HOOK_URL
@@ -57,8 +57,8 @@ func init() {
 	influxReadOnly = os.Getenv("INFLUX_READ_ONLY") == "true"
 	nginxTail = os.Getenv("NGINX_TAIL")
 	rsyncdTail = os.Getenv("RSYNCD_TAIL")
-	rsyncDryRun = os.Getenv("RSYNC_DRY_RUN") == "true"
-	rsyncLogs = os.Getenv("RSYNC_LOGS")
+	syncDryRun = os.Getenv("RSYNC_DRY_RUN") == "true" || os.Getenv("SYNC_DRY_RUN") == "true"
+	syncLogs = os.Getenv("RSYNC_LOGS")
 	webServerCache = os.Getenv("WEB_SERVER_CACHE") == "true"
 	hookURL = os.Getenv("HOOK_URL")
 	pingID = os.Getenv("PING_ID")
@@ -85,11 +85,11 @@ func init() {
 		logging.Warn("No RSYNCD_TAIL environment variable found. Live tail will not be used and will instead attempt to read ./rsyncd.log")
 	}
 
-	if rsyncDryRun {
+	if syncDryRun {
 		logging.Warn("RSYNC_DRY_RUN is set, all rsyncs will be run in dry-run mode")
 	}
 
-	if rsyncLogs == "" {
+	if syncLogs == "" {
 		logging.Warn("No RSYNC_LOGS environment variable found. Persisent logs are not being saved")
 	}
 
@@ -193,7 +193,7 @@ func main() {
 	stop := make(chan struct{})
 	manual := make(chan string)
 	rsyncStatus := make(RSYNCStatus)
-	go handleRSYNC(config, rsyncStatus, manual, stop)
+	go handleSyncs(config, rsyncStatus, manual, stop)
 
 	go func() {
 		for {
@@ -212,7 +212,7 @@ func main() {
 
 			// restart the rsync scheduler
 			rsyncStatus := make(RSYNCStatus)
-			go handleRSYNC(config, rsyncStatus, manual, stop)
+			go handleSyncs(config, rsyncStatus, manual, stop)
 		}
 	}()
 

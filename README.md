@@ -1,27 +1,29 @@
 # Mirror
 
-Monolithic software for our [mirror](https://mirror.clarkson.edu) that handles the website, tracking, and scheduling systems. We use an influxdb time series database for storage.
+Monolithic software for our [mirror](https://mirror.clarkson.edu) that handles the website, tracking, and scheduling systems. We use an influxdb time series database for storage. It is important to clone this repo with the `--recurse-submodules` flag!
 
 ## TODO LIST
+
 - [ ] The Mirror "book" documentation
 - [ ] Manage torrents using config
 - [ ] Recording rsync bandwidth
 - [ ] Recording tranmission bittorrent bandwidth
 - [ ] Make the map look nice on mobile devices
-- [ ] Mobile friendly navbar
 
 **Statistics Page**
+
 - [ ] Exposing nginx bandwidth per repo (pie chart)
 - [ ] Exposing rsync bandwidth
 - [ ] Exposing tranmission bittorrent bandwidth
 - [ ] Exposing total network bandwidth
 
 ## Env File Formatting
+
 ```
 # Discord Webhook URL and id to ping when things panic
 # Omit either and the bot will not communicate with discord
-#HOOK_URL=url
-#PING_ID=id
+HOOK_URL=url
+PING_ID=id
 
 # Maxmind DB token to update the database, omit and we'll only use a local copy if it exists
 MAXMIND_LICENSE_KEY=key
@@ -39,7 +41,8 @@ NGINX_TAIL=/var/log/nginx/access.log
 RSYNCD_TAIL=/var/log/rsyncd.log
 
 # "true" if the --dry-run flag to the rsync jobs
-RSYNC_DRY_RUN=true
+# and we skip other scripts pulls
+SYNC_DRY_RUN=true
 
 # Directory to store the rsync log files, if empty then we don't keep logs. It will be created if it doesn't exist.
 RSYNC_LOGS=/tmp/mirror/
@@ -50,6 +53,10 @@ WEB_SERVER_CACHE=true
 # Secret push token
 PULL_TOKEN=token
 ```
+
+## Dependencies
+
+Quick-Fedora-Mirror requires zsh
 
 ## Hardware
 

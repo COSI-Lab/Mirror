@@ -64,43 +64,15 @@ func handleProjects(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-type LineChart struct {
-	Sent  []float64
-	Recv  []float64
-	Times []int64
-}
-
-type StatsPage struct {
-	Pie    map[string]int64
-	Weekly LineChart
-}
-
 func handleStatistics(w http.ResponseWriter, r *http.Request) {
-	// get pie chart data
-	pie, err := QueryBytesSentByProject()
-
-	if err != nil {
-		logging.Warn("handleStatistics; failed to load pie data", err)
-	}
-
 	// get bar chart data
-	sent, recv, times, nil := QueryWeeklyNetStats()
-
+	line, err := QueryWeeklyNetStats()
 	if err != nil {
-		logging.Warn("handleStatistics; failed to load bar data", err)
+		logging.Warn("handleStatistics;", err)
+		return
 	}
 
-	page := StatsPage{
-		Pie: pie,
-		Weekly: LineChart{
-			sent,
-			recv,
-			times,
-		},
-	}
-
-	err = tmpls.ExecuteTemplate(w, "statistics.gohtml", page)
-
+	err = tmpls.ExecuteTemplate(w, "statistics.gohtml", line)
 	if err != nil {
 		logging.Warn("handleStatistics;", err)
 	}
