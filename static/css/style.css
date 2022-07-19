@@ -211,23 +211,9 @@ body > h1 {
 }
 
 /* For statistics.gohtml */
-.statpage {
+.statistics {
   display: flex;
-  padding: 50px;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
-}
-.statpage b {
-  font-size: 30px;
-}
-.container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-.item {
-  margin: auto;
 }
 
 /* General Use: CHANGE WITH CAUTION */
@@ -237,6 +223,7 @@ body > h1 {
     background-color: white;
     padding-left: 5%;
     padding-right: 5%;
+    margin: 0;
   }
 }
 /* desktop */
@@ -245,6 +232,7 @@ body > h1 {
     background-color: white;
     padding-left: 20%;
     padding-right: 20%;
+    margin: 0;
   }
 }
 

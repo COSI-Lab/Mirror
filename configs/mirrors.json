@@ -128,7 +128,7 @@
       },
       "official": false,
       "homepage": "https://centos.org/",
-      "color": "#000000",
+      "color": "#0abab5",
       "publicRsync": true,
       "alternative": "http://mirror.siena.edu/centos-stream/"
     },
@@ -246,6 +246,23 @@
       "color": "#00755e",
       "publicRsync": true,
       "alternative": "http://mirror.umd.edu/eclipse/"
+    },
+    "fedora": {
+      "name": "Fedora",
+      "page": "Distributions",
+      "script": {
+        "syncs_per_day": 4,
+        "command": "./scripts/quick-fedora-mirror/quick-fedora-mirror",
+        "arguments": [
+          "-c",
+          "configs/quick-fedora-mirror.conf"
+        ]
+      },
+      "official": false,
+      "homepage": "https://www.fedoraproject.org/",
+      "color": "#00755e",
+      "publicRsync": true,
+      "alternative": "http://mirror.rit.edu/fedora/"
     },
     "gentoo": {
       "name": "Gentoo",
@@ -534,21 +551,21 @@
       "alternative": "http://ftp.osuosl.org/pub/tdf/"
     },
     "ubuntu": {
-      "name": "Ubuntu", 
-      "page": "Distributions", 
+      "name": "Ubuntu",
+      "page": "Distributions",
       "rsync": {
-        "host": "mirrors.rit.edu", 
-        "src": "ubuntu", 
-        "dest": "/storage/ubuntu", 
-	"options": "-vrtlH --no-perms --no-owner --no-group --safe-links --exclude \"Packages*\" --exclude \"Sources*\" --exclude \"Release*\" --exclude \"InRelease\"",
+        "host": "mirrors.rit.edu",
+        "src": "ubuntu",
+        "dest": "/storage/ubuntu",
+        "options": "-vrtlH --no-perms --no-owner --no-group --safe-links --exclude \"Packages*\" --exclude \"Sources*\" --exclude \"Release*\" --exclude \"InRelease\"",
         "second": "-vrtlH --no-perms --no-owner --no-group --safe-links --delete --delete-after",
-        "syncs_per_day": 4 
+        "syncs_per_day": 4
       },
-      "official": true, 
-      "homepage": "https://www.ubuntu.com/", 
-      "color": "#ffd300", 
-      "publicRsync": true, 
-      "alternative": "http://mirrors.mit.edu/ubuntu/" 
+      "official": true,
+      "homepage": "https://www.ubuntu.com/",
+      "color": "#ffd300",
+      "publicRsync": true,
+      "alternative": "http://mirrors.mit.edu/ubuntu/"
     },
     "ubuntu-releases": {
       "name": "Ubuntu Releases",

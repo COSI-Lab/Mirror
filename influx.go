@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
+	"sort"
 
 	"github.com/COSI_Lab/Mirror/logging"
 	influxdb2 "github.com/influxdata/influxdb-client-go/v2"
@@ -17,7 +18,7 @@ var reader api.QueryAPI
 
 func SetupInfluxClients(token string) {
 	// create new client with default option for server url authenticate by token
-	client := influxdb2.NewClient("https://mirror.clarkson.edu:8086", token)
+	client := influxdb2.NewClient("http://mirror.clarkson.edu:8086", token)
 
 	writer = client.WriteAPI("COSI", "stats")
 	reader = client.QueryAPI("COSI")
@@ -74,27 +75,48 @@ func QueryBytesSentByProject() (map[string]int64, error) {
 	return bytesSent, nil
 }
 
+// implements the sort interface
+type LineChart struct {
+	Sent  []float64
+	Recv  []float64
+	Times []int64
+}
+
+func (l LineChart) Len() int {
+	return len(l.Sent)
+}
+
+func (l LineChart) Swap(i, j int) {
+	l.Sent[i], l.Sent[j] = l.Sent[j], l.Sent[i]
+	l.Recv[i], l.Recv[j] = l.Recv[j], l.Recv[i]
+	l.Times[i], l.Times[j] = l.Times[j], l.Times[i]
+}
+
+func (l LineChart) Less(i, j int) bool {
+	return l.Times[i] < l.Times[j]
+}
+
 // Gets the total network bytes sent and recieved for the last week in 1 hour blocks
-func QueryWeeklyNetStats() (sent []float64, recv []float64, times []int64, err error) {
+func QueryWeeklyNetStats() (line LineChart, err error) {
 	// You can paste this into the influxdb data explorer
 	/*
 		from(bucket: "system")
-		  |> range(start: -7d, stop: now())
-		  |> filter(fn: (r) => r["_measurement"] == "net")
-		  |> filter(fn: (r) => r["_field"] == "bytes_sent" or r["_field"] == "bytes_recv")
-		  |> derivative(unit: 1s, nonNegative: true)
-		  |> aggregateWindow(every: 1h, fn: mean)
-		  |> yield(name: "nonnegative derivative")
+			|> range(start: -7d, stop: now())
+			|> filter(fn: (r) => r["_measurement"] == "net" and r["interface"] == "enp8s0")
+			|> filter(fn: (r) => r["_field"] == "bytes_sent" or r["_field"] == "bytes_recv")
+			|> aggregateWindow(every: 1h, fn: last)
+			|> derivative(unit: 1s, nonNegative: true)
+			|> yield(name: "nonnegative derivative")
 	*/
-	result, err := reader.Query(context.Background(), "from(bucket: \"system\") |> range(start: -7d, stop: now()) |> filter(fn: (r) => r[\"_measurement\"] == \"net\") |> filter(fn: (r) => r[\"_field\"] == \"bytes_sent\" or r[\"_field\"] == \"bytes_recv\") |> derivative(unit: 1s, nonNegative: true) |> aggregateWindow(every: 1h, fn: mean) |> yield(name: \"nonnegative derivative\")")
+	result, err := reader.Query(context.Background(), "from(bucket: \"system\") |> range(start: -7d, stop: now()) |> filter(fn: (r) => r[\"_measurement\"] == \"net\" and r[\"interface\"] == \"enp8s0\") |> filter(fn: (r) => r[\"_field\"] == \"bytes_sent\" or r[\"_field\"] == \"bytes_recv\") |> aggregateWindow(every: 1h, fn: last) |> derivative(unit: 1s, nonNegative: true) |> yield(name: \"nonnegative derivative\")")
 
 	if err != nil {
-		return nil, nil, nil, err
+		return LineChart{}, err
 	}
 
-	sent = make([]float64, 0)
-	recv = make([]float64, 0)
-	times = make([]int64, 0)
+	sent := make([]float64, 0)
+	recv := make([]float64, 0)
+	times := make([]int64, 0)
 
 	for result.Next() {
 		if result.Err() == nil {
@@ -128,5 +150,16 @@ func QueryWeeklyNetStats() (sent []float64, recv []float64, times []int64, err e
 			logging.Warn("InitNGINXStats Flux Query Error", result.Err())
 		}
 	}
-	return sent, recv, times, nil
+
+	line = LineChart{
+		Sent:  sent,
+		Recv:  recv,
+		Times: times,
+	}
+
+	fmt.Println(len(sent), len(recv), len(times))
+
+	sort.Sort(line)
+
+	return line, nil
 }

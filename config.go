@@ -84,8 +84,11 @@ type Project struct {
 	Id        byte   // Id is given out in alphabetical order of short (only 255 are supported)
 	SyncStyle string // "script" "rsync" or "static"
 	Script    struct {
-		Command     string `json:"command"`
-		SyncsPerDay int    `json:"syncs_per_day"`
+		// Map of envirment variables to be set before calling the command
+		Env map[string]string `json:"env"`
+		Command     string   `json:"command"`
+		Arguments   []string `json:"arguments"`
+		SyncsPerDay int      `json:"syncs_per_day"`
 	}
 	Rsync struct {
 		Options      string `json:"options"` // cmdline options for first stage
@@ -131,7 +134,7 @@ func ParseConfig(configFile, schemaFile, tokensFile string) (config ConfigFile) 
 	// Validate the config against the schema
 	result, err := gojsonschema.Validate(schemaLoader, documentLoader)
 	if err != nil {
-		log.Fatal(err.Error())
+		log.Fatal("Config file did not match the schema: ", err.Error())
 	}
 
 	// Report errors

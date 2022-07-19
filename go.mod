@@ -5,7 +5,7 @@ go 1.18
 require (
 	github.com/gorilla/mux v1.8.0
 	github.com/gorilla/websocket v1.5.0
-	github.com/influxdata/influxdb-client-go/v2 v2.9.0
+	github.com/influxdata/influxdb-client-go/v2 v2.9.1
 	github.com/joho/godotenv v1.4.0
 	github.com/nxadm/tail v1.4.8
 	github.com/oschwald/geoip2-golang v1.7.0
