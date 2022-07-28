@@ -13,7 +13,7 @@ import (
 	"strings"
 	"text/template"
 
-	"github.com/COSI_Lab/Mirror/logging"
+	"github.com/COSI-Lab/logging"
 	"github.com/xeipuuv/gojsonschema"
 )
 

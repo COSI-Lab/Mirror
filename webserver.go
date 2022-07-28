@@ -3,12 +3,10 @@ package main
 import (
 	"fmt"
 	"html/template"
-	"net"
 	"net/http"
 	"sync"
 
-	"github.com/COSI_Lab/Mirror/logging"
-	"github.com/COSI_Lab/Mirror/mirrormap"
+	"github.com/COSI-Lab/logging"
 	"github.com/gorilla/mux"
 )
 
@@ -124,72 +122,6 @@ func handleHealth(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 }
 
-func entriesToMessages(entries chan *NginxLogEntry, messages chan []byte) {
-	// Send groups of 8 messages
-	ch := make(chan []byte)
-	go func() {
-		for {
-			group := make([]byte, 0, 40)
-			for i := 0; i < 8; i++ {
-				group = append(group, <-ch...)
-			}
-			messages <- group
-		}
-	}()
-
-	// Track the previous IP to avoid sending duplicate data
-	prevIP := net.IPv4(0, 0, 0, 0)
-	for {
-		// Read from the channel
-		entry := <-entries
-
-		// If the lookup failed, skip this entry
-		if entry == nil || entry.City == nil {
-			continue
-		}
-
-		// Skip if the IP is the same as the previous one
-		if prevIP.Equal(entry.IP) {
-			continue
-		}
-
-		// Update the previous IP
-		prevIP = entry.IP
-
-		// Get the distro
-		project, ok := projects[entry.Distro]
-		if !ok {
-			continue
-		}
-
-		// Get the location
-		lat_ := entry.City.Location.Latitude
-		long_ := entry.City.Location.Longitude
-
-		if lat_ == 0 && long_ == 0 {
-			continue
-		}
-
-		// convert [-90, 90] latitude to [0, 4096] pixels
-		lat := int16((lat_ + 90) * 4096 / 180)
-		// convert [-180, 180] longitude to [0, 4096] pixels
-		long := int16((long_ + 180) * 4096 / 360)
-
-		// Create a new message
-		msg := make([]byte, 5)
-		// First byte is the project ID
-		msg[0] = project.Id
-		// Second and Third byte are the latitude
-		msg[1] = byte(lat >> 8)
-		msg[2] = byte(lat & 0xFF)
-		// Fourth and Fifth byte are the longitude
-		msg[3] = byte(long >> 8)
-		msg[4] = byte(long & 0xFF)
-
-		ch <- msg
-	}
-}
-
 // Reload distributions and software arrays
 func WebserverLoadConfig(config *ConfigFile) {
 	dataLock.Lock()
@@ -210,8 +142,8 @@ func HandleWebserver(manual chan<- string, entries chan *NginxLogEntry) {
 	// Setup the map
 	r.Handle("/map", cachingMiddleware(handleMap))
 	mapMessages := make(chan []byte)
-	go entriesToMessages(entries, mapMessages)
-	mirrormap.MapRouter(r.PathPrefix("/map").Subrouter(), mapMessages)
+	// go entriesToMessages(entries, mapMessages)
+	MapRouter(r.PathPrefix("/map").Subrouter(), mapMessages)
 
 	// Handlers for the other pages
 	// redirect / to /home
@@ -222,7 +154,7 @@ func HandleWebserver(manual chan<- string, entries chan *NginxLogEntry) {
 	r.Handle("/stats", cachingMiddleware(handleStatistics))
 	r.Handle("/sync/{project}", handleManualSyncs(manual))
 	r.HandleFunc("/health", handleHealth)
-	r.HandleFunc("/ws", mirrormap.HandleWebsocket)
+	r.HandleFunc("/ws", HandleWebsocket)
 
 	// Static files
 	r.PathPrefix("/").Handler(cachingMiddleware(http.FileServer(http.Dir("static")).ServeHTTP))

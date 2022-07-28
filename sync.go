@@ -8,8 +8,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/COSI_Lab/Mirror/datarithms"
-	"github.com/COSI_Lab/Mirror/logging"
+	"github.com/COSI-Lab/datarithms"
+	"github.com/COSI-Lab/logging"
 )
 
 type Status struct {

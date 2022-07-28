@@ -8,11 +8,12 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/COSI_Lab/Mirror/logging"
+	"github.com/COSI-Lab/geoip"
+	"github.com/COSI-Lab/logging"
 	"github.com/joho/godotenv"
 )
 
-var geoip *GeoIPHandler
+var geoipHandler *geoip.GeoIPHandler
 
 var (
 	// HOOK_URL and PING_URL and handled in the logging packages
@@ -141,7 +142,13 @@ func main() {
 	map_entries := make(chan *NginxLogEntry, 100)
 
 	// GeoIP lookup
-	geoip = NewGeoIPHandler(maxmindLicenseKey)
+	var err error
+	if maxmindLicenseKey != "" {
+		geoipHandler, err = geoip.NewGeoIPHandler(maxmindLicenseKey)
+		if err != nil {
+			logging.Error("Failed to initialize GeoIP handler:", err)
+		}	
+	}
 
 	// Connect to the database
 	if influxToken == "" {

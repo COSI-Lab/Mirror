@@ -10,7 +10,7 @@ Monolithic software for our [mirror](https://mirror.clarkson.edu) that handles t
 - [ ] Recording tranmission bittorrent bandwidth
 - [ ] Make the map look nice on mobile devices
 
-**Statistics Page**
+Statistics Page:
 
 - [ ] Exposing nginx bandwidth per repo (pie chart)
 - [ ] Exposing rsync bandwidth
@@ -19,7 +19,7 @@ Monolithic software for our [mirror](https://mirror.clarkson.edu) that handles t
 
 ## Env File Formatting
 
-```
+```text
 # Discord Webhook URL and id to ping when things panic
 # Omit either and the bot will not communicate with discord
 HOOK_URL=url
@@ -60,7 +60,7 @@ Quick-Fedora-Mirror requires zsh
 
 ## Hardware
 
-```
+```text
 8x Black Diamond M-1333TER-8192BD23 8GB DDR3 RAM
 
 Samsung EVO 870 1TB SATA SSD
@@ -69,9 +69,9 @@ Samsung EVO 870 1TB SATA SSD
 
 HP 671798-001 10gb Ethernet Network Interface Card NIC Board
 
-some random pcie riser for an m.2 ssd cache
+Some random pcie riser for PCIE 3 M.2 ssd cache
 
-sabrent SB-RKT4P-1TB
+Sabrent SB-RKT4P-1TB
 ```
 
 ## GeoLite2 Attribution
