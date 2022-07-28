@@ -4,8 +4,9 @@ go 1.18
 
 require (
 	github.com/COSI-Lab/datarithms v1.0.2
-	github.com/COSI-Lab/logging v1.0.1
 	github.com/COSI-Lab/geoip v1.0.0
+	github.com/COSI-Lab/logging v1.0.1
+	github.com/IncSW/geoip2 v0.1.2
 	github.com/gorilla/mux v1.8.0
 	github.com/gorilla/websocket v1.5.0
 	github.com/influxdata/influxdb-client-go/v2 v2.9.1
@@ -15,7 +16,6 @@ require (
 )
 
 require (
-	github.com/IncSW/geoip2 v0.1.2 // indirect
 	github.com/deepmap/oapi-codegen v1.8.2 // indirect
 	github.com/fsnotify/fsnotify v1.4.9 // indirect
 	github.com/influxdata/line-protocol v0.0.0-20200327222509-2487e7298839 // indirect
