@@ -227,6 +227,8 @@ func main() {
 	WebserverLoadConfig(config)
 	go HandleWebserver(manual, map_entries)
 
+	go HandleCheckIn()
+
 	for {
 		logging.Info(runtime.NumGoroutine(), "goroutines")
 		time.Sleep(time.Hour)

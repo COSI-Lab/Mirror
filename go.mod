@@ -16,14 +16,18 @@ require (
 )
 
 require (
-	github.com/deepmap/oapi-codegen v1.8.2 // indirect
-	github.com/fsnotify/fsnotify v1.4.9 // indirect
-	github.com/influxdata/line-protocol v0.0.0-20200327222509-2487e7298839 // indirect
+	github.com/deepmap/oapi-codegen v1.11.0 // indirect
+	github.com/fsnotify/fsnotify v1.5.4 // indirect
+	github.com/golang/freetype v0.0.0-20170609003504-e2365dfdc4a0 // indirect
+	github.com/google/uuid v1.3.0 // indirect
+	github.com/influxdata/line-protocol v0.0.0-20210922203350-b1ad95c89adf // indirect
 	github.com/pkg/errors v0.9.1 // indirect
-	github.com/xeipuuv/gojsonpointer v0.0.0-20180127040702-4e3ac2762d5f // indirect
+	github.com/wcharczuk/go-chart/v2 v2.1.0 // indirect
+	github.com/xeipuuv/gojsonpointer v0.0.0-20190905194746-02993c407bfb // indirect
 	github.com/xeipuuv/gojsonreference v0.0.0-20180127040603-bd5ef7bd5415 // indirect
-	golang.org/x/net v0.0.0-20210119194325-5f4716e94777 // indirect
-	golang.org/x/sys v0.0.0-20210124154548-22da62e12c0c // indirect
+	golang.org/x/image v0.0.0-20200927104501-e162460cd6b5 // indirect
+	golang.org/x/net v0.0.0-20220726230323-06994584191e // indirect
+	golang.org/x/sys v0.0.0-20220727055044-e65921a090b8 // indirect
 	gopkg.in/tomb.v1 v1.0.0-20141024135613-dd632973f1e7 // indirect
-	gopkg.in/yaml.v2 v2.3.0 // indirect
+	gopkg.in/yaml.v2 v2.4.0 // indirect
 )
