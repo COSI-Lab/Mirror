@@ -117,7 +117,7 @@ func PrepareDailySendStats() (map[string][]TimeSentPair, error) {
 }
 
 // Create a bar chart for the bandwidth sent per hour
-func CreateBarChart(timeSentPairs []TimeSentPair) chart.BarChart {
+func CreateBarChart(timeSentPairs []TimeSentPair, project string) chart.BarChart {
 	style := chart.Style{
 		FillColor: drawing.ColorFromHex("#00bcd4"),
 		StrokeColor: drawing.ColorFromHex("#00bcd4"),
@@ -134,7 +134,7 @@ func CreateBarChart(timeSentPairs []TimeSentPair) chart.BarChart {
 	}
 
 	graph := chart.BarChart{
-		Title: fmt.Sprint("Bytes sent per hour ", time.Now().Format("Jan 02 2006")),
+		Title: fmt.Sprintf("Bytes sent per hour for %s | %s", project, time.Now().Format("Jan 02 2006")),
 		Background: chart.Style{
 			Padding: chart.Box{
 				Top:    40,
