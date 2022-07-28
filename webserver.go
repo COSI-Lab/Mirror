@@ -142,7 +142,7 @@ func HandleWebserver(manual chan<- string, entries chan *NginxLogEntry) {
 	// Setup the map
 	r.Handle("/map", cachingMiddleware(handleMap))
 	mapMessages := make(chan []byte)
-	// go entriesToMessages(entries, mapMessages)
+	go entriesToMessages(entries, mapMessages)
 	MapRouter(r.PathPrefix("/map").Subrouter(), mapMessages)
 
 	// Handlers for the other pages
