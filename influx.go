@@ -18,7 +18,7 @@ var reader api.QueryAPI
 
 func SetupInfluxClients(token string) {
 	// create new client with default option for server url authenticate by token
-	client := influxdb2.NewClient("http://mirror.clarkson.edu:8086", token)
+	client := influxdb2.NewClient("http://localhost:8086", token)
 
 	writer = client.WriteAPI("COSI", "stats")
 	reader = client.QueryAPI("COSI")
