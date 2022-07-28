@@ -11,10 +11,10 @@ import (
 	"strings"
 	"time"
 
-	"github.com/COSI_Lab/Mirror/datarithms"
-	"github.com/COSI_Lab/Mirror/logging"
+	"github.com/COSI-Lab/datarithms"
+	"github.com/COSI-Lab/logging"
+	"github.com/IncSW/geoip2"
 	"github.com/nxadm/tail"
-	"github.com/oschwald/geoip2-golang"
 )
 
 // It is critical that NGINX uses the following log format:
@@ -26,7 +26,7 @@ import (
 // NginxLogEntry is a struct that represents a parsed nginx log entry
 type NginxLogEntry struct {
 	IP        net.IP
-	City      *geoip2.City
+	City      *geoip2.CityResult
 	Time      time.Time
 	Method    string
 	Distro    string
@@ -148,8 +148,13 @@ func parseNginxLine(line string) (*NginxLogEntry, error) {
 	}
 
 	// Optional GeoIP lookup
-	if geoip != nil {
-		entry.City = geoip.GetGeoIP(entry.IP)
+	if geoipHandler != nil {
+		city, err := geoipHandler.Lookup(entry.IP)
+		if err != nil {
+			entry.City = nil
+		} else {
+			entry.City = city
+		}
 	} else {
 		entry.City = nil
 	}

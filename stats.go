@@ -7,7 +7,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/COSI_Lab/Mirror/logging"
+	"github.com/COSI-Lab/logging"
 	influxdb2 "github.com/influxdata/influxdb-client-go/v2"
 	"github.com/influxdata/influxdb-client-go/v2/api"
 )
