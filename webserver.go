@@ -104,7 +104,7 @@ func handleStatistics(w http.ResponseWriter, r *http.Request) {
 
 		// Create the bar chart for the to
 		if data, ok := stats[project]; ok {
-			graph := CreateBarChart(data)
+			graph := CreateBarChart(data, project)
 			// render the chart as PNG
 			err = graph.Render(chart.PNG, w)
 			if err != nil {
