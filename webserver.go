@@ -8,6 +8,7 @@ import (
 
 	"github.com/COSI-Lab/logging"
 	"github.com/gorilla/mux"
+	"github.com/wcharczuk/go-chart/v2"
 )
 
 var tmpls *template.Template
@@ -62,17 +63,61 @@ func handleProjects(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func handleStatistics(w http.ResponseWriter, r *http.Request) {
+// The /stats page
+func handleStats(w http.ResponseWriter, r *http.Request) {
 	// get bar chart data
 	line, err := QueryWeeklyNetStats()
 	if err != nil {
-		logging.Warn("handleStatistics;", err)
+		logging.Warn("handleStats;", err)
 		return
 	}
 
 	err = tmpls.ExecuteTemplate(w, "statistics.gohtml", line)
 	if err != nil {
-		logging.Warn("handleStatistics;", err)
+		logging.Warn("handleStats;", err)
+	}
+}
+
+// The /stats/{project}/{statistic} endpoint
+// Supported statistics:
+//   - daily_sent
+func handleStatistics(w http.ResponseWriter, r *http.Request) {
+	// Get the statistic name
+	vars := mux.Vars(r)
+	project := vars["project"]
+	statistic := vars["statistic"]
+
+	if project == "" || statistic == "" {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	switch statistic {
+	case "daily_sent":
+		// Get the bar chart data
+		stats, err := PrepareDailySendStats()
+		if err != nil {
+			logging.Warn("handleStatistics /daily_sent", err)
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+
+		// Create the bar chart for the to
+		if data, ok := stats[project]; ok {
+			graph := CreateBarChart(data)
+			// render the chart as PNG
+			err = graph.Render(chart.PNG, w)
+			if err != nil {
+				logging.Warn("handleStatistics /daily_sent", err)
+				w.WriteHeader(http.StatusInternalServerError)
+				return
+			}
+			w.Header().Set("Content-Type", "image/png")
+		} else {
+			w.WriteHeader(http.StatusNotFound)
+		}
+	default:
+		w.WriteHeader(http.StatusBadRequest)
 	}
 }
 
@@ -151,7 +196,8 @@ func HandleWebserver(manual chan<- string, entries chan *NginxLogEntry) {
 	r.Handle("/home", cachingMiddleware(handleHome))
 	r.Handle("/projects", cachingMiddleware(handleProjects))
 	r.Handle("/history", cachingMiddleware(handleHistory))
-	r.Handle("/stats", cachingMiddleware(handleStatistics))
+	r.Handle("/stats/{project}/{statistic}", cachingMiddleware(handleStatistics))
+	r.Handle("/stats", cachingMiddleware(handleStats))
 	r.Handle("/sync/{project}", handleManualSyncs(manual))
 	r.HandleFunc("/health", handleHealth)
 	r.HandleFunc("/ws", HandleWebsocket)

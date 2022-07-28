@@ -258,6 +258,8 @@ func QueryNginxStatistics() (*api.QueryTableResult, error) {
 
 		if err != nil {
 			logging.Warn("Failed to querying influxdb nginx statistics", err)
+			// Sleep for some time before retrying
+			time.Sleep(time.Duration(i) * time.Second)
 			continue
 		}
 
@@ -284,6 +286,8 @@ func QueryRsyncdStatistics() (result *api.QueryTableResult, err error) {
 
 		if err != nil {
 			logging.Warn("Failed to querying influxdb rsyncd statistics", err)
+			// Sleep for some time before retrying
+			time.Sleep(time.Duration(i) * time.Second)
 			continue
 		}
 
