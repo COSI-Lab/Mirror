@@ -134,7 +134,7 @@ func CreateBarChart(timeSentPairs []TimeSentPair, project string) chart.BarChart
 	}
 
 	graph := chart.BarChart{
-		Title: fmt.Sprintf("Bytes sent per hour for %s | %s", project, time.Now().Format("Jan 02 2006")),
+		Title: fmt.Sprintf("Bytes sent per hour for \"%s\" | %s", project, time.Now().Format("Jan 02 2006")),
 		Background: chart.Style{
 			Padding: chart.Box{
 				Top:    40,
