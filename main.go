@@ -136,7 +136,7 @@ func main() {
 
 	// Update the rsyncd.conf file based on the config file
 	createRsyncdConfig(config)
-	createNginxRedirects(config)
+	// createNginxRedirects(config)
 
 	// We will always run the mirror map
 	map_entries := make(chan *NginxLogEntry, 100)
