@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"crypto/tls"
 	"fmt"
 	"sort"
 
@@ -18,7 +19,10 @@ var reader api.QueryAPI
 
 func SetupInfluxClients(token string) {
 	// create new client with default option for server url authenticate by token
-	client := influxdb2.NewClient("http://mirror.clarkson.edu:8086", token)
+	options := influxdb2.DefaultOptions()
+	options.SetTLSConfig(&tls.Config{InsecureSkipVerify: true})
+
+	client := influxdb2.NewClientWithOptions("https://mirror.clarkson.edu:8086", token, options)
 
 	writer = client.WriteAPI("COSI", "stats")
 	reader = client.QueryAPI("COSI")
