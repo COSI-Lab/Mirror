@@ -98,9 +98,14 @@ func appendToLogFile(short string, data []byte) {
 
 	// Open the log file
 	path := syncLogs + "/" + short + "-" + month + ".log"
-	file, err := os.OpenFile(path, os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0644)
+	file, err := os.OpenFile(path, os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0640)
 	if err != nil {
 		logging.Warn("failed to open log file ", path, err)
+	}
+	// Set the file to be owned by the adm group
+	err = file.Chown(os.Getuid(), admGroup)
+	if err != nil {
+		logging.Warn("failed to set log file ownership", path, err)
 	}
 
 	// Write to the log file

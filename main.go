@@ -1,10 +1,12 @@
 package main
 
 import (
+	"fmt"
 	"os"
 	"os/signal"
 	"runtime"
 	"runtime/debug"
+	"strconv"
 	"syscall"
 	"time"
 
@@ -15,9 +17,11 @@ import (
 
 var geoipHandler *geoip.GeoIPHandler
 
+// .env variables
 var (
+	// ADM_GROUP
+	admGroup int
 	// HOOK_URL and PING_URL and handled in the logging packages
-
 	// MAXMIND_LICENSE_KEY
 	maxmindLicenseKey string
 	// INFLUX_TOKEN
@@ -28,6 +32,8 @@ var (
 	nginxTail string
 	// RSYNCD_TAIL
 	rsyncdTail string
+	// SCHEDULER_PAUSED
+	schedulerPaused bool
 	// RSYNC_DRY_RUN
 	syncDryRun bool
 	// RSYNC_LOGS
@@ -58,12 +64,37 @@ func init() {
 	influxReadOnly = os.Getenv("INFLUX_READ_ONLY") == "true"
 	nginxTail = os.Getenv("NGINX_TAIL")
 	rsyncdTail = os.Getenv("RSYNCD_TAIL")
+	schedulerPaused = os.Getenv("SCHEDULER_PAUSED") == "true"
 	syncDryRun = os.Getenv("RSYNC_DRY_RUN") == "true" || os.Getenv("SYNC_DRY_RUN") == "true"
 	syncLogs = os.Getenv("RSYNC_LOGS")
 	webServerCache = os.Getenv("WEB_SERVER_CACHE") == "true"
 	hookURL = os.Getenv("HOOK_URL")
 	pingID = os.Getenv("PING_ID")
 	pullToken = os.Getenv("PULL_TOKEN")
+	admGroup, err = strconv.Atoi(os.Getenv("ADM_GROUP"))
+
+	if err != nil {
+		logging.Warn("environment variable ADM_GROUP is not a number")
+		os.Exit(1)
+	}
+
+	// Verify both groups are in our list of groups
+	groups, err := os.Getgroups()
+	if err != nil {
+		logging.Warn("Could not get groups")
+		os.Exit(1)
+	}
+	var foundAdmGroup bool
+	for _, group := range groups {
+		if group == admGroup {
+			foundAdmGroup = true
+		}
+	}
+
+	if !foundAdmGroup {
+		logging.Warn("ADM_GROUP is not in the list of usable groups")
+		os.Exit(1)
+	}
 
 	// Check if the environment variables are set
 	if maxmindLicenseKey == "" {
@@ -127,6 +158,17 @@ func main() {
 			main()
 		}
 	}()
+
+	// Enforce we are running linux or macos
+	if runtime.GOOS != "linux" && runtime.GOOS != "darwin" {
+		fmt.Println("This program is only meant to be run on *nix systems")
+		os.Exit(1)
+	}
+
+	// Do not run as root
+	if os.Geteuid() == 0 {
+		fmt.Println("This program should no longer be run as root")
+	}
 
 	// Setup logging
 	logging.Setup(hookURL, pingID)
@@ -196,32 +238,49 @@ func main() {
 	sighup := make(chan os.Signal, 1)
 	signal.Notify(sighup, syscall.SIGHUP)
 
-	// rsync scheduler
-	stop := make(chan struct{})
-	manual := make(chan string)
-	rsyncStatus := make(RSYNCStatus)
-	go handleSyncs(config, rsyncStatus, manual, stop)
+	var manual chan string
 
-	go func() {
-		for {
-			<-sighup
-			logging.Info("Received SIGHUP")
+	if schedulerPaused {
+		go func() {
+			for {
+				<-sighup
+				logging.Info("Received SIGHUP")
 
-			config = loadConfig()
-			logging.Info("Reloaded config")
+				config = loadConfig()
+				logging.Info("Reloaded config")
 
-			WebserverLoadConfig(config)
-			logging.Info("Reloaded projects page")
+				WebserverLoadConfig(config)
+				logging.Info("Reloaded projects page")
+			}
+		}()
+	} else {
+		// rsync scheduler
+		stop := make(chan struct{})
+		manual = make(chan string)
+		rsyncStatus := make(RSYNCStatus)
+		go handleSyncs(config, rsyncStatus, manual, stop)
 
-			// stop the rsync scheduler
-			stop <- struct{}{}
-			<-stop
+		go func() {
+			for {
+				<-sighup
+				logging.Info("Received SIGHUP")
 
-			// restart the rsync scheduler
-			rsyncStatus := make(RSYNCStatus)
-			go handleSyncs(config, rsyncStatus, manual, stop)
-		}
-	}()
+				config = loadConfig()
+				logging.Info("Reloaded config")
+
+				WebserverLoadConfig(config)
+				logging.Info("Reloaded projects page")
+
+				// stop the rsync scheduler
+				stop <- struct{}{}
+				<-stop
+
+				// restart the rsync scheduler
+				rsyncStatus := make(RSYNCStatus)
+				go handleSyncs(config, rsyncStatus, manual, stop)
+			}
+		}()
+	}
 
 	// Webserver
 	WebserverLoadConfig(config)

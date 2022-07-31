@@ -126,6 +126,11 @@ func handleStatistics(w http.ResponseWriter, r *http.Request) {
 // /sync/{project}?token={token}
 func handleManualSyncs(manual chan<- string) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		if manual == nil {
+			w.WriteHeader(http.StatusServiceUnavailable)
+			return
+		}
+
 		// Get the project name
 		vars := mux.Vars(r)
 		projectName := vars["project"]
