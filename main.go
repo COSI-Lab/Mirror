@@ -117,6 +117,10 @@ func init() {
 		logging.Warn("No RSYNCD_TAIL environment variable found. Live tail will not be used and will instead attempt to read ./rsyncd.log")
 	}
 
+	if schedulerPaused {
+		logging.Warn("SCHEDULER_PAUSED is set, the scheduler will not run and projects will never be synced")
+	}
+
 	if syncDryRun {
 		logging.Warn("RSYNC_DRY_RUN is set, all rsyncs will be run in dry-run mode")
 	}
