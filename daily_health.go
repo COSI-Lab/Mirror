@@ -27,8 +27,9 @@ func HandleCheckIn() {
 		// Sleep until 8 am
 		time.Sleep(eight.Sub(now))
 
-		// Post the daily progress report to the discord channel
-		logging.InfoToDiscord("Daily progress report: https://mirror.clarkson.edu/stats/total/daily_sent")
+		// Post the daily progress report to the discord channel (dd-mm-yyyy)
+		todays_date := time.Now().Format("02-01-2006")
+		logging.InfoToDiscord(fmt.Sprintf("Daily progress report: https://mirror.clarkson.edu/stats/total/daily_sent?data=%s", todays_date))
 	}
 }
 
