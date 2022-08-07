@@ -303,7 +303,7 @@ func checkRSYNCState(short string, state *os.ProcessState, output []byte) {
 	} else {
 		if state.ExitCode() == 23 || state.ExitCode() == 24 {
 			// states 23 "Partial transfer due to error" and 24 "Partial transfer" are not considered important enough to message discord
-			logging.Error(output, "Job rsync: ", short, " failed. Exit code: ", state.ExitCode(), " ", rysncErrorCodes[state.ExitCode()])
+			logging.Error("Job rsync: ", short, " failed. Exit code: ", state.ExitCode(), " ", rysncErrorCodes[state.ExitCode()])
 		} else {
 			// We have some human readable error descriptions
 			if meaning, ok := rysncErrorCodes[state.ExitCode()]; ok {
