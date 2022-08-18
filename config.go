@@ -223,7 +223,7 @@ func createRsyncdConfig(config *ConfigFile) {
 uid = nobody
 gid = nogroup
 use chroot = yes
-max connections = 40
+max connections = 0
 pid file = /var/run/rsyncd.pid
 motd file = /etc/rsyncd.motd
 log file = /var/log/rsyncd.log
