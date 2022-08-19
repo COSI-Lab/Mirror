@@ -17,15 +17,15 @@ import (
 func HandleCheckIn() {
 	// every day at 8 am local time send progress report
 	for {
-		// Figure out how long 8 am is away from now
+		// Figure out how long 7 am is away from now
 		now := time.Now()
-		eight := time.Date(now.Year(), now.Month(), now.Day(), 8, 0, 0, 0, time.Local)
-		if now.After(eight) {
-			eight = eight.Add(24 * time.Hour)
+		target := time.Date(now.Year(), now.Month(), now.Day(), 7, 0, 0, 0, time.Local)
+		if now.After(target) {
+			target = eight.Add(24 * time.Hour)
 		}
 
-		// Sleep until 8 am
-		time.Sleep(eight.Sub(now))
+		// Sleep until target time
+		time.Sleep(target.Sub(now))
 
 		// Post the daily progress report to the discord channel (dd-mm-yyyy)
 		todays_date := time.Now().Format("02-01-2006")

@@ -1,3 +1,6 @@
 [submodule "scripts/quick-fedora-mirror"]
 	path = scripts/quick-fedora-mirror
 	url = https://pagure.io/quick-fedora-mirror.git
+[submodule "scripts/archvsync"]
+	path = scripts/archvsync
+	url = https://salsa.debian.org/mirror-team/archvsync.git
