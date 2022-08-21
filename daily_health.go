@@ -13,11 +13,10 @@ import (
 	"github.com/wcharczuk/go-chart/v2/drawing"
 )
 
-// Creates and sends a progress report to the discord channel regarding the health of the server
+// Every day creates ands sends a progress report to the discord channel regarding the health of the server
 func HandleCheckIn() {
-	// every day at 8 am local time send progress report
 	for {
-		// Figure out how long 7 am is away from now
+		// Target sending report at 7:00 AM local time
 		now := time.Now()
 		target := time.Date(now.Year(), now.Month(), now.Day(), 7, 0, 0, 0, time.Local)
 		if now.After(target) {
