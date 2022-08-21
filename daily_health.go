@@ -21,7 +21,7 @@ func HandleCheckIn() {
 		now := time.Now()
 		target := time.Date(now.Year(), now.Month(), now.Day(), 7, 0, 0, 0, time.Local)
 		if now.After(target) {
-			target = eight.Add(24 * time.Hour)
+			target = target.Add(24 * time.Hour)
 		}
 
 		// Sleep until target time
