@@ -429,7 +429,7 @@
       "name": "Parrot Security OS",
       "page": "Distributions",
       "rsync": {
-        "host": "rsync.parrotsec.org",
+        "host": "rsync.parrot.sh",
         "src": "parrot",
         "dest": "/storage/parrot",
         "syncs_per_day": 4,
