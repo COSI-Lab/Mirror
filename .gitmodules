@@ -3,4 +3,4 @@
 	url = https://pagure.io/quick-fedora-mirror.git
 [submodule "scripts/archvsync"]
 	path = scripts/archvsync
-	url = https://salsa.debian.org/mirror-team/archvsync.git
+	url = git@github.com:COSI-Lab/archvsync.git
