@@ -199,12 +199,11 @@
     "debian": {
       "name": "Debian",
       "page": "Distributions",
-      "rsync": {
-        "host": "rsync.osuosl.org",
-        "src": "debian",
-        "dest": "/storage/debian",
-        "options": "--no-perms --no-owner --no-group --exclude Packages* --exclude Sources* --exclude Release* --exclude=InRelease --include=i18n/by-hash/** --exclude=i18n/* --exclude ls-lR*",
-        "second": "-vrtlH --no-perms --no-owner --no-group --safe-links --delete --delete-after",
+      "script": {
+        "command": "./scripts/archvsync/bin/ftpsync",
+        "arguments": [
+          "sync:all"
+        ],
         "syncs_per_day": 4
       },
       "official": false,
