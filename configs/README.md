@@ -14,10 +14,10 @@ $EDITOR blender.secret
 
 Some projects ask that syncs be preformed using a seperate script. Typically these scripts are rsync wrappers. Currently these configs are for third party scripts.
 
-| project | config                                          | script                                                |
-| :------ | :---------------------------------------------- | :---------------------------------------------------- | 
-| debian  | [fypsync.conf](fypsync.conf)                    | [archvsync](../scripts/archvsync)                     |
-| fedora  | [quick-fedora-mirror.conf](quick-fedora-mirror) | [quick-fedora-mirror](../scripts/quick-fedora-mirror) |
+| project | config                                               | script                                                       |
+| :------ | :--------------------------------------------------- | :----------------------------------------------------------- |  
+| debian  | [ftpsync.conf](ftpsync.conf)                         | [archvsync](https://github.com/COSI-Lab/archvsync)(forked)   |
+| fedora  | [quick-fedora-mirror.conf](quick-fedora-mirror.conf) | [quick-fedora-mirror](https://pagure.io/quick-fedora-mirror) |
 
 ## `tokens.txt`
 
