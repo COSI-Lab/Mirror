@@ -11,7 +11,7 @@
         "options": "-avzrH --no-perms --no-owner --no-group --delete --delete-delay --delay-updates --ignore-errors --exclude \".~tmp~\"",
         "syncs_per_day": 8
       },
-      "official": false,
+      "official": true,
       "homepage": "https://almalinux.org",
       "color": "#7851a9",
       "publicRsync": true,
@@ -197,7 +197,7 @@
       "alternative": "http://mirrors.rit.edu/cygwin/"
     },
     "debian": {
-      "name": "Debian",
+      "name": "Debian (Official Status Pending)",
       "page": "Distributions",
       "script": {
         "command": "./scripts/archvsync/bin/ftpsync",

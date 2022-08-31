@@ -1,6 +1,12 @@
 # Mirror
 
-Monolithic software for our [mirror](https://mirror.clarkson.edu) that handles the website, tracking, and scheduling systems. We use an influxdb time series database for storage. It is important to clone this repo with the `--recurse-submodules` flag!
+Monolithic software for our [mirror](https://mirror.clarkson.edu) that handles the website, tracking, and scheduling systems. We use an influxdb time series database for storage. 
+
+## Setup
+
+```
+git clone --recurse_submodule git@github.com:COSI-Lab/Mirror.git
+```
 
 ## TODO LIST
 
@@ -56,7 +62,9 @@ PULL_TOKEN=token
 
 ## Dependencies
 
-Quick-Fedora-Mirror requires zsh
+Quick-Fedora-Mirror requires `zsh`
+
+raspbian-tools requires `python3` and it's recommended to pip install the `urllib3` module
 
 ## Hardware
 
