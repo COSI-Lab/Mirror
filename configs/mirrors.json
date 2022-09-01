@@ -197,7 +197,7 @@
       "alternative": "http://mirrors.rit.edu/cygwin/"
     },
     "debian": {
-      "name": "Debian (Official Status Pending)",
+      "name": "Debian (Pending Official)",
       "page": "Distributions",
       "script": {
         "command": "./scripts/archvsync/bin/ftpsync",
@@ -264,7 +264,7 @@
       "alternative": "http://mirror.rit.edu/fedora/"
     },
     "gentoo": {
-      "name": "Gentoo",
+      "name": "Gentoo (Pending Official)",
       "page": "Distributions",
       "rsync": {
         "host": "masterdistfiles.gentoo.org",
