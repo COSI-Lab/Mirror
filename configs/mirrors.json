@@ -247,7 +247,7 @@
       "alternative": "http://mirror.umd.edu/eclipse/"
     },
     "fedora": {
-      "name": "Fedora",
+      "name": "Fedora (Pending Official)",
       "page": "Distributions",
       "script": {
         "syncs_per_day": 4,
