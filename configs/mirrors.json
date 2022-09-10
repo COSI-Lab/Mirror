@@ -247,7 +247,7 @@
       "alternative": "http://mirror.umd.edu/eclipse/"
     },
     "fedora": {
-      "name": "Fedora (Pending Official)",
+      "name": "Fedora",
       "page": "Distributions",
       "script": {
         "syncs_per_day": 4,
@@ -257,9 +257,9 @@
           "configs/quick-fedora-mirror.conf"
         ]
       },
-      "official": false,
+      "official": true,
       "homepage": "https://www.fedoraproject.org/",
-      "color": "#00755e",
+      "color": "#0b57a4",
       "publicRsync": true,
       "alternative": "http://mirror.rit.edu/fedora/"
     },
