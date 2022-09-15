@@ -20,7 +20,7 @@ var geoipHandler *geoip.GeoIPHandler
 // .env variables
 var (
 	// ADM_GROUP
-	admGroup int
+	admGroup int = 0
 	// HOOK_URL and PING_URL and handled in the logging packages
 	// MAXMIND_LICENSE_KEY
 	maxmindLicenseKey string
@@ -71,29 +71,29 @@ func init() {
 	hookURL = os.Getenv("HOOK_URL")
 	pingID = os.Getenv("PING_ID")
 	pullToken = os.Getenv("PULL_TOKEN")
-	admGroup, err = strconv.Atoi(os.Getenv("ADM_GROUP"))
+	admGroupStr := os.Getenv("ADM_GROUP")
 
-	if err != nil {
-		logging.Warn("environment variable ADM_GROUP is not a number")
-		os.Exit(1)
-	}
+	if admGroupStr != "" {
+		admGroup, err = strconv.Atoi(admGroupStr)
 
-	// Verify both groups are in our list of groups
-	groups, err := os.Getgroups()
-	if err != nil {
-		logging.Warn("Could not get groups")
-		os.Exit(1)
-	}
-	var foundAdmGroup bool
-	for _, group := range groups {
-		if group == admGroup {
-			foundAdmGroup = true
+		if err != nil {
+			logging.Warn("environment variable ADM_GROUP", err)
+		} else {
+			// Verify adm is in our list of groups
+			groups, err := os.Getgroups()
+			if err != nil {
+				logging.Warn("Could not get groups")
+			}
+			var foundAdmGroup bool
+			for _, group := range groups {
+				if group == admGroup {
+					foundAdmGroup = true
+				}
+			}
+			if !foundAdmGroup {
+				logging.Warn("ADM_GROUP is not in the list of usable groups")
+			}
 		}
-	}
-
-	if !foundAdmGroup {
-		logging.Warn("ADM_GROUP is not in the list of usable groups")
-		os.Exit(1)
 	}
 
 	// Check if the environment variables are set
@@ -193,7 +193,7 @@ func main() {
 		geoipHandler, err = geoip.NewGeoIPHandler(maxmindLicenseKey)
 		if err != nil {
 			logging.Error("Failed to initialize GeoIP handler:", err)
-		}	
+		}
 	}
 
 	// Connect to the database

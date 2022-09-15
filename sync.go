@@ -102,10 +102,13 @@ func appendToLogFile(short string, data []byte) {
 	if err != nil {
 		logging.Warn("failed to open log file ", path, err)
 	}
-	// Set the file to be owned by the adm group
-	err = file.Chown(os.Getuid(), admGroup)
-	if err != nil {
-		logging.Warn("failed to set log file ownership", path, err)
+
+	if admGroup != 0 {
+		// Set the file to be owned by the adm group
+		err = file.Chown(os.Getuid(), admGroup)
+		if err != nil {
+			logging.Warn("failed to set log file ownership", path, err)
+		}
 	}
 
 	// Write to the log file
