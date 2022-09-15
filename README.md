@@ -2,43 +2,37 @@
 
 Monolithic software for our [mirror](https://mirror.clarkson.edu) that handles the website, tracking, and scheduling systems. We use an influxdb time series database for storage. 
 
+![preview](./preview.png)
+
 ## Setup
 
 ```
 git clone --recurse_submodule git@github.com:COSI-Lab/Mirror.git
 ```
 
-## TODO LIST
+## `.env`
 
-- [ ] The Mirror "book" documentation
-- [ ] Manage torrents using config
-- [ ] Recording rsync bandwidth
-- [ ] Recording tranmission bittorrent bandwidth
-- [ ] Make the map look nice on mobile devices
-
-Statistics Page:
-
-- [ ] Exposing nginx bandwidth per repo (pie chart)
-- [ ] Exposing rsync bandwidth
-- [ ] Exposing tranmission bittorrent bandwidth
-- [ ] Exposing total network bandwidth
-
-## Env File Formatting
+Secrets and some configuration is managed through creating a `.env` file.
 
 ```text
+# "adm" group id. check with "getent group admin"
+# the user running this script should be in the "adm" group
+# so that they can read and write log files.
+ADM_GROUP=
+
 # Discord Webhook URL and id to ping when things panic
 # Omit either and the bot will not communicate with discord
-HOOK_URL=url
-PING_ID=id
+HOOK_URL=
+PING_ID=
 
 # Maxmind DB token to update the database, omit and we'll only use a local copy if it exists
-MAXMIND_LICENSE_KEY=key
+MAXMIND_LICENSE_KEY=
 
-# InfluxDB RW Token
-INFLUX_TOKEN=token
+# InfluxDB Token
+INFLUX_TOKEN=
 
-# "true" if we only read from the database (still uses a rw token)
-INFLUX_READ_ONLY=true
+# "true" if we only read from the database
+INFLUX_READ_ONLY=
 
 # File to tail NGINX access logs, if empty then we read the static ./access.log file
 NGINX_TAIL=/var/log/nginx/access.log
@@ -51,12 +45,12 @@ RSYNCD_TAIL=/var/log/rsyncd.log
 SYNC_DRY_RUN=true
 
 # Directory to store the rsync log files, if empty then we don't keep logs. It will be created if it doesn't exist.
-RSYNC_LOGS=/tmp/mirror/
+RSYNC_LOGS=
 
-# If we should cache the result of executing templates
-WEB_SERVER_CACHE=true
+# "true" if we should cache the result of executing templates
+WEB_SERVER_CACHE=false
 
-# Secret push token
+# Secret pull token
 PULL_TOKEN=token
 ```
 
