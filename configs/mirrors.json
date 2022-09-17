@@ -126,7 +126,7 @@
         "options": "-aqzH --no-perms --no-owner --no-group --delete",
         "syncs_per_day": 4
       },
-      "official": false,
+      "official": true,
       "homepage": "https://centos.org/",
       "color": "#0abab5",
       "publicRsync": true,
