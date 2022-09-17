@@ -197,7 +197,7 @@
       "alternative": "http://mirrors.rit.edu/cygwin/"
     },
     "debian": {
-      "name": "Debian (Pending Official)",
+      "name": "Debian",
       "page": "Distributions",
       "script": {
         "command": "./scripts/archvsync/bin/ftpsync",
@@ -206,7 +206,7 @@
         ],
         "syncs_per_day": 4
       },
-      "official": false,
+      "official": true,
       "homepage": "https://www.debian.org",
       "color": "#ffc87c",
       "publicRsync": true,
