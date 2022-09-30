@@ -2,8 +2,8 @@ github.com/COSI-Lab/datarithms v1.0.2 h1:lBCmJs6f1HBT8WpkPdVkz2jIIz+4SmhWapPmJDo
 github.com/COSI-Lab/datarithms v1.0.2/go.mod h1:RbztXJr04lNIwJxbc6X5a4RUJTng9tuR0C0htlzhOrk=
 github.com/COSI-Lab/geoip v1.0.0 h1:wZEWHfw6mex+Vfk3BPKpVP1Ia1Y+ARhqwgs7QqckP9o=
 github.com/COSI-Lab/geoip v1.0.0/go.mod h1:/XlojAhPMNnxoBhTSk3o/dFAW+BsywOHJffEmLQOMjo=
-github.com/COSI-Lab/logging v1.0.2 h1:dDfwp3eav6PNmFm1k706npMKLH7IJeGd3Li+RmhpyQI=
-github.com/COSI-Lab/logging v1.0.2/go.mod h1:7JdoE7ECtg/nWA5FjTAL8f/amR6lvp4cYy+wmXbEYYw=
+github.com/COSI-Lab/logging v1.0.3 h1:D/ritIpI0o8WWgywF9/nQlJbGTu1lLQGAeophjPkLuU=
+github.com/COSI-Lab/logging v1.0.3/go.mod h1:7JdoE7ECtg/nWA5FjTAL8f/amR6lvp4cYy+wmXbEYYw=
 github.com/IncSW/geoip2 v0.1.2 h1:v7iAyDiNZjHES45P1JPM3SMvkw0VNeJtz0XSVxkRwOY=
 github.com/IncSW/geoip2 v0.1.2/go.mod h1:adcasR40vXiUBjtzdaTTKL/6wSf+fgO4M8Gve/XzPUk=
 github.com/creack/pty v1.1.9/go.mod h1:oKZEueFk5CKHvIhNR5MUki03XCEU+Q6VDXinZuGJ33E=
