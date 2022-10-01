@@ -85,10 +85,10 @@ type Project struct {
 	SyncStyle string // "script" "rsync" or "static"
 	Script    struct {
 		// Map of envirment variables to be set before calling the command
-		Env map[string]string `json:"env"`
-		Command     string   `json:"command"`
-		Arguments   []string `json:"arguments"`
-		SyncsPerDay int      `json:"syncs_per_day"`
+		Env         map[string]string `json:"env"`
+		Command     string            `json:"command"`
+		Arguments   []string          `json:"arguments"`
+		SyncsPerDay int               `json:"syncs_per_day"`
 	}
 	Rsync struct {
 		Options      string `json:"options"` // cmdline options for first stage

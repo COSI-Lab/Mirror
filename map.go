@@ -34,7 +34,6 @@ func HandleWebsocket(w http.ResponseWriter, r *http.Request) {
 	go client.write()
 }
 
-
 type hub struct {
 	// Hashset of clients
 	clients map[*client]struct{}

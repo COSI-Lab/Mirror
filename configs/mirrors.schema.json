@@ -132,6 +132,11 @@
             "type": "string",
             "description": "HTTP Url to another nearby site that hosts the same content that we can forward to incase there is an interruption to Mirror",
             "pattern": "http?://.*/"
+          },
+          "torrents": {
+            "type": "array",
+            "description": "an array of _relative_ file locations to find and sync .torrents files",
+            "items": { "type": "string" }
           }
         },
         "required": [

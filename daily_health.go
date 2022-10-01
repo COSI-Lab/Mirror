@@ -61,7 +61,7 @@ func QueryDailyNginxStats() (*api.QueryTableResult, error) {
 }
 
 type TimeSentPair struct {
-	t   time.Time
+	t    time.Time
 	sent int64
 }
 
@@ -119,7 +119,7 @@ func PrepareDailySendStats() (map[string][]TimeSentPair, error) {
 // Create a bar chart for the bandwidth sent per hour
 func CreateBarChart(timeSentPairs []TimeSentPair, project string) chart.BarChart {
 	style := chart.Style{
-		FillColor: drawing.ColorFromHex("#00bcd4"),
+		FillColor:   drawing.ColorFromHex("#00bcd4"),
 		StrokeColor: drawing.ColorFromHex("#00bcd4"),
 		StrokeWidth: 0,
 	}
@@ -127,8 +127,8 @@ func CreateBarChart(timeSentPairs []TimeSentPair, project string) chart.BarChart
 	max := float64(0)
 	values := make([]chart.Value, 0)
 	for _, v := range timeSentPairs {
-		values = append(values, chart.Value{Style: style, Label: fmt.Sprint(v.t.Hour()) , Value: float64(v.sent / 1000000000)})
-		if float64(v.sent / 1000000000) > max {
+		values = append(values, chart.Value{Style: style, Label: fmt.Sprint(v.t.Hour()), Value: float64(v.sent / 1000000000)})
+		if float64(v.sent/1000000000) > max {
 			max = float64(v.sent / 1000000000)
 		}
 	}
@@ -148,18 +148,18 @@ func CreateBarChart(timeSentPairs []TimeSentPair, project string) chart.BarChart
 			Range: &chart.ContinuousRange{
 				Min: 0,
 				Max: max,
-			},	
+			},
 			ValueFormatter: func(v interface{}) string {
 				if vf, isFloat := v.(float64); isFloat {
 					return fmt.Sprintf("%0.fG", vf)
-				}	
+				}
 				return ""
 			},
 		},
-		Height: 600,
-		Width: 600*16/9,
+		Height:   600,
+		Width:    600 * 16 / 9,
 		BarWidth: 16,
-		Bars: values,
+		Bars:     values,
 	}
 
 	return graph
