@@ -149,13 +149,20 @@ body > h1 {
 /* For projects.gohtml */
 @media screen and (min-width: 800px) {
   .projects-container {
-    display: flex;
+    display: grid;
+    grid-area: span;
+    grid-template-columns: 20vw 80vw;
     flex-direction: row;
     justify-content: space-between;
   }
 
   .projects-container > .toc {
-    width: 20%;
+    position: sticky;
+    top: 10px;
+    bottom: 10px;
+    float: left;
+    height: 30%;
+    width: 70%; 
   }
 
   .projects-container > .list {
