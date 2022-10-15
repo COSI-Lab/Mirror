@@ -101,7 +101,7 @@
       "alternative": "http://mirrors.ocf.berkeley.edu/blender/"
     },
     "centos": {
-      "name": "CentOS (<8)",
+      "name": "CentOS (≤8)",
       "page": "Distributions",
       "rsync": {
         "host": "msync.centos.org",

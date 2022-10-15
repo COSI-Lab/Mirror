@@ -35,6 +35,7 @@
 
 <head>
     <title>Mirror - Projects</title>
+    <script defer src="js/projects.js"></script>
     {{template "head.gohtml" .}}
 </head>
 
@@ -46,37 +47,42 @@
             <div class="toc">
                 <h3 class="center">Table of Contents</h3>
                 <hr style="padding: 0px">
-                <b> Distributions </b>
-                <ul>
-                    {{ range .Distributions }}
-                    {{if .Official}}
-                    <li><a class="bold" href="#{{ .Short }}">{{ .Name }}</a></li>
-                    {{ else }}
-                    <li><a href="#{{ .Short }}">{{ .Name }}</a></li>
-                    {{ end }}
-                    {{ end }}
-                </ul>
-                <b> Software </b>
-                <ul>
-                    {{ range .Software }}
-                    {{if .Official}}
-                    <li><a class="bold" href="#{{ .Short }}">{{ .Name }}</a></li>
-                    {{ else }}
-                    <li><a href="#{{ .Short }}">{{ .Name }}</a></li>
-                    {{ end }}
-                    {{ end }}
-                </ul>
-                <b> Miscellaneous </b>
-                <ul>
-                    {{ range .Miscellaneous }}
-                    {{ if .Official }}
-                    <li><a class="bold" href="#{{ .Short }}">{{ .Name }}</a></li>
-                    {{ else }}
-                    <li><a href="#{{ .Short }}">{{ .Name }}</a></li>
-                    {{ end }}
-                    {{ end }}
-                </ul>
-                </ul>
+                <button type="button" class="toc-heading"> <b> Distributions </b> </button>
+                <div class="toc-section-content" style="display: block">
+                    <ul>
+                        {{ range .Distributions }}
+                        {{if .Official}}
+                        <li><a class="bold" href="#{{ .Short }}">{{ .Name }}</a></li>
+                        {{ else }}
+                        <li><a href="#{{ .Short }}">{{ .Name }}</a></li>
+                        {{ end }}
+                        {{ end }}
+                    </ul>
+                </div>
+                <button type="button" class="toc-heading"> <b> Software </b> </button>
+                <div class="toc-section-content" style="display: block">
+                    <ul>
+                        {{ range .Software }}
+                        {{if .Official}}
+                        <li><a class="bold" href="#{{ .Short }}">{{ .Name }}</a></li>
+                        {{ else }}
+                        <li><a href="#{{ .Short }}">{{ .Name }}</a></li>
+                        {{ end }}
+                        {{ end }}
+                    </ul>
+                </div>
+                <button type="button" class="toc-heading"> <b> Miscellaneous </b> </button>
+                <div class="toc-section-content" style="display: block">
+                    <ul>
+                        {{ range .Miscellaneous }}
+                        {{ if .Official }}
+                        <li><a class="bold" href="#{{ .Short }}">{{ .Name }}</a></li>
+                        {{ else }}
+                        <li><a href="#{{ .Short }}">{{ .Name }}</a></li>
+                        {{ end }}
+                        {{ end }}
+                    </ul>
+                </div>
             </div>
             <div class="list">
                 <h1 id="distributions" class="center">Linux Distributions</h1>
