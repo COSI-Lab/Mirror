@@ -46,9 +46,9 @@
         <div class="projects-container">
             <div class="toc">
                 <h3 class="center">Table of Contents</h3>
-                <hr style="padding: 0px">
+                <hr style="padding: 0px; width: 90%">
                 <button type="button" class="toc-heading"> <b> Distributions </b> </button>
-                <div class="toc-section-content" style="display: block">
+                <div class="toc-section-content" style="display: none">
                     <ul>
                         {{ range .Distributions }}
                         {{if .Official}}
@@ -60,7 +60,7 @@
                     </ul>
                 </div>
                 <button type="button" class="toc-heading"> <b> Software </b> </button>
-                <div class="toc-section-content" style="display: block">
+                <div class="toc-section-content" style="display: none">
                     <ul>
                         {{ range .Software }}
                         {{if .Official}}
@@ -71,8 +71,9 @@
                         {{ end }}
                     </ul>
                 </div>
+                {{if .Miscellaneous}} 
                 <button type="button" class="toc-heading"> <b> Miscellaneous </b> </button>
-                <div class="toc-section-content" style="display: block">
+                <div class="toc-section-content" style="display: none">
                     <ul>
                         {{ range .Miscellaneous }}
                         {{ if .Official }}
@@ -83,6 +84,8 @@
                         {{ end }}
                     </ul>
                 </div>
+                {{else}}
+                {{end}}
             </div>
             <div class="list">
                 <h1 id="distributions" class="center">Linux Distributions</h1>
@@ -95,11 +98,14 @@
                 {{ range .Software }}
                 {{ template "project" . }}
                 {{ end }}
+                {{if .Miscellaneous}}
                 <h1 id="miscellaneous" class="center">Miscellaneous</h1>
                 <hr>
                 {{ range .Miscellaneous }}
                 {{ template "project" . }}
                 {{ end }}
+                {{else}}
+                {{end}}
             </div>
         </div>
     </main>
