@@ -1,5 +1,3 @@
-// TODO: Make a working collapsable
-
 var collapsable = document.getElementsByClassName("toc-heading"); // TODO: set id of "linux distributions", "software", and "miscellaneous" to collapsable in toc after making the following for loop work
 
 for (let i = 0; i < collapsable.length; i++) {
