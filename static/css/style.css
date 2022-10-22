@@ -171,10 +171,10 @@ body>h1 {
     position: sticky;
     top: 10px;
     bottom: 10px;
-    float: left;
-    height: fit-content;
-    width: 70%;
     overflow-y: scroll;
+    height: 100vh;
+    float: left;
+    width: 70%;
     scrollbar-width: 0px;
     -ms-overflow-style: none;
   }
@@ -213,9 +213,7 @@ body>h1 {
   }
 
   .toc-section-content {
-    display: block;
-    max-height: fit-content;
-    overflow: hidden;
+    min-height: fit-content !important;
     transition: max-height 0.2s ease-out;
   }
 
