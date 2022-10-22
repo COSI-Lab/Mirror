@@ -22,6 +22,7 @@ header {
   padding-bottom: 0;
   border-bottom: yellow solid 3px;
 }
+
 header ul {
   list-style-type: none;
   margin: 0;
@@ -29,12 +30,14 @@ header ul {
   overflow: hidden;
   background-color: rgb(40, 104, 40);
 }
+
 /* mobile */
 @media screen and (max-width: 800px) {
   header li {
     float: none;
   }
 }
+
 /* desktop */
 @media screen and (min-width: 800px) {
   header li {
@@ -42,7 +45,7 @@ header ul {
   }
 }
 
-header li > a {
+header li>a {
   font-size: 20px;
   display: block;
   color: white;
@@ -50,6 +53,7 @@ header li > a {
   padding: 14px 16px;
   text-decoration: none;
 }
+
 header li a:hover {
   background-color: darkgreen;
 }
@@ -62,9 +66,11 @@ footer {
   display: block;
   text-align: center;
 }
+
 footer a {
   color: white;
 }
+
 footer b * {
   white-space: nowrap;
 }
@@ -77,7 +83,8 @@ footer b * {
   flex-direction: column;
   margin: 0;
 }
-body > h1 {
+
+body>h1 {
   font-size: 50px;
   padding: 100px;
   margin-top: 0;
@@ -105,7 +112,7 @@ body > h1 {
     align-items: center;
   }
 
-  .vertlist > b {
+  .vertlist>b {
     text-align: center;
     font-size: 30px;
   }
@@ -127,18 +134,18 @@ body > h1 {
     align-items: left;
   }
 
-  .vertlist > img {
+  .vertlist>img {
     margin-left: 30px;
   }
 
-  .vertlist > b {
+  .vertlist>b {
     padding-left: 30px;
     padding-right: 30px;
     text-align: left;
     font-size: 30px;
   }
 
-  .vertlist > p {
+  .vertlist>p {
     text-align: left;
     padding-left: 30px;
     padding-right: 30px;
@@ -149,22 +156,74 @@ body > h1 {
 /* For projects.gohtml */
 @media screen and (min-width: 800px) {
   .projects-container {
-    display: flex;
+    display: grid;
+    grid-area: span;
+    grid-template-columns: 20vw 80vw;
     flex-direction: row;
     justify-content: space-between;
   }
 
-  .projects-container > .toc {
-    width: 20%;
+  .projects-container>.toc {
+    display: flex;
+    flex-direction: column;
+    text-decoration: none;
+    text-align: left;
+    position: sticky;
+    top: 10px;
+    bottom: 10px;
+    overflow-y: scroll;
+    height: 100vh;
+    float: left;
+    width: 70%;
+    scrollbar-width: 0px;
+    -ms-overflow-style: none;
   }
 
-  .projects-container > .list {
+  .projects-container>.toc::-webkit-scrollbar {
+    display:none;
+  }
+
+  .toc>.toc-section-content>ul>li>a {
+    text-decoration:none;
+  }
+
+  .toc-heading {
+    border: none;
+    border-radius: 5px;
+    margin: 5px;
+    margin-left: 0px;
+    width: fit-content;
+    background-color: white;
+    font-size: 16px;
+    padding: 4px;
+  }
+
+  .toc-heading:hover {
+    background-color: #ccc;
+  }
+
+  .active:before {
+    content: "\002B" !important;
+    color: black;
+  }
+
+  .toc-heading:before {
+    content: '\2212';
+    color: black;
+  }
+
+  .toc-section-content {
+    min-height: fit-content !important;
+    transition: max-height 0.2s ease-out;
+  }
+
+  .projects-container>.list {
     width: 75%;
   }
 
   .projects {
     padding-left: 5%;
-  }  
+  }
 }
 
 @media screen and (max-width: 800px) {
@@ -176,12 +235,12 @@ body > h1 {
     display: flex;
   }
 
-  .projects-container > .toc {
+  .projects-container>.toc {
     /* remove from flexbox and hide */
     display: none;
   }
 
-  .projects-container > .list {
+  .projects-container>.list {
     width: 100%;
   }
 }
@@ -202,7 +261,7 @@ body > h1 {
   overflow: hidden;
 }
 
-.distro > a {
+.distro>a {
   color: rgb(40, 104, 40);
 }
 
@@ -226,6 +285,7 @@ body > h1 {
     margin: 0;
   }
 }
+
 /* desktop */
 @media screen and (min-width: 800px) {
   main {
@@ -240,10 +300,12 @@ p {
   color: black;
   line-height: 24px;
 }
+
 a {
   padding: 0;
   color: green;
 }
+
 /* For history.gohtml */
 .history {
   display: flex;
