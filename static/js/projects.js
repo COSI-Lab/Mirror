@@ -1,4 +1,4 @@
-var collapsable = document.getElementsByClassName("toc-heading"); // TODO: set id of "linux distributions", "software", and "miscellaneous" to collapsable in toc after making the following for loop work
+var collapsable = document.getElementsByClassName("toc-heading");
 
 for (let i = 0; i < collapsable.length; i++) {
   collapsable[i].addEventListener("click", function () {
