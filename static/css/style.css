@@ -14,7 +14,8 @@ body {
 }
 
 /* For nav.gohtml */
-@media screen and (max-width: 800px) /* mobile */ {
+/* mobile */
+@media screen and (max-width: 800px) {
   header {
     display: block;
     width: 100;
@@ -28,10 +29,10 @@ body {
   .darkmode-button-after {
     display: none;
   }
-
 }
 
-@media screen and (min-width: 800px) /* desktop */ {
+/* desktop */
+@media screen and (min-width: 800px) {
   header {
     display: grid;
     grid-template-columns: 3fr 1fr;
@@ -327,10 +328,6 @@ body>h1 {
   overflow: hidden;
 }
 
-.distro>a {
-  color: rgb(40, 104, 40);
-}
-
 .bold {
   font-weight: 900;
 }
@@ -367,7 +364,14 @@ p {
 
 a {
   padding: 0;
-  color: green;
+}
+
+.main-link-light {
+  color: rgb(40, 104, 40);
+}
+
+.main-link-dark {
+  color: rgb(68, 178, 68);
 }
 
 /* For history.gohtml */
