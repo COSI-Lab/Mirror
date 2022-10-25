@@ -137,10 +137,6 @@
             "type": "array",
             "description": "an array of _relative_ file locations to find and sync .torrents files",
             "items": { "type": "string" }
-          },
-          "icon": {
-            "type": "string",
-            "description": "Name of project logo file"
           }
         },
         "required": [
