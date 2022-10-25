@@ -1,6 +1,5 @@
 body {
   margin: 0;
-  background: rgb(40, 104, 40);
   font-family: "Roboto";
 }
 
@@ -16,17 +15,20 @@ body {
 
 /* For nav.gohtml */
 header {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  width: 100;
   background: rgb(40, 104, 40);
   color: white;
-  display: block;
-  padding-bottom: 0;
+  padding-bottom: 0px;
   border-bottom: yellow solid 3px;
 }
 
 header ul {
   list-style-type: none;
-  margin: 0;
-  padding: 0;
+  align-self: center;
+  margin: 0px;
+  padding: 0px;
   overflow: hidden;
   background-color: rgb(40, 104, 40);
 }
@@ -42,6 +44,7 @@ header ul {
 @media screen and (min-width: 800px) {
   header li {
     float: left;
+    align-content: center;
   }
 }
 
@@ -54,7 +57,7 @@ header li>a {
   text-decoration: none;
 }
 
-header li a:hover {
+header a:hover {
   background-color: darkgreen;
 }
 
@@ -73,6 +76,43 @@ footer a {
 
 footer b * {
   white-space: nowrap;
+}
+
+.lightmode-back {
+  background-color: white;
+}
+
+.darkmode-back {
+  background-color: rgb(31 41 55);
+  color: white;
+}
+
+.darkmode-button {
+  float: right;
+  display: flex;
+  border: 3px solid white;
+  border-radius: 10px;
+  margin: 5px;
+  width: fit-content;
+  background-color: inherit;
+  font-size: 35px;
+  padding: 4px;
+  color: white;
+  min-width: 55px;
+  width: fit-content;
+  height: 55px;
+  align-content: center;
+  justify-content: center;
+}
+
+.darkmode-button::before {
+  content: "\263C";
+}
+
+.darkmode-button-after::before {
+  content: "\263D" !important;
+  font-size: 30px;
+  align-self: top !important;
 }
 
 /* For home.gohtml */
@@ -156,6 +196,7 @@ body>h1 {
 /* For projects.gohtml */
 @media screen and (min-width: 800px) {
   .projects-container {
+    color: inherit;
     display: grid;
     grid-area: span;
     grid-template-columns: 20vw 80vw;
@@ -165,6 +206,7 @@ body>h1 {
 
   .projects-container>.toc {
     display: flex;
+    color: inherit;
     flex-direction: column;
     text-decoration: none;
     text-align: left;
@@ -180,36 +222,37 @@ body>h1 {
   }
 
   .projects-container>.toc::-webkit-scrollbar {
-    display:none;
+    display: none;
   }
 
   .toc>.toc-section-content>ul>li>a {
-    text-decoration:none;
+    text-decoration: none;
   }
 
   .toc-heading {
     border: none;
+    color: inherit;
     border-radius: 5px;
     margin: 5px;
     margin-left: 0px;
     width: fit-content;
-    background-color: white;
+    background-color: inherit;
     font-size: 16px;
     padding: 4px;
   }
 
   .toc-heading:hover {
-    background-color: #ccc;
+    color: rgb(68, 178, 68)
   }
 
   .active:before {
     content: "\002B" !important;
-    color: black;
+    color: inherit;
   }
 
   .toc-heading:before {
     content: '\2212';
-    color: black;
+    color: inherit;
   }
 
   .toc-section-content {
@@ -279,7 +322,6 @@ body>h1 {
 /* mobile */
 @media screen and (max-width: 800px) {
   main {
-    background-color: white;
     padding-left: 5%;
     padding-right: 5%;
     margin: 0;
@@ -289,7 +331,6 @@ body>h1 {
 /* desktop */
 @media screen and (min-width: 800px) {
   main {
-    background-color: white;
     padding-left: 20%;
     padding-right: 20%;
     margin: 0;
@@ -297,7 +338,7 @@ body>h1 {
 }
 
 p {
-  color: black;
+  color: inherit;
   line-height: 24px;
 }
 
