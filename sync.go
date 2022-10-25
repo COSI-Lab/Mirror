@@ -317,3 +317,24 @@ func checkRSYNCState(short string, state *os.ProcessState, output []byte) {
 		}
 	}
 }
+
+func checkOldLogs() {
+	ticker := time.NewTicker(168 * time.Hour)
+
+	for {
+		select {
+
+		case t := <-ticker.C:
+			logFiles, err := os.ReadDir(syncLogs)
+
+			for _, logFile := range logFiles {
+				fileStat, err := os.Stat(logFile.Name())
+				modTime := fileStat.ModTime()
+				if modTime.Before(time.Now().Add(-2160 * time.Hour)) {
+					os.Remove(logFile.Name())
+				}
+			}
+		}
+
+	}
+}
