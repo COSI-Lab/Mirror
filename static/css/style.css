@@ -14,14 +14,64 @@ body {
 }
 
 /* For nav.gohtml */
-header {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  width: 100;
-  background: rgb(40, 104, 40);
-  color: white;
-  padding-bottom: 0px;
-  border-bottom: yellow solid 3px;
+@media screen and (max-width: 800px) /* mobile */ {
+  header {
+    display: block;
+    width: 100;
+    background: rgb(40, 104, 40);
+    color: white;
+    padding-bottom: 0px;
+    border-bottom: yellow solid 3px;
+  }
+
+  .darkmode-button,
+  .darkmode-button-after {
+    display: none;
+  }
+
+}
+
+@media screen and (min-width: 800px) /* desktop */ {
+  header {
+    display: grid;
+    grid-template-columns: 3fr 1fr;
+    width: 100;
+    background: rgb(40, 104, 40);
+    color: white;
+    padding-bottom: 0px;
+    border-bottom: yellow solid 3px;
+  }
+
+  .darkmode-button,
+  .darkmode-button-after {
+    float: right;
+    display: flex;
+    border: 3px solid white;
+    border-radius: 10px;
+    margin: 5px;
+    width: fit-content;
+    background-color: inherit;
+    font-size: 25px;
+    padding: 4px;
+    color: white;
+    min-width: 45px;
+    width: fit-content;
+    height: 45px;
+    align-content: center;
+    justify-content: center;
+  }
+
+  .darkmode-button::before {
+    content: "\263C";
+    /* unicode sun character */
+  }
+
+  .darkmode-button-after::before {
+    content: "\263D";
+    /* unicode moon character */
+    font-size: 20px;
+  }
+
 }
 
 header ul {
@@ -85,35 +135,6 @@ footer b * {
 .darkmode-back {
   background-color: #202124;
   color: white;
-}
-
-
-.darkmode-button,
-.darkmode-button-after {
-  float: right;
-  display: flex;
-  border: 3px solid white;
-  border-radius: 10px;
-  margin: 5px;
-  width: fit-content;
-  background-color: inherit;
-  font-size: 25px;
-  padding: 4px;
-  color: white;
-  min-width: 45px;
-  width: fit-content;
-  height: 45px;
-  align-content: center;
-  justify-content: center;
-}
-
-.darkmode-button::before {
-  content: "\263C"; /* unicode sun character */
-}
-
-.darkmode-button-after::before {
-  content: "\263D"; /* unicode moon character */
-  font-size: 20px;
 }
 
 /* For home.gohtml */
@@ -247,12 +268,14 @@ body>h1 {
   }
 
   .active:before {
-    content: "\002B" !important; /* unicode plus sign */
+    content: "\002B" !important;
+    /* unicode plus sign */
     color: inherit;
   }
 
   .toc-heading:before {
-    content: '\2212'; /* uncode minus sign */
+    content: '\2212';
+    /* uncode minus sign */
     color: inherit;
   }
 
