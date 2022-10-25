@@ -1,6 +1,6 @@
 body {
   margin: 0;
-  background: rgb(40, 104, 40);
+  /* background: rgb(86, 145, 86); */
   font-family: "Roboto";
 }
 
@@ -157,9 +157,7 @@ body>h1 {
 @media screen and (min-width: 800px) {
   .projects-container {
     display: grid;
-    grid-area: span;
     grid-template-columns: 20vw 80vw;
-    flex-direction: row;
     justify-content: space-between;
   }
 
@@ -180,11 +178,11 @@ body>h1 {
   }
 
   .projects-container>.toc::-webkit-scrollbar {
-    display:none;
+    display: none;
   }
 
   .toc>.toc-section-content>ul>li>a {
-    text-decoration:none;
+    text-decoration: none;
   }
 
   .toc-heading {
@@ -254,12 +252,60 @@ body>h1 {
   padding-left: 20px;
 }
 
-.distro {
-  border-bottom: 2px solid #cccccc;
-  padding-bottom: 1em;
-  width: 100%;
-  overflow: hidden;
+/* Desktop */
+@media screen and (min-width: 800px) {
+  .project-box {
+    display: flex;
+    width: 100%;
+    border-bottom: 2px solid #cccccc;
+    padding-bottom: 1em;
+  }
+
+  .project-box>.distro {
+    min-width: fit-content;
+    width: 40%;
+    overflow: hidden;
+  }
+
+  .icon-box {
+    width: fit-content;
+    align-self: center;
+    align-content: center;
+    justify-self: right;
+    justify-content: center;
+    
+    /* background-color: rgb(31 41 55);
+    padding: 5px;
+    border: black solid 2px;
+    border-radius: 10px;
+    margin: 20px; */
+  }
+
+  .icon-box>.icon-image {
+    max-height: 150px;
+    min-height: 75px;
+    min-width: 150px;
+    width: fit-content;
+  }
 }
+
+@media screen and (max-width: 800px) {
+  .project-box {
+    width: 100%;
+    border-bottom: 2px solid #cccccc;
+    padding-bottom: 1em;
+  }
+
+  .project-box>.distro {
+    width: 100%;
+    overflow: hidden;
+  }
+
+  .project-box>.distro-icon {
+    display: none;
+  }
+}
+
 
 .distro>a {
   color: rgb(40, 104, 40);

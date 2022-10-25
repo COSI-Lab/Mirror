@@ -6,7 +6,8 @@ for (let i = 0; i < collapsable.length; i++) {
     var content = this.nextElementSibling;
     if (content.style.display === "block") {
       content.style.display = "none";
-    } else {
+    }
+    else {
       content.style.display = "block";
     }
   })
