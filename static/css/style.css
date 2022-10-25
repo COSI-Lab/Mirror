@@ -16,7 +16,17 @@ body {
 /* For nav.gohtml */
 /* mobile */
 @media screen and (max-width: 800px) {
-  header {
+
+  .darkmode-back header {
+    display: block;
+    width: 100;
+    background: rgb(0, 50, 0);
+    color: white;
+    padding-bottom: 0px;
+    border-bottom: yellow solid 3px;
+  }
+
+  .lightmode-back header {
     display: block;
     width: 100;
     background: rgb(40, 104, 40);
@@ -33,7 +43,18 @@ body {
 
 /* desktop */
 @media screen and (min-width: 800px) {
-  header {
+  
+  .darkmode-back header {
+    display: grid;
+    grid-template-columns: 3fr 1fr;
+    width: 100;
+    background: rgb(0, 50, 0);
+    color: white;
+    padding-bottom: 0px;
+    border-bottom: yellow solid 3px;
+  }
+
+  .lightmode-back header {
     display: grid;
     grid-template-columns: 3fr 1fr;
     width: 100;
@@ -79,9 +100,9 @@ header ul {
   list-style-type: none;
   align-self: center;
   margin: 0px;
+  height: 100%;
   padding: 0px;
   overflow: hidden;
-  background-color: rgb(40, 104, 40);
 }
 
 /* mobile */
@@ -113,13 +134,22 @@ header a:hover {
 }
 
 /* For footer.gohtml */
-footer {
+.darkmode-back footer {
+  background: rgb(0, 50, 0);
+  color: white;
+  padding: 25px;
+  display: block;
+  text-align: center;
+}
+
+.lightmode-back footer {
   background: rgb(40, 104, 40);
   color: white;
   padding: 25px;
   display: block;
   text-align: center;
 }
+
 
 footer a {
   color: white;
@@ -134,7 +164,7 @@ footer b * {
 }
 
 .darkmode-back {
-  background-color: #202124;
+  background-color: rgb(20, 20, 20);
   color: white;
 }
 
@@ -362,16 +392,14 @@ p {
   line-height: 24px;
 }
 
-a {
-  padding: 0;
-}
-
-.main-link-light {
-  color: rgb(40, 104, 40);
-}
-
-.main-link-dark {
+.darkmode-back main a {
   color: rgb(68, 178, 68);
+  padding: 0px;
+}
+
+.lightmode-back main a {
+  color: rgb(40, 104, 40);
+  padding: 0px;
 }
 
 /* For history.gohtml */
