@@ -23,7 +23,7 @@ body {
     background: rgb(0, 50, 0);
     color: white;
     padding-bottom: 0px;
-    border-bottom: yellow solid 3px;
+    border-bottom: rgb(184, 184, 41) solid 3px;
   }
 
   .lightmode-back header {
@@ -51,7 +51,7 @@ body {
     background: rgb(0, 50, 0);
     color: white;
     padding-bottom: 0px;
-    border-bottom: yellow solid 3px;
+    border-bottom: rgb(184, 184, 41) solid 3px;
   }
 
   .lightmode-back header {
