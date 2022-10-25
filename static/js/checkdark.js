@@ -1,9 +1,21 @@
-var doc = document.getElementsByTagName("HTML")
+var doc = document.getElementsByTagName('HTML')
 
-var modeSwapButton = document.getElementById("darkmode_button")
+var modeSwapButton = document.getElementById('darkmode_button')
 
-if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-	doc[0].classList.add("darkmode-back");
-	doc[0].classList.remove("lightmode-back")
-	modeSwapButton.classList.add("darkmode-button-after");
+var prefersDark
+
+if (getDarkState() === null) {
+	prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
+}
+else {
+	prefersDark = (getDarkState() === 'true')
+}
+
+function getDarkState() {
+	return window.localStorage.getItem('mirror-dark')
+}
+
+if (prefersDark) {
+	doc[0].className = 'darkmode-back'
+	modeSwapButton.className = 'darkmode-button-after'
 }
