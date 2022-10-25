@@ -83,11 +83,13 @@ footer b * {
 }
 
 .darkmode-back {
-  background-color: rgb(31 41 55);
+  background-color: #202124;
   color: white;
 }
 
-.darkmode-button {
+
+.darkmode-button,
+.darkmode-button-after {
   float: right;
   display: flex;
   border: 3px solid white;
@@ -95,24 +97,23 @@ footer b * {
   margin: 5px;
   width: fit-content;
   background-color: inherit;
-  font-size: 35px;
+  font-size: 25px;
   padding: 4px;
   color: white;
-  min-width: 55px;
+  min-width: 45px;
   width: fit-content;
-  height: 55px;
+  height: 45px;
   align-content: center;
   justify-content: center;
 }
 
 .darkmode-button::before {
-  content: "\263C";
+  content: "\263C"; /* unicode sun character */
 }
 
 .darkmode-button-after::before {
-  content: "\263D" !important;
-  font-size: 30px;
-  align-self: top !important;
+  content: "\263D"; /* unicode moon character */
+  font-size: 20px;
 }
 
 /* For home.gohtml */
@@ -246,18 +247,17 @@ body>h1 {
   }
 
   .active:before {
-    content: "\002B" !important;
+    content: "\002B" !important; /* unicode plus sign */
     color: inherit;
   }
 
   .toc-heading:before {
-    content: '\2212';
+    content: '\2212'; /* uncode minus sign */
     color: inherit;
   }
 
   .toc-section-content {
-    min-height: fit-content !important;
-    transition: max-height 0.2s ease-out;
+    min-height: fit-content;
   }
 
   .projects-container>.list {
