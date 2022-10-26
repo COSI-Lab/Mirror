@@ -32,9 +32,11 @@
             Homepage: <a href={{ .HomePage }}>{{ .HomePage }}</a>
         </p>
     </div>
-    {{ if .Icon }}  
-    <div class="icon-box">
-        <img src="img/projects/{{ .Icon }}" class="icon-image">
+    {{ if .Icon }}
+    <div class="icon-container"> 
+        <div class="icon-box">
+            <img src="img/projects/{{ .Icon }}" class="icon-image">
+        </div>
     </div>
     {{ end }}
 </div>

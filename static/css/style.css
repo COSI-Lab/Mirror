@@ -211,8 +211,8 @@ body>h1 {
   }
 
   .toc-section-content {
-    min-height: fit-content !important;
-    transition: max-height 0.2s ease-out;
+    min-height: fit-content;
+    width: 100%;
   }
 
   .projects-container>.list {
@@ -255,7 +255,8 @@ body>h1 {
 /* Desktop */
 @media screen and (min-width: 800px) {
   .project-box {
-    display: flex;
+    display: grid;
+    grid-template-columns: 55% 45%;
     width: 100%;
     border-bottom: 2px solid #cccccc;
     padding-bottom: 1em;
@@ -263,26 +264,29 @@ body>h1 {
 
   .project-box>.distro {
     min-width: fit-content;
-    width: 40%;
+    width: 100%;
     overflow: hidden;
   }
 
-  .icon-box {
-    width: fit-content;
+  .icon-container {
+    width: 100%;
     align-self: center;
-    align-content: center;
-    justify-self: right;
-    justify-content: center;
-    
-    /* background-color: rgb(31 41 55);
-    padding: 5px;
+  }
+
+  .icon-box {
+    float: right;
+    width: fit-content;
+
+    background-color: white;
+    padding: 10px;
     border: black solid 2px;
     border-radius: 10px;
-    margin: 20px; */
+    margin: 20px;
   }
 
   .icon-box>.icon-image {
     max-height: 150px;
+    max-width: 100%;
     min-height: 75px;
     min-width: 150px;
     width: fit-content;
@@ -301,11 +305,10 @@ body>h1 {
     overflow: hidden;
   }
 
-  .project-box>.distro-icon {
+  .icon-container {
     display: none;
   }
 }
-
 
 .distro>a {
   color: rgb(40, 104, 40);

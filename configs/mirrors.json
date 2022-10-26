@@ -51,7 +51,7 @@
       "color": "#f0d4f0",
       "publicRsync": true,
       "alternative": "http://mirrors.rit.edu/archlinux/",
-      "icon": "archlinux.png"
+      "icon": "arch.svg"
     },
     "archlinux32": {
       "name": "Arch Linux 32",
@@ -68,7 +68,7 @@
       "color": "#d8bfd8",
       "publicRsync": true,
       "alternative": "http://mirror.math.princeton.edu/pub/archlinux32/",
-      "icon": "archlinux32.png"
+      "icon": "arch32.png"
     },
     "artix-linux": {
       "name": "Artix Linux",
@@ -121,7 +121,7 @@
       "color": "#0abab5",
       "publicRsync": true,
       "alternative": "http://mirrors.rit.edu/centos/",
-      "icon": "centos.png"
+      "icon": "centos.svg"
     },
     "centos9": {
       "name": "CentOS Stream 9",
@@ -138,7 +138,7 @@
       "color": "#0abab5",
       "publicRsync": true,
       "alternative": "http://mirror.siena.edu/centos-stream/",
-      "icon": "centos.png"
+      "icon": "centos.svg"
     },
     "cpan": {
       "name": "CPAN",
@@ -430,7 +430,7 @@
       "color": "#8878c3",
       "publicRsync": true,
       "alternative": "http://mirror.umd.edu/msys2/",
-      "icon": "msys2.svg"
+      "icon": "msys2.png"
     },
     "opensuse": {
       "name": "OpenSUSE",
@@ -447,7 +447,7 @@
       "color": "#4bb679",
       "publicRsync": true,
       "alternative": "http://mirrors.rit.edu/opensuse/",
-      "icon": "opensuse.png"
+      "icon": "opensuse.svg"
     },
     "parrot": {
       "name": "Parrot Security OS",
