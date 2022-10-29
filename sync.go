@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"os"
 	"os/exec"
 	"strings"
@@ -318,23 +319,26 @@ func checkRSYNCState(short string, state *os.ProcessState, output []byte) {
 	}
 }
 
+// Once a week check all logs and deletes logs older than 3 months
 func checkOldLogs() {
 	ticker := time.NewTicker(168 * time.Hour)
 
-	for {
-		select {
-
-		case t := <-ticker.C:
-			logFiles, err := os.ReadDir(syncLogs)
-
+	for range ticker.C {
+		logFiles, err := os.ReadDir(syncLogs)
+		if err != nil {
+			log.Fatal(err)
+		} else {
 			for _, logFile := range logFiles {
 				fileStat, err := os.Stat(logFile.Name())
-				modTime := fileStat.ModTime()
-				if modTime.Before(time.Now().Add(-2160 * time.Hour)) {
-					os.Remove(logFile.Name())
+				if err != nil {
+					log.Fatal(err)
+				} else {
+					modTime := fileStat.ModTime()
+					if modTime.Before(time.Now().Add(-2160 * time.Hour)) {
+						os.Remove(logFile.Name())
+					}
 				}
 			}
 		}
-
 	}
 }
