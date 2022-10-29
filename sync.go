@@ -341,7 +341,12 @@ func deleteOldLogs() {
 			} else {
 				modTime := fileStat.ModTime()
 				if modTime.Before(time.Now().Add(-2160 * time.Hour)) {
-					os.Remove(syncLogs + "/" + logFile.Name())
+					err = os.Remove(syncLogs + "/" + logFile.Name())
+					if err != nil {
+						logging.Warn(err)
+					} else {
+						logging.Info("removed " + syncLogs + "/" + logFile.Name())
+					}
 				}
 			}
 		}
