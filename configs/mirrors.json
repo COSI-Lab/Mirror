@@ -95,7 +95,7 @@
         "password_file": "blender.secret"
       },
       "official": true,
-      "homepage": " https://www.blender.org",
+      "homepage": "https://www.blender.org/",
       "color": "#eb7700",
       "publicRsync": true,
       "alternative": "http://mirrors.ocf.berkeley.edu/blender/"
@@ -111,7 +111,7 @@
         "syncs_per_day": 2
       },
       "official": true,
-      "homepage": " https://www.centos.org/",
+      "homepage": "https://www.centos.org/",
       "color": "#0abab5",
       "publicRsync": true,
       "alternative": "http://mirrors.rit.edu/centos/"
@@ -159,7 +159,7 @@
         "syncs_per_day": 1
       },
       "official": false,
-      "homepage": " http://cran.r-project.org/",
+      "homepage": "http://cran.r-project.org/",
       "color": "#eee600",
       "publicRsync": true,
       "alternative": "http://mirror.las.iastate.edu/CRAN/"
@@ -467,7 +467,7 @@
         "syncs_per_day": 1
       },
       "official": true,
-      "homepage": "https://ravynos.org/",
+      "homepage": "https://airyx.org/",
       "color": "#ff42b0",
       "publicRsync": false,
       "alternative": "http://mirror2.sandyriver.net/pub/ravynos/"

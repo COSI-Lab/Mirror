@@ -1,6 +1,5 @@
 body {
   margin: 0;
-  background: rgb(40, 104, 40);
   font-family: "Roboto";
 }
 
@@ -15,20 +14,95 @@ body {
 }
 
 /* For nav.gohtml */
-header {
-  background: rgb(40, 104, 40);
-  color: white;
-  display: block;
-  padding-bottom: 0;
-  border-bottom: yellow solid 3px;
+/* mobile */
+@media screen and (max-width: 800px) {
+
+  .darkmode-back header {
+    display: block;
+    width: 100;
+    background: rgb(0, 50, 0);
+    color: white;
+    padding-bottom: 0px;
+    border-bottom: rgb(184, 184, 41) solid 3px;
+  }
+
+  .lightmode-back header {
+    display: block;
+    width: 100;
+    background: rgb(40, 104, 40);
+    color: white;
+    padding-bottom: 0px;
+    border-bottom: yellow solid 3px;
+  }
+
+  .darkmode-button,
+  .darkmode-button-after {
+    display: none;
+  }
+}
+
+/* desktop */
+@media screen and (min-width: 800px) {
+  
+  .darkmode-back header {
+    display: grid;
+    grid-template-columns: 3fr 1fr;
+    width: 100;
+    background: rgb(0, 50, 0);
+    color: white;
+    padding-bottom: 0px;
+    border-bottom: rgb(184, 184, 41) solid 3px;
+  }
+
+  .lightmode-back header {
+    display: grid;
+    grid-template-columns: 3fr 1fr;
+    width: 100;
+    background: rgb(40, 104, 40);
+    color: white;
+    padding-bottom: 0px;
+    border-bottom: yellow solid 3px;
+  }
+
+  .darkmode-button,
+  .darkmode-button-after {
+    float: right;
+    display: flex;
+    border: 3px solid white;
+    border-radius: 10px;
+    margin: 5px;
+    width: fit-content;
+    background-color: inherit;
+    font-size: 25px;
+    padding: 4px;
+    color: white;
+    min-width: 45px;
+    width: fit-content;
+    height: 45px;
+    align-content: center;
+    justify-content: center;
+  }
+
+  .darkmode-button::before {
+    content: "\263C";
+    /* unicode sun character */
+  }
+
+  .darkmode-button-after::before {
+    content: "\263D";
+    /* unicode moon character */
+    font-size: 20px;
+  }
+
 }
 
 header ul {
   list-style-type: none;
-  margin: 0;
-  padding: 0;
+  align-self: center;
+  margin: 0px;
+  height: 100%;
+  padding: 0px;
   overflow: hidden;
-  background-color: rgb(40, 104, 40);
 }
 
 /* mobile */
@@ -42,6 +116,7 @@ header ul {
 @media screen and (min-width: 800px) {
   header li {
     float: left;
+    align-content: center;
   }
 }
 
@@ -54,12 +129,20 @@ header li>a {
   text-decoration: none;
 }
 
-header li a:hover {
+header a:hover {
   background-color: darkgreen;
 }
 
 /* For footer.gohtml */
-footer {
+.darkmode-back footer {
+  background: rgb(0, 50, 0);
+  color: white;
+  padding: 25px;
+  display: block;
+  text-align: center;
+}
+
+.lightmode-back footer {
   background: rgb(40, 104, 40);
   color: white;
   padding: 25px;
@@ -67,12 +150,22 @@ footer {
   text-align: center;
 }
 
+
 footer a {
   color: white;
 }
 
 footer b * {
   white-space: nowrap;
+}
+
+.lightmode-back {
+  background-color: white;
+}
+
+.darkmode-back {
+  background-color: rgb(20, 20, 20);
+  color: white;
 }
 
 /* For home.gohtml */
@@ -156,6 +249,7 @@ body>h1 {
 /* For projects.gohtml */
 @media screen and (min-width: 800px) {
   .projects-container {
+    color: inherit;
     display: grid;
     grid-area: span;
     grid-template-columns: 20vw 80vw;
@@ -165,6 +259,7 @@ body>h1 {
 
   .projects-container>.toc {
     display: flex;
+    color: inherit;
     flex-direction: column;
     text-decoration: none;
     text-align: left;
@@ -180,41 +275,43 @@ body>h1 {
   }
 
   .projects-container>.toc::-webkit-scrollbar {
-    display:none;
+    display: none;
   }
 
   .toc>.toc-section-content>ul>li>a {
-    text-decoration:none;
+    text-decoration: none;
   }
 
   .toc-heading {
     border: none;
+    color: inherit;
     border-radius: 5px;
     margin: 5px;
     margin-left: 0px;
     width: fit-content;
-    background-color: white;
+    background-color: inherit;
     font-size: 16px;
     padding: 4px;
   }
 
   .toc-heading:hover {
-    background-color: #ccc;
+    color: rgb(68, 178, 68)
   }
 
   .active:before {
     content: "\002B" !important;
-    color: black;
+    /* unicode plus sign */
+    color: inherit;
   }
 
   .toc-heading:before {
     content: '\2212';
-    color: black;
+    /* uncode minus sign */
+    color: inherit;
   }
 
   .toc-section-content {
-    min-height: fit-content !important;
-    transition: max-height 0.2s ease-out;
+    min-height: fit-content;
   }
 
   .projects-container>.list {
@@ -261,10 +358,6 @@ body>h1 {
   overflow: hidden;
 }
 
-.distro>a {
-  color: rgb(40, 104, 40);
-}
-
 .bold {
   font-weight: 900;
 }
@@ -279,7 +372,6 @@ body>h1 {
 /* mobile */
 @media screen and (max-width: 800px) {
   main {
-    background-color: white;
     padding-left: 5%;
     padding-right: 5%;
     margin: 0;
@@ -289,7 +381,6 @@ body>h1 {
 /* desktop */
 @media screen and (min-width: 800px) {
   main {
-    background-color: white;
     padding-left: 20%;
     padding-right: 20%;
     margin: 0;
@@ -297,13 +388,18 @@ body>h1 {
 }
 
 p {
-  color: black;
+  color: inherit;
   line-height: 24px;
 }
 
-a {
-  padding: 0;
-  color: green;
+.darkmode-back main a {
+  color: rgb(68, 178, 68);
+  padding: 0px;
+}
+
+.lightmode-back main a {
+  color: rgb(40, 104, 40);
+  padding: 0px;
 }
 
 /* For history.gohtml */
