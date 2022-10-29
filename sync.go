@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"log"
 	"os"
 	"os/exec"
 	"strings"
@@ -319,24 +318,37 @@ func checkRSYNCState(short string, state *os.ProcessState, output []byte) {
 	}
 }
 
-// Once a week check all logs and deletes logs older than 3 months
+// On start up then once a week checks and deletes all logs older than 3 months
 func checkOldLogs() {
+	startUp := time.NewTicker(time.Minute)
 	ticker := time.NewTicker(168 * time.Hour)
 
-	for range ticker.C {
-		logFiles, err := os.ReadDir(syncLogs)
-		if err != nil {
-			log.Fatal(err)
-		} else {
-			for _, logFile := range logFiles {
-				fileStat, err := os.Stat(logFile.Name())
-				if err != nil {
-					log.Fatal(err)
-				} else {
-					modTime := fileStat.ModTime()
-					if modTime.Before(time.Now().Add(-2160 * time.Hour)) {
-						os.Remove(logFile.Name())
-					}
+	for {
+		select {
+		case <-startUp.C:
+			startUp.Stop()
+			deleteOldLogs()
+
+		case <-ticker.C:
+			deleteOldLogs()
+		}
+	}
+}
+
+// deletes all logs older than 3 months
+func deleteOldLogs() {
+	logFiles, err := os.ReadDir(syncLogs)
+	if err != nil {
+		logging.Error(err)
+	} else {
+		for _, logFile := range logFiles {
+			fileStat, err := os.Stat(logFile.Name())
+			if err != nil {
+				logging.Warn(err)
+			} else {
+				modTime := fileStat.ModTime()
+				if modTime.Before(time.Now().Add(-2160 * time.Hour)) {
+					os.Remove(logFile.Name())
 				}
 			}
 		}
