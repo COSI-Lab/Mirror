@@ -140,7 +140,7 @@
           },
           "icon": {
             "type": "string",
-            "description": "Name of project logo file"
+            "description": "Local path to project logo file"
           }
         },
         "required": [

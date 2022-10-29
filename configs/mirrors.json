@@ -16,7 +16,7 @@
       "color": "#7851a9",
       "publicRsync": true,
       "alternative": "http://mirror.lshiy.com/almalinux/",
-      "icon": "almalinux.svg"
+      "icon": "img/projects/almalinux.svg"
     },
     "alpine": {
       "name": "Alpine Linux",
@@ -34,7 +34,7 @@
       "color": "#cd5700",
       "publicRsync": true,
       "alternative": "http://ewr.edge.kernel.org/alpine/",
-      "icon": "alpinelinux.svg"
+      "icon": "img/projects/alpinelinux.svg"
     },
     "archlinux": {
       "name": "Arch Linux",
@@ -51,7 +51,7 @@
       "color": "#f0d4f0",
       "publicRsync": true,
       "alternative": "http://mirrors.rit.edu/archlinux/",
-      "icon": "arch.svg"
+      "icon": "img/projects/arch.svg"
     },
     "archlinux32": {
       "name": "Arch Linux 32",
@@ -68,7 +68,7 @@
       "color": "#d8bfd8",
       "publicRsync": true,
       "alternative": "http://mirror.math.princeton.edu/pub/archlinux32/",
-      "icon": "arch32.png"
+      "icon": "img/projects/arch32.png"
     },
     "artix-linux": {
       "name": "Artix Linux",
@@ -85,7 +85,7 @@
       "color": "#de6fa1",
       "publicRsync": true,
       "alternative": "http://mirrors.dotsrc.org/artix-linux/",
-      "icon": "artix.png"
+      "icon": "img/projects/artix.png"
     },
     "blender": {
       "name": "Blender",
@@ -104,7 +104,7 @@
       "color": "#eb7700",
       "publicRsync": true,
       "alternative": "http://mirrors.ocf.berkeley.edu/blender/",
-      "icon": "blender.svg"
+      "icon": "img/projects/blender.png"
     },
     "centos": {
       "name": "CentOS (≤8)",
@@ -121,7 +121,7 @@
       "color": "#0abab5",
       "publicRsync": true,
       "alternative": "http://mirrors.rit.edu/centos/",
-      "icon": "centos.svg"
+      "icon": "img/projects/centos.svg"
     },
     "centos9": {
       "name": "CentOS Stream 9",
@@ -138,7 +138,7 @@
       "color": "#0abab5",
       "publicRsync": true,
       "alternative": "http://mirror.siena.edu/centos-stream/",
-      "icon": "centos.svg"
+      "icon": "img/projects/centos.svg"
     },
     "cpan": {
       "name": "CPAN",
@@ -155,7 +155,7 @@
       "color": "#dbd7d2",
       "publicRsync": true,
       "alternative": "http://mirrors.rit.edu/CPAN/",
-      "icon": "cpan.png"
+      "icon": "img/projects/cpan.png"
     },
     "cran": {
       "name": "CRAN",
@@ -172,7 +172,7 @@
       "color": "#eee600",
       "publicRsync": true,
       "alternative": "http://mirror.las.iastate.edu/CRAN/",
-      "icon": "cran.svg"
+      "icon": "img/projects/cran.svg"
     },
     "ctan": {
       "name": "CTAN",
@@ -205,7 +205,7 @@
       "color": "#746cc0",
       "publicRsync": true,
       "alternative": "http://mirrors.rit.edu/cygwin/",
-      "icon": "cygwin.png"
+      "icon": "img/projects/cygwin.png"
     },
     "debian": {
       "name": "Debian",
@@ -222,7 +222,7 @@
       "color": "#ffc87c",
       "publicRsync": true,
       "alternative": "http://mirrors.rit.edu/debian/",
-      "icon": "debian.png"
+      "icon": "img/projects/debian.png"
     },
     "debian-cd": {
       "name": "Debian Images",
@@ -239,7 +239,7 @@
       "color": "#ffc87c",
       "publicRsync": true,
       "alternative": "http://debian.osuosl.org/debian-cdimage/",
-      "icon": "debian.png"
+      "icon": "img/projects/debian.png"
     },
     "eclipse": {
       "name": "Eclipse",
@@ -258,7 +258,7 @@
       "color": "#00755e",
       "publicRsync": true,
       "alternative": "http://mirror.umd.edu/eclipse/",
-      "icon": "eclipse.svg"
+      "icon": "img/projects/eclipse.svg"
     },
     "fedora": {
       "name": "Fedora",
@@ -276,7 +276,7 @@
       "color": "#0b57a4",
       "publicRsync": true,
       "alternative": "http://mirror.rit.edu/fedora/",
-      "icon": "fedora.png"
+      "icon": "img/projects/fedora.png"
     },
     "gentoo": {
       "name": "Gentoo (Pending Official)",
@@ -293,7 +293,7 @@
       "color": "#30d5c8",
       "publicRsync": true,
       "alternative": "http://mirrors.rit.edu/gentoo/",
-      "icon": "gentoo.svg"
+      "icon": "img/projects/gentoo.png"
     },
     "gentoo-portage": {
       "name": "Gentoo Portage",
@@ -310,7 +310,7 @@
       "color": "#30d5c8",
       "publicRsync": true,
       "alternative": "http://mirrors.rit.edu/gentoo-rsync/",
-      "icon": "gentoo.svg"
+      "icon": "img/projects/gentoo.png"
     },
     "ipfire": {
       "name": "IPFire",
@@ -327,7 +327,7 @@
       "color": "#7c4848",
       "publicRsync": true,
       "alternative": "http://mirrors.rit.edu/ipfire/",
-      "icon": "ipfire.png"
+      "icon": "img/projects/ipfire.png"
     },
     "isabelle": {
       "name": "Isabelle",
@@ -344,7 +344,7 @@
       "color": "#8a496b",
       "publicRsync": true,
       "alternative": "http://mirror.cse.unsw.edu.au/pub/isabelle/",
-      "icon": "isabelle.gif"
+      "icon": "img/projects/isabelle.gif"
     },
     "linux": {
       "name": "Linux (including source)",
@@ -361,7 +361,7 @@
       "color": "#930056",
       "publicRsync": true,
       "alternative": "http://mirrors.edge.kernel.org/pub/",
-      "icon": "linux.png"
+      "icon": "img/projects/linux.png"
     },
     "linuxmint-images": {
       "name": "LinuxMint Images",
@@ -378,7 +378,7 @@
       "color": "#62b858",
       "publicRsync": true,
       "alternative": "http://mirrors.advancedhosters.com/linuxmint/isos/",
-      "icon": "mint.svg"
+      "icon": "img/projects/mint.svg"
     },
     "linuxmint-packages": {
       "name": "LinuxMint Packages",
@@ -396,7 +396,7 @@
       "color": "#62b858",
       "publicRsync": true,
       "alternative": "http://mirror.csclub.uwaterloo.ca/linuxmint-packages/",
-      "icon": "mint.svg"
+      "icon": "img/projects/mint.svg"
     },
     "manjaro": {
       "name": "Manjaro",
@@ -413,7 +413,7 @@
       "color": "#d9004c",
       "publicRsync": true,
       "alternative": "http://mirror.math.princeton.edu/pub/manjaro/",
-      "icon": "manjaro.svg"
+      "icon": "img/projects/manjaro.svg"
     },
     "msys2": {
       "name": "msys2",
@@ -430,7 +430,7 @@
       "color": "#8878c3",
       "publicRsync": true,
       "alternative": "http://mirror.umd.edu/msys2/",
-      "icon": "msys2.png"
+      "icon": "img/projects/msys2.png"
     },
     "opensuse": {
       "name": "OpenSUSE",
@@ -447,7 +447,7 @@
       "color": "#4bb679",
       "publicRsync": true,
       "alternative": "http://mirrors.rit.edu/opensuse/",
-      "icon": "opensuse.svg"
+      "icon": "img/projects/opensuse.svg"
     },
     "parrot": {
       "name": "Parrot Security OS",
@@ -464,7 +464,7 @@
       "color": "#ff6fff",
       "publicRsync": true,
       "alternative": "http://mirrors.mit.edu/parrot/",
-      "icon": "parrot.svg"
+      "icon": "img/projects/parrot.svg"
     },
     "raspian": {
       "name": "Raspbian",
@@ -481,7 +481,7 @@
       "color": "#c51d4a",
       "publicRsync": true,
       "alternative": "http://mirrors.mit.edu/raspbian/",
-      "icon": "raspbian.png"
+      "icon": "img/projects/raspbian.png"
     },
     "ravynos": {
       "name": "ravynOS",
@@ -498,7 +498,7 @@
       "color": "#ff42b0",
       "publicRsync": false,
       "alternative": "http://mirror2.sandyriver.net/pub/ravynos/",
-      "icon": "ravyn.svg"
+      "icon": "img/projects/ravyn.svg"
     },
     "RebornOS": {
       "name": "RebornOS",
@@ -515,7 +515,7 @@
       "color": "#1e73be",
       "publicRsync": true,
       "alternative": "http://repo.rebornos.org/RebornOS/",
-      "icon": "reborn.svg"
+      "icon": "img/projects/reborn.svg"
     },
     "slackware": {
       "name": "Slackware",
@@ -532,7 +532,7 @@
       "color": "#b78727",
       "publicRsync": true,
       "alternative": "http://mirror.math.princeton.edu/pub/slackware/",
-      "icon": "slackware.png"
+      "icon": "img/projects/slackware.svg"
     },
     "slitaz": {
       "name": "SliTaz Linux",
@@ -549,7 +549,7 @@
       "color": "#ffff60",
       "publicRsync": true,
       "alternative": "http://mirror1.slitaz.org/",
-      "icon": "slitaz.svg"
+      "icon": "img/projects/slitaz.svg"
     },
     "templeos": {
       "name": "TempleOS",
@@ -563,7 +563,7 @@
       "color": "#efcc00",
       "publicRsync": true,
       "alternative": "http://templeos.org/",
-      "icon": "templeos.jpg"
+      "icon": "img/projects/templeos.jpg"
     },
     "tdf": {
       "name": "LibreOffice",
@@ -580,7 +580,7 @@
       "color": "#00a500",
       "publicRsync": true,
       "alternative": "http://ftp.osuosl.org/pub/tdf/",
-      "icon": "libreoffice.png"
+      "icon": "img/projects/libreoffice.png"
     },
     "ubuntu": {
       "name": "Ubuntu",
@@ -598,7 +598,7 @@
       "color": "#ffd300",
       "publicRsync": true,
       "alternative": "http://mirrors.mit.edu/ubuntu/",
-      "icon": "ubuntu.png"
+      "icon": "img/projects/ubuntu.png"
     },
     "ubuntu-releases": {
       "name": "Ubuntu Releases",
@@ -615,7 +615,7 @@
       "color": "#ffd300",
       "publicRsync": true,
       "alternative": "http://mirrors.mit.edu/ubuntu-releases/",
-      "icon": "ubuntu.png"
+      "icon": "img/projects/ubuntu.png"
     },
     "videolan": {
       "name": "VLC",
@@ -632,7 +632,7 @@
       "color": "#bb85fc",
       "publicRsync": true,
       "alternative": "http://ftp.osuosl.org/pub/videolan/",
-      "icon": "vlc.png"
+      "icon": "img/projects/vlc.png"
     },
     "voidlinux": {
       "name": "VoidLinux",
@@ -651,7 +651,7 @@
       "color": "#000000",
       "publicRsync": true,
       "alternative": "http://mirrors.servercentral.com/voidlinux/",
-      "icon": "void.png"
+      "icon": "img/projects/void.png"
     },
     "zorinos": {
       "name": "Zorin OS",
@@ -668,7 +668,7 @@
       "color": "#fc6c85",
       "publicRsync": true,
       "alternative": "http://mirror.umd.edu/zorin/",
-      "icon": "zorin.svg"
+      "icon": "img/projects/zorin.svg"
     }
   }
 }

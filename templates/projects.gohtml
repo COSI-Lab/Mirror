@@ -33,9 +33,9 @@
         </p>
     </div>
     {{ if .Icon }}
-    <div class="icon-container"> 
+    <div class="icon-container">
         <div class="icon-box">
-            <img src="img/projects/{{ .Icon }}" class="icon-image">
+            <img src="{{ .Icon }}" class="icon-image" alt="{{.Name}} Logo" loading="lazy">
         </div>
     </div>
     {{ end }}
