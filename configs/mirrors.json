@@ -519,7 +519,7 @@
     },
     "slackware": {
       "name": "Slackware",
-      "page": "Software",
+      "page": "Distributions",
       "rsync": {
         "host": "mirror.cs.princeton.edu",
         "src": "slackware",
