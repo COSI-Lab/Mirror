@@ -320,18 +320,11 @@ func checkRSYNCState(short string, state *os.ProcessState, output []byte) {
 
 // On start up then once a week checks and deletes all logs older than 3 months
 func checkOldLogs() {
-	startUp := time.NewTicker(time.Minute)
 	ticker := time.NewTicker(168 * time.Hour)
+	deleteOldLogs()
 
-	for {
-		select {
-		case <-startUp.C:
-			startUp.Stop()
-			deleteOldLogs()
-
-		case <-ticker.C:
-			deleteOldLogs()
-		}
+	for range ticker.C {
+		deleteOldLogs()
 	}
 }
 
