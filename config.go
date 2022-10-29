@@ -112,6 +112,7 @@ type Project struct {
 	Page        string `json:"page"`
 	HomePage    string `json:"homepage"`
 	PublicRsync bool   `json:"publicRsync"`
+	Icon        string `json:"icon"`
 	Alternative string `json:"alternative"`
 	AccessToken string // Loaded from the access tokens file
 }

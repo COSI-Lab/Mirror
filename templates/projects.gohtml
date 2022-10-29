@@ -2,41 +2,52 @@
 <html class="lightmode-back">
 
 {{define "project"}}
-<div id="{{ .Short }}" class="distro">
-    <h2>
-        {{ .Name }} {{if .Official }} (Official Mirror) {{ end }}
-    </h2>
-    {{ if eq (.SyncStyle) ("static") }} (STATIC) 
-    <p>
-        This project is no longer recieving updates.
-    </p>
-    {{ end }}
-    <p>
-        HTTP: <a href=http://mirror.clarkson.edu/{{ .Short }}>http://mirror.clarkson.edu/{{ .Short }}</a>
-        <br>
-        HTTPS: <a href=https://mirror.clarkson.edu/{{ .Short }}>https://mirror.clarkson.edu/{{ .Short }}</a>
-        {{ if .PublicRsync }}
-        <br>
-        RSYNC: rsync://mirror.clarkson.edu/{{ .Short }}
+<div id="{{ .Short }}" class="project-box">
+    <div class="distro">
+        <h2>
+            {{ .Name }} {{if .Official }} (Official Mirror) {{ end }}
+        </h2>
+        {{ if eq (.SyncStyle) ("static") }} (STATIC) 
+        <p>
+            This project is no longer recieving updates.
+        </p>
         {{ end }}
-    </p>
-    {{ if eq (.SyncStyle) ("rsync") }}
-    <p>
-        Upstream Mirror: rsync://{{ .Rsync.Host }}/{{ .Rsync.Src }}
-        <br>
-        Syncs per day: {{ .Rsync.SyncsPerDay }}
-    </p>
+        <p>
+            HTTP: <a href=http://mirror.clarkson.edu/{{ .Short }}>http://mirror.clarkson.edu/{{ .Short }}</a>
+            <br>
+            HTTPS: <a href=https://mirror.clarkson.edu/{{ .Short }}>https://mirror.clarkson.edu/{{ .Short }}</a>
+            {{ if .PublicRsync }}
+            <br>
+            RSYNC: rsync://mirror.clarkson.edu/{{ .Short }}
+            {{ end }}
+        </p>
+        {{ if eq (.SyncStyle) ("rsync") }}
+        <p>
+            Upstream Mirror: rsync://{{ .Rsync.Host }}/{{ .Rsync.Src }}
+            <br>
+            Syncs per day: {{ .Rsync.SyncsPerDay }}
+        </p>
+        {{ end }}
+        <p>
+            Homepage: <a href={{ .HomePage }}>{{ .HomePage }}</a>
+        </p>
+    </div>
+    {{ if .Icon }}
+    <div class="icon-container">
+        <template>
+            <div class="icon-box">
+                <img src="{{ .Icon }}" class="icon-image" alt="{{.Name}} Logo" loading="lazy">
+            </div>
+        </template>
+    </div>
     {{ end }}
-    <p>
-        Homepage: <a href={{ .HomePage }}>{{ .HomePage }}</a>
-    </p>
 </div>
 {{end}}
 
 <head>
     <title>Mirror - Projects</title>
     <script defer src="js/projects.js"></script>
-    {{template "head.gohtml" .}}
+    {{ template "head.gohtml" . }}
 </head>
 
 <body>
@@ -84,8 +95,7 @@
                         {{ end }}
                     </ul>
                 </div>
-                {{else}}
-                {{end}}
+                {{ end }}
             </div>
             <div class="list">
                 <h1 id="distributions" class="center">Linux Distributions</h1>
@@ -98,18 +108,17 @@
                 {{ range .Software }}
                 {{ template "project" . }}
                 {{ end }}
-                {{if .Miscellaneous}}
+                {{ if .Miscellaneous }}
                 <h1 id="miscellaneous" class="center">Miscellaneous</h1>
                 <hr>
                 {{ range .Miscellaneous }}
                 {{ template "project" . }}
                 {{ end }}
-                {{else}}
-                {{end}}
+                {{ end }}
             </div>
         </div>
     </main>
-    {{template "footer.gohtml" .}}
+    {{ template "footer.gohtml" . }}
 </body>
 
 </html>

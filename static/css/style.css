@@ -251,9 +251,7 @@ body>h1 {
   .projects-container {
     color: inherit;
     display: grid;
-    grid-area: span;
     grid-template-columns: 20vw 80vw;
-    flex-direction: row;
     justify-content: space-between;
   }
 
@@ -312,6 +310,7 @@ body>h1 {
 
   .toc-section-content {
     min-height: fit-content;
+    width: 100%;
   }
 
   .projects-container>.list {
@@ -351,11 +350,62 @@ body>h1 {
   padding-left: 20px;
 }
 
-.distro {
-  border-bottom: 2px solid #cccccc;
-  padding-bottom: 1em;
-  width: 100%;
-  overflow: hidden;
+/* Desktop */
+@media screen and (min-width: 800px) {
+  .project-box {
+    display: grid;
+    grid-template-columns: 55% 45%;
+    width: 100%;
+    border-bottom: 2px solid #cccccc;
+    padding-bottom: 1em;
+  }
+
+  .project-box>.distro {
+    min-width: fit-content;
+    width: 100%;
+    overflow: hidden;
+  }
+
+  .icon-container {
+    width: 100%;
+    align-self: center;
+  }
+
+  .icon-box {
+    float: right;
+    width: fit-content;
+
+    background-color: white;
+    padding: 10px;
+    border: black solid 2px;
+    border-radius: 10px;
+    margin: 20px;
+  }
+
+  .icon-box>.icon-image {
+    max-height: 150px;
+    max-width: 100%;
+    min-height: 75px;
+    min-width: 150px;
+    width: fit-content;
+  }
+}
+
+@media screen and (max-width: 800px) {
+  .project-box {
+    width: 100%;
+    border-bottom: 2px solid #cccccc;
+    padding-bottom: 1em;
+  }
+
+  .project-box>.distro {
+    width: 100%;
+    overflow: hidden;
+  }
+
+  .icon-container {
+    display: none;
+  }
 }
 
 .bold {
