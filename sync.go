@@ -335,13 +335,13 @@ func deleteOldLogs() {
 		logging.Error(err)
 	} else {
 		for _, logFile := range logFiles {
-			fileStat, err := os.Stat(logFile.Name())
+			fileStat, err := os.Stat(syncLogs + "/" + logFile.Name())
 			if err != nil {
 				logging.Warn(err)
 			} else {
 				modTime := fileStat.ModTime()
 				if modTime.Before(time.Now().Add(-2160 * time.Hour)) {
-					os.Remove(logFile.Name())
+					os.Remove(syncLogs + "/" + logFile.Name())
 				}
 			}
 		}
