@@ -317,3 +317,39 @@ func checkRSYNCState(short string, state *os.ProcessState, output []byte) {
 		}
 	}
 }
+
+// On start up then once a week checks and deletes all logs older than 3 months
+func checkOldLogs() {
+	ticker := time.NewTicker(168 * time.Hour)
+	deleteOldLogs()
+
+	for range ticker.C {
+		deleteOldLogs()
+	}
+}
+
+// deletes all logs older than 3 months
+func deleteOldLogs() {
+	logFiles, err := os.ReadDir(syncLogs)
+	if err != nil {
+		logging.Error(err)
+	} else {
+		for _, logFile := range logFiles {
+			path := syncLogs + "/" + logFile.Name()
+			fileStat, err := os.Stat(path)
+			if err != nil {
+				logging.Warn(err)
+			} else {
+				modTime := fileStat.ModTime()
+				if modTime.Before(time.Now().Add(-2160 * time.Hour)) {
+					err = os.Remove(path)
+					if err != nil {
+						logging.Warn(err)
+					} else {
+						logging.Info("removed " + path)
+					}
+				}
+			}
+		}
+	}
+}
