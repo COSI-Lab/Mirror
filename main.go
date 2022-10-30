@@ -292,6 +292,8 @@ func main() {
 
 	go HandleCheckIn()
 
+	go checkOldLogs()
+
 	for {
 		logging.Info(runtime.NumGoroutine(), "goroutines")
 		time.Sleep(time.Hour)
