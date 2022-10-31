@@ -34,11 +34,18 @@ INFLUX_TOKEN=
 # "true" if we only read from the database
 INFLUX_READ_ONLY=
 
+# Location on disk to save torrents to leave
+# empty to disable the torrent syncing system
+TORRENT_DIR=
+
 # File to tail NGINX access logs, if empty then we read the static ./access.log file
 NGINX_TAIL=/var/log/nginx/access.log
 
 # File to tail rsyncd log file. If empty then we read a local ./rsyncd.log file
 RSYNCD_TAIL=/var/log/rsyncd.log
+
+# Set to "true" to pause scheduling sync tasks
+SCHEDULER_PAUSED=true
 
 # "true" if the --dry-run flag to the rsync jobs
 # and we skip other scripts pulls
