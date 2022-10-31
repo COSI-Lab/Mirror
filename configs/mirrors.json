@@ -1,5 +1,9 @@
 {
   "$schema": "./mirrors.schema.json",
+  "torrents": [
+    { "url": "https://linuxmint.com/torrents/", "depth": 1, "delay": 1 },
+    { "url": "http://mirror.clarkson.edu/archlinux/iso/", "depth": 2, "delay": 0 }
+  ],
   "mirrors": {
     "almalinux": {
       "name": "AlmaLinux",

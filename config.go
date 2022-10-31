@@ -18,8 +18,15 @@ import (
 )
 
 type ConfigFile struct {
-	Schema  string              `json:"$schema"`
-	Mirrors map[string]*Project `json:"mirrors"`
+	Schema   string              `json:"$schema"`
+	Mirrors  map[string]*Project `json:"mirrors"`
+	Torrents []*Torrent          `json:"torrents"`
+}
+
+type Torrent struct {
+	Url   string `json:"url"`
+	Delay int    `json:"delay"`
+	Depth int    `json:"depth"`
 }
 
 // Returns a slice of all projects sorted by id

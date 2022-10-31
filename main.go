@@ -46,6 +46,8 @@ var (
 	pingID string
 	// PULL_TOKEN
 	pullToken string
+	// torrent_dir
+	torrentDir string
 )
 
 func init() {
@@ -72,6 +74,7 @@ func init() {
 	pingID = os.Getenv("PING_ID")
 	pullToken = os.Getenv("PULL_TOKEN")
 	admGroupStr := os.Getenv("ADM_GROUP")
+	torrentDir = os.Getenv("TORRENT_DIR")
 
 	if admGroupStr != "" {
 		admGroup, err = strconv.Atoi(admGroupStr)
@@ -139,6 +142,10 @@ func init() {
 
 	if pullToken == "" {
 		logging.Warn("PULL_TOKEN is not set so there is no master pull token")
+	}
+
+	if torrentDir == "" {
+		logging.Warn("TORRENT_DIR is not set torrents will not be synced")
 	}
 }
 
@@ -284,6 +291,11 @@ func main() {
 				go handleSyncs(config, rsyncStatus, manual, stop)
 			}
 		}()
+	}
+
+	// torrent scheduler TODO handle reload
+	if torrentDir != "" {
+		ScheduleTorrents(config.Torrents, torrentDir)
 	}
 
 	// Webserver

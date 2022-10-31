@@ -133,11 +133,6 @@
             "description": "HTTP Url to another nearby site that hosts the same content that we can forward to incase there is an interruption to Mirror",
             "pattern": "http?://.*/"
           },
-          "torrents": {
-            "type": "array",
-            "description": "an array of _relative_ file locations to find and sync .torrents files",
-            "items": { "type": "string" }
-          },
           "icon": {
             "type": "string",
             "description": "Local path to project logo file"
@@ -164,6 +159,23 @@
           }
         ],
         "additionalProperties": false
+      }
+    },
+    "torrents": {
+      "type": "array",
+      "description": "list of sources to pull torrents from using HTTP",
+      "items": { 
+        "type": "object",
+        "depth": {
+          "type": "number",
+          "default": 1
+        },
+        "url": { "type": "string" },
+        "delay": {
+          "type": "number",
+          "default": 1,
+          "description": "Number of seconds to wait between each request. Locally 0 seconds is fine, globally 1 is normally safe."
+        }
       }
     }
   }
