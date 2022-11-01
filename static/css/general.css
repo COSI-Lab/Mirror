@@ -45,15 +45,11 @@ main {
 }
 
 footer {
-  position: absolute;
-  text-align: center;
-  width: 100vw;
   color: white;
   padding-top: 25px;
   padding-bottom: 25px;
-  display: block;
   text-align: center;
-  bottom: 0px;
+  display: block;
 }
 
 footer a {
