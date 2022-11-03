@@ -361,12 +361,15 @@ Start of Mobile Specific
   }
 
   .navbutton {
+    justify-content: center;
+    align-content: center;
+    display: flex;
     justify-self: center;
     border: none;
     background-color: inherit;
     color: inherit;
     text-align: center;
-    font-size: 25px;
+    font-size: 50px;
     width: 100%;
   }
 
@@ -374,14 +377,8 @@ Start of Mobile Specific
     background-color: darkgreen;
   }
 
-  .navbutton:before {
-    content: "\FE3E";
-    /* unicode for double down facing arrows */
-  }
-
-  .navbutton-expanded:before {
-    content: "\FE3D" !important;
-    /* unicode for double up facing arrows */
+  .rotate90 {
+    rotate: 90deg;
   }
 
   .navmenu-collapsed {
