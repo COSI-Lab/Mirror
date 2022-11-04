@@ -5,21 +5,21 @@ var doc = document.getElementsByTagName('HTML')
 var modeSwapButton = document.getElementById('darkmode_button')
 
 if (prefersDark) {
-	modeSwapButton.className = 'darkmode-button-after'
+	modeSwapButton.className = 'darkmode-button-active'
 }
 else {
-	modeSwapButton.className = 'darkmode-button'
+	modeSwapButton.className = 'darkmode-button-inactive'
 }
 
 modeSwapButton.addEventListener('click', function () {
-	if (doc[0].classList.contains('lightmode-back')) {
-		doc[0].className = 'darkmode-back'
-		modeSwapButton.className = 'darkmode-button-after'
+	if (!document.styleSheets.item(2).disabled) {
+		document.styleSheets.item(2).disabled = true;
+		modeSwapButton.className = 'darkmode-button-active'
 		setDarkState('true')
 	}
-	else if (doc[0].classList.contains('darkmode-back')) {
-		doc[0].className = 'lightmode-back'
-		modeSwapButton.className = 'darkmode-button'
+	else if (document.styleSheets.item(2).disabled) {
+		document.styleSheets.item(2).disabled = false;
+		modeSwapButton.className = 'darkmode-button-inactive'
 		setDarkState('false')
 	}
 })
