@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html class="lightmode-back">
+<html>
 <head>
     <title>Mirror - Home</title>    
     {{template "head.gohtml" .}}
@@ -7,8 +7,8 @@
 
 <body>
     {{template "nav.gohtml" .}}
-    <h1> Welcome to Mirror </h1>
-    <main class="home">
+    <h1 class="homeBanner"> Welcome to Mirror </h1>
+    <main class="homeMain">
         <h2> About Mirror </h2>
 
         <p>
@@ -20,8 +20,8 @@
             You can find out more information about everything we mirror on the <a href="/projects">projects</a> page.
         </p>
         {{/* <hr size="1" width="100%" color="black" /> */}}
-        <div class="horlist">
-            <div class="vertlist">
+        <div class="horizontalList">
+            <div class="verticalList">
                 <img src="img/Ubuntu.png" alt="Ubuntu Logo" style="width: 200px; height: 200px" />
                 <b> Linux Distros </b>
                 <p>
@@ -30,7 +30,7 @@
                     majority are updated 4 times a day.
                 </p>
             </div>
-            <div class="vertlist">
+            <div class="verticalList">
                 <img src="img/Blender.png" alt="Blender Logo" style="width: 200px; height: 200px" />
                 <b> Software </b>
                 <p>
@@ -38,7 +38,7 @@
                     Cygwin, Eclipse, and more. 
                 </p>
             </div>
-            <div class="vertlist">
+            <div class="verticalList">
                 <img src="img/wikimedia.png" alt="Wikimedia Logo" style="width: 200px; height: 200px" />
                 <b> Miscellaneous </b>
                 <p>

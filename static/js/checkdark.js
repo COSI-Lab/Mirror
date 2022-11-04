@@ -1,9 +1,6 @@
 import { setDarkState } from "./darkmode.js"
 
 var prefersDark
-
-var doc = document.getElementsByTagName('HTML')
-
 var modeSwapButton = document.getElementById('darkmode_button')
 
 if (getDarkState() === null) {
@@ -20,8 +17,8 @@ function getDarkState() {
 }
 
 if (prefersDark) {
-	doc[0].className = 'darkmode-back'
-	modeSwapButton.className = 'darkmode-button-after'
+	document.styleSheets.item(2).disabled = true;
+	modeSwapButton.className = 'darkmode-button-active'
 }
 
 export { prefersDark }

@@ -1,12 +1,17 @@
 <header id="header">
-    <ul>
-        <li> <a href="/home">Home</a> </li>
-        <li> <a href="/projects">Projects</a> </li>
-        {{/* <li> <a href="/stats">Statistics</a> </li> */}}
-        <li> <a href="/map">Map</a> </li>
-        <li> <a href="/history">History & Sponsors</a> </li>
-    </ul>
-    <div id="dm_button_container">
-        <button type="button" id="darkmode_button" class="darkmode-button"></button>
+    <div id="navbar" class ="navbar">
+        <button type='button' id='nav_collapse_button' class="navbutton"><span class="rotate90">»</span></button>
+        <div id="nav_menu" class="navmenu-collapsed">
+            <ul>
+                <li> <a href="/home">Home</a> </li>
+                <li> <a href="/projects">Projects</a> </li>
+                {{/* <li> <a href="/stats">Statistics</a> </li> */}}
+                <li> <a href="/map">Map</a> </li>
+                <li> <a href="/history">History & Sponsors</a> </li>
+            </ul>
+        </div>
     </div>
-</header>
+    <div id="dm_button_container">
+        <button type="button" id="darkmode_button" class="darkmode-button-inactive"></button>
+    </div>
+</header> 
