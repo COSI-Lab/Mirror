@@ -532,7 +532,7 @@
       "color": "#1e73be",
       "publicRsync": true,
       "alternative": "http://mirrors.dotsrc.org/osdn/storage/g/r/re/rebornos/armrepo/",
-      "icon": "img/projects/reborn.svg"
+      "icon": "img/projects/rebornarm.svg"
     },
     "slackware": {
       "name": "Slackware",
