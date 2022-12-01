@@ -517,6 +517,23 @@
       "alternative": "http://repo.rebornos.org/RebornOS/",
       "icon": "img/projects/reborn.svg"
     },
+    "rebornos-test": {
+      "name": "RebornOS Test",
+      "page": "Distributions",
+      "rsync": {
+        "host": "de.mirror.rebornos.org/",
+        "src": "rebornos",
+        "dest": "/storage/rebornos-test",
+        "options": "-avzrH --no-perms --no-owner --no-group --delete --delete-delay --delay-updates --ignore-errors --exclude \".~tmp~\"",
+        "syncs_per_day": 1
+      },
+      "official": false,
+      "homepage": "https://rebornos.org/",
+      "color": "#1e73be",
+      "publicRsync": true,
+      "alternative": "http://repo.rebornos.org/RebornOS/",
+      "icon": "img/projects/reborn.svg"
+    },
     "slackware": {
       "name": "Slackware",
       "page": "Distributions",
