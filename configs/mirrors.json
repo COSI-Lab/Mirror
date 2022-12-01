@@ -523,7 +523,7 @@
       "rsync": {
         "host": "de.mirror.rebornos.org",
         "src": "rebornos",
-        "dest": "/storage/rebornos-arm",
+        "dest": "/storage/RebornOS-ARM",
         "options": "-avzrH --no-perms --no-owner --no-group --delete --delete-delay --delay-updates --ignore-errors --exclude \".~tmp~\"",
         "syncs_per_day": 2
       },
