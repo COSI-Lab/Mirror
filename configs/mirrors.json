@@ -508,7 +508,7 @@
         "src": "osdn/storage/g/r/re/rebornos/repo/RebornOS",
         "dest": "/storage/RebornOS",
         "options": "-avzrH --no-perms --no-owner --no-group --delete --delete-delay --delay-updates --ignore-errors --exclude \".~tmp~\"",
-        "syncs_per_day": 1
+        "syncs_per_day": 2
       },
       "official": true,
       "homepage": "https://rebornos.org/",
@@ -517,21 +517,20 @@
       "alternative": "http://repo.rebornos.org/RebornOS/",
       "icon": "img/projects/reborn.svg"
     },
-    "rebornos-test": {
-      "name": "RebornOS Test",
+    "RebornOS-ARM": {
+      "name": "RebornOS ARM",
       "page": "Distributions",
       "rsync": {
-        "host": "de.mirror.rebornos.org/",
+        "host": "de.mirror.rebornos.org",
         "src": "rebornos",
-        "dest": "/storage/rebornos-test",
+        "dest": "/storage/rebornos-arm",
         "options": "-avzrH --no-perms --no-owner --no-group --delete --delete-delay --delay-updates --ignore-errors --exclude \".~tmp~\"",
-        "syncs_per_day": 1
+        "syncs_per_day": 2
       },
-      "official": false,
+      "official": true,
       "homepage": "https://rebornos.org/",
       "color": "#1e73be",
       "publicRsync": true,
-      "alternative": "http://repo.rebornos.org/RebornOS/",
       "icon": "img/projects/reborn.svg"
     },
     "slackware": {
