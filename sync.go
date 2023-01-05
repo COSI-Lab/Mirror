@@ -285,16 +285,32 @@ func handleSyncs(config *ConfigFile, status RSYNCStatus, manual <-chan string, s
 			go syncProject(config, status, short)
 		case short := <-manual:
 			// wait for the project to be unlocked
-			for {
-				syncLock.Lock()
-				if !syncLocks[short] {
+			if short == "all" {
+				for _, project := range config.Mirrors {
+					for {
+						syncLock.Lock()
+						if !syncLocks[project.Short] {
+							syncLock.Unlock()
+							break
+						}
+						syncLock.Unlock()
+						time.Sleep(time.Second)
+					}
+					go syncProject(config, status, project.Short)
+				}
+			} else {
+				for {
+					syncLock.Lock()
+					if !syncLocks[short] {
+						syncLock.Unlock()
+						break
+					}
 					syncLock.Unlock()
 					break
 				}
 				syncLock.Unlock()
 				time.Sleep(time.Second)
 			}
-
 			go syncProject(config, status, short)
 		}
 	}
