@@ -363,6 +363,23 @@
       "alternative": "http://mirrors.edge.kernel.org/pub/",
       "icon": "img/projects/linux.png"
     },
+    "linux-lite": {
+      "name": "Linux Lite",
+      "page": "Distributions",
+      "rsync": {
+        "host": "repo.linuxliteos.com",
+        "src": "repo",
+        "dest": "/storage/linux-lite",
+        "options": "-avzrH --no-perms --no-owner --no-group --delete --delete-delay --delay-updates --ignore-errors --exclude \".~tmp~\"",
+        "syncs_per_day": 2
+      },
+      "official": false,
+      "homepage": "https://www.linuxliteos.com/index.html",
+      "color": "#03a9f4",
+      "publicRsync": true,
+      "alternative": "http://repo.linuxliteos.com/linuxlite",
+      "icon": "img/projects/linux-lite.png"
+    },
     "linuxmint-images": {
       "name": "LinuxMint Images",
       "page": "Distributions",
