@@ -310,8 +310,8 @@ func handleSyncs(config *ConfigFile, status RSYNCStatus, manual <-chan string, s
 				}
 				syncLock.Unlock()
 				time.Sleep(time.Second)
+				go syncProject(config, status, short)
 			}
-			go syncProject(config, status, short)
 		}
 	}
 }
