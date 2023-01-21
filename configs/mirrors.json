@@ -687,6 +687,23 @@
       "alternative": "http://mirrors.servercentral.com/voidlinux/",
       "icon": "img/projects/void.png"
     },
+    "wikipedia": {
+      "name": "Wikipedia",
+      "page": "Software",
+      "rsync": {
+        "host": "dumps.wikimedia.org",
+        "src": "wikidatawiki",
+        "dest": "/storage/wikipedia",
+        "options": "-azrH --no-perms --no-owner --no-group --delete --delete-delay --delay-updates --ignore-errors --exclude \".~tmp~\"",
+        "syncs_per_day": 1
+      },
+      "official": true,
+      "homepage": "https://dumps.wikimedia.org/",
+      "color": "#339967",
+      "publicRsync": true,
+      "alternative": "http://dumps.wikimedia.org/wikidatawiki/",
+      "icon": "img/wikimedia.png"
+    },
     "zorinos": {
       "name": "Zorin OS",
       "page": "Distributions",
