@@ -79,7 +79,7 @@ func syncTorrents(config *ConfigFile, torrentDir, ourDir string) {
 					if err != nil {
 						if os.IsNotExist(err) {
 							// Create a hardlink
-							err = os.Link(torrentPath, downloadDir+"/"+torrentName)
+							err = os.Link(filepath, downloadDir+"/"+fileName)
 							if err != nil {
 								logging.Warn("Failed to create hardlink: ", err)
 								continue
