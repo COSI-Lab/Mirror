@@ -8,7 +8,7 @@
         "host": "rsync.repo.almalinux.org",
         "src": "almalinux",
         "dest": "/storage/almalinux",
-        "options": "-avzrH --no-perms --no-owner --no-group --delete --delete-delay --delay-updates --ignore-errors --exclude \".~tmp~\"",
+        "options": "-avzrHy --no-perms --no-group --no-owner --delete --delete-delay --delay-updates --ignore-errors --exclude \".~tmp~\"",
         "syncs_per_day": 8
       },
       "official": true,
@@ -25,7 +25,7 @@
         "host": "rsync.alpinelinux.org",
         "src": "alpine",
         "dest": "/storage/alpine",
-        "options": "-avzrH --no-perms --no-owner --no-group --delete --delete-delay --delay-updates --ignore-errors --exclude \".~tmp~\"",
+        "options": "-avzrHy --no-perms --no-group --no-owner --delete --delete-delay --delay-updates --ignore-errors --exclude \".~tmp~\"",
         "sync_file": "last-updated",
         "syncs_per_day": 4
       },
@@ -43,7 +43,7 @@
         "host": "mirrors.rit.edu",
         "src": "archlinux",
         "dest": "/storage/archlinux",
-        "options": "-vrlptH --no-perms --no-owner --no-group --safe-links --delete-delay --delay-updates",
+        "options": "-vrlptHy --no-perms --no-owner --no-group --safe-links --delete-delay --delay-updates",
         "syncs_per_day": 12
       },
       "official": true,
@@ -60,7 +60,7 @@
         "host": "mirror.archlinux32.org",
         "src": "archlinux32",
         "dest": "/storage/archlinux32",
-        "options": "-rtlvH --no-perms --no-owner --no-group --delete-after --delay-updates --safe-links",
+        "options": "-rtlvHy --no-perms --no-owner --no-group --delete-after --delay-updates --safe-links",
         "syncs_per_day": 4
       },
       "official": true,
@@ -77,7 +77,7 @@
         "host": "mirror1.artixlinux.org",
         "src": "artix-linux",
         "dest": "/storage/artix-linux/repos",
-        "options": "-rtlvH --no-perms --no-owner --no-group --delete-after --delay-updates --safe-links",
+        "options": "-rtlvHy --no-perms --no-owner --no-group --delete-after --delay-updates --safe-links",
         "syncs_per_day": 3
       },
       "official": true,
@@ -95,7 +95,7 @@
         "host": "download.blender.org",
         "src": "blender",
         "dest": "/storage/blender",
-        "options": "-avzrH --no-perms --no-owner --no-group --exclude \".~tmp~\"",
+        "options": "-avzrHy --no-perms --no-owner --no-group --exclude \".~tmp~\"",
         "syncs_per_day": 6,
         "password_file": "blender.secret"
       },
@@ -113,7 +113,7 @@
         "host": "msync.centos.org",
         "src": "CentOS",
         "dest": "/storage/centos",
-        "options": "-avzrH -4 --no-perms --no-owner --no-group --delete --delete-delay --delay-updates --ignore-errors --exclude \".~tmp~\"",
+        "options": "-avzrHy -4 --no-perms --no-owner --no-group --delete --delete-delay --delay-updates --ignore-errors --exclude \".~tmp~\"",
         "syncs_per_day": 2
       },
       "official": true,
@@ -130,7 +130,7 @@
         "host": "rsync.stream.centos.org",
         "src": "CentOS-Stream-All",
         "dest": "/storage/centos9",
-        "options": "-aqzH --no-perms --no-owner --no-group --delete",
+        "options": "-aqzHy --no-perms --no-owner --no-group --delete",
         "syncs_per_day": 4
       },
       "official": true,
@@ -147,7 +147,7 @@
         "host": "mirrors.rit.edu",
         "src": "cpan",
         "dest": "/storage/cpan",
-        "options": "-avzrH --no-perms --no-owner --no-group --delete --delete-delay --delay-updates --ignore-errors --exclude \".~tmp~\"",
+        "options": "-avzrHy --no-perms --no-group --no-owner --delete --delete-delay --delay-updates --ignore-errors --exclude \".~tmp~\"",
         "syncs_per_day": 2
       },
       "official": false,
@@ -164,7 +164,7 @@
         "host": "cran.r-project.org",
         "src": "CRAN",
         "dest": "/storage/cran",
-        "options": "-rtlzv --no-perms --no-owner --no-group --delete",
+        "options": "-rtlzvy --no-perms --no-owner --no-group --delete",
         "syncs_per_day": 1
       },
       "official": false,
@@ -181,7 +181,7 @@
         "host": "ctan.math.utah.edu",
         "src": "CTAN",
         "dest": "/storage/ctan",
-        "options": "-avzrH --no-perms --no-owner --no-group --delete --delete-delay --delay-updates --ignore-errors --exclude \".~tmp~\"",
+        "options": "-avzrHy --no-perms --no-group --no-owner --delete --delete-delay --delay-updates --ignore-errors --exclude \".~tmp~\"",
         "syncs_per_day": 2
       },
       "official": false,
@@ -197,7 +197,7 @@
         "host": "cygwin.org",
         "src": "cygwin-ftp",
         "dest": "/storage/cygwin",
-        "options": "-avzrH --no-perms --no-owner --no-group --delete --delete-delay --delay-updates --ignore-errors --exclude \".~tmp~\"",
+        "options": "-avzrHy --no-perms --no-group --no-owner --delete --delete-delay --delay-updates --ignore-errors --exclude \".~tmp~\"",
         "syncs_per_day": 2
       },
       "official": true,
@@ -231,7 +231,7 @@
         "host": "cdimage.debian.org",
         "src": "debian-cd",
         "dest": "/storage/debian-cd",
-        "options": "-avzrH --no-perms --no-owner --no-group --delete --delete-delay --delay-updates --ignore-errors --exclude \".~tmp~\"",
+        "options": "-avzrHy --no-perms --no-group --no-owner --delete --delete-delay --delay-updates --ignore-errors --exclude \".~tmp~\"",
         "syncs_per_day": 4
       },
       "official": false,
@@ -285,7 +285,7 @@
         "host": "masterdistfiles.gentoo.org",
         "src": "gentoo",
         "dest": "/storage/gentoo",
-        "options": "-avzrH --no-perms --no-owner --no-group --delete --delete-delay --delay-updates --ignore-errors --exclude \".~tmp~\" --exclude \"/releases/historical\"",
+        "options": "-avzrHy --no-perms --no-group --no-owner --delete --delete-delay --delay-updates --ignore-errors --exclude \".~tmp~\" --exclude \"/releases/historical\"",
         "syncs_per_day": 6
       },
       "official": false,
@@ -302,7 +302,7 @@
         "host": "rsync11.us.gentoo.org",
         "src": "gentoo-portage",
         "dest": "/storage/gentoo-portage",
-        "options": "-avzrH --no-perms --no-owner --no-group --delete --delete-delay --delay-updates --ignore-errors --exclude \".~tmp~\"",
+        "options": "-avzrHy --no-perms --no-group --no-owner --delete --delete-delay --delay-updates --ignore-errors --exclude \".~tmp~\"",
         "syncs_per_day": 24
       },
       "official": false,
@@ -319,7 +319,7 @@
         "host": "rsync.ipfire.org",
         "src": "full",
         "dest": "/storage/ipfire",
-        "options": "-avzrH --no-perms --no-owner --no-group --delete --delete-delay --delay-updates --ignore-errors --exclude \".~tmp~\"",
+        "options": "-avzrHy --no-perms --no-group --no-owner --delete --delete-delay --delay-updates --ignore-errors --exclude \".~tmp~\"",
         "syncs_per_day": 24
       },
       "official": true,
@@ -336,7 +336,7 @@
         "host": "isabelle.in.tum.de",
         "src": "isabelle-website",
         "dest": "/storage/isabelle",
-        "options": "-avzrH --no-perms --no-owner --no-group --delete --delete-delay --delay-updates --ignore-errors --exclude \".~tmp~\"",
+        "options": "-avzrHy --no-perms --no-group --no-owner --delete --delete-delay --delay-updates --ignore-errors --exclude \".~tmp~\"",
         "syncs_per_day": 2
       },
       "official": true,
@@ -353,7 +353,7 @@
         "host": "rsync.kernel.org",
         "src": "pub/linux",
         "dest": "/storage/linux",
-        "options": "-avzrH --no-perms --no-owner --no-group --delete --delete-delay --delay-updates --ignore-errors --exclude \".~tmp~\"",
+        "options": "-avzrHy --no-perms --no-group --no-owner --delete --delete-delay --delay-updates --ignore-errors --exclude \".~tmp~\"",
         "syncs_per_day": 4
       },
       "official": true,
@@ -370,7 +370,7 @@
         "host": "repo.linuxliteos.com",
         "src": "repo",
         "dest": "/storage/linux-lite",
-        "options": "-avzrH --no-perms --no-owner --no-group --delete --delete-delay --delay-updates --ignore-errors --exclude \".~tmp~\"",
+        "options": "-avzrHy --no-perms --no-group --no-owner --delete --delete-delay --delay-updates --ignore-errors --exclude \".~tmp~\"",
         "syncs_per_day": 2
       },
       "official": false,
@@ -387,7 +387,7 @@
         "host": "pub.linuxmint.com",
         "src": "pub",
         "dest": "/storage/linuxmint-images",
-        "options": "-avzrH --no-perms --no-owner --no-group --delete --delete-delay --delay-updates --ignore-errors --exclude \".~tmp~\"",
+        "options": "-avzrHy --no-perms --no-group --no-owner --delete --delete-delay --delay-updates --ignore-errors --exclude \".~tmp~\"",
         "syncs_per_day": 1
       },
       "official": true,
@@ -422,7 +422,7 @@
         "host": "mirror.netcologne.de",
         "src": "manjaro",
         "dest": "/storage/manjaro",
-        "options": "-avzrH --no-perms --no-owner --no-group --delete --delete-delay --delay-updates --ignore-errors --exclude \".~tmp~\"",
+        "options": "-avzrHy --no-perms --no-group --no-owner --delete --delete-delay --delay-updates --ignore-errors --exclude \".~tmp~\"",
         "syncs_per_day": 6
       },
       "official": true,
@@ -439,7 +439,7 @@
         "host": "repo.msys2.org",
         "src": "builds",
         "dest": "/storage/msys2",
-        "options": "-avzrH --no-perms --no-owner --no-group --delete --delete-delay --delay-updates --ignore-errors --exclude \".~tmp~\"",
+        "options": "-avzrHy --no-perms --no-group --no-owner --delete --delete-delay --delay-updates --ignore-errors --exclude \".~tmp~\"",
         "syncs_per_day": 1
       },
       "official": true,
@@ -456,7 +456,7 @@
         "host": "stage.opensuse.org",
         "src": "opensuse-full-with-factory",
         "dest": "/storage/opensuse",
-        "options": "-4 -avzrH --no-perms --no-owner --no-group --delete --delete-delay --delay-updates --ignore-errors --exclude \".~tmp~\"",
+        "options": "-4 -avzrHy --no-perms --no-group --no-owner --delete --delete-delay --delay-updates --ignore-errors --exclude \".~tmp~\"",
         "syncs_per_day": 4
       },
       "official": true,
@@ -474,7 +474,7 @@
         "src": "parrot",
         "dest": "/storage/parrot",
         "syncs_per_day": 4,
-        "options": "-avzrH --no-perms --no-owner --no-group --delete --delete-delay --delay-updates --ignore-errors --exclude \".~tmp~\""
+        "options": "-avzrHy --no-perms --no-group --no-owner --delete --delete-delay --delay-updates --ignore-errors --exclude \".~tmp~\""
       },
       "official": true,
       "homepage": "https://www.parrotsec.org/",
@@ -524,7 +524,7 @@
         "host": "mirrors.dotsrc.org",
         "src": "osdn/storage/g/r/re/rebornos/repo/RebornOS",
         "dest": "/storage/RebornOS",
-        "options": "-avzrH --no-perms --no-owner --no-group --delete --delete-delay --delay-updates --ignore-errors --exclude \".~tmp~\"",
+        "options": "-avzrHy --no-perms --no-group --no-owner --delete --delete-delay --delay-updates --ignore-errors --exclude \".~tmp~\"",
         "syncs_per_day": 2
       },
       "official": true,
@@ -541,7 +541,7 @@
         "host": "de.mirror.rebornos.org",
         "src": "rebornos",
         "dest": "/storage/RebornOS-ARM",
-        "options": "-avzrH --no-perms --no-owner --no-group --delete --delete-delay --delay-updates --ignore-errors --exclude \".~tmp~\"",
+        "options": "-avzrHy --no-perms --no-group --no-owner --delete --delete-delay --delay-updates --ignore-errors --exclude \".~tmp~\"",
         "syncs_per_day": 2
       },
       "official": true,
@@ -559,7 +559,7 @@
         "src": "slackware",
         "dest": "/storage/slackware",
         "syncs_per_day": 12,
-        "options": "-avzrH --no-perms --no-owner --no-group --delete --delete-delay --delay-updates --ignore-errors --exclude \".~tmp~\""
+        "options": "-avzrHy --no-perms --no-group --no-owner --delete --delete-delay --delay-updates --ignore-errors --exclude \".~tmp~\""
       },
       "official": false,
       "homepage": "https://www.slackware.com/",
@@ -576,7 +576,7 @@
         "src": "slitaz",
         "dest": "/storage/slitaz",
         "syncs_per_day": 2,
-        "options": "-avzrH --no-perms --no-owner --no-group --delete --delete-delay --delay-updates --ignore-errors --exclude \".~tmp~\""
+        "options": "-avzrHy --no-perms --no-group --no-owner --delete --delete-delay --delay-updates --ignore-errors --exclude \".~tmp~\""
       },
       "official": true,
       "homepage": "http://www.slitaz.org/en/",
@@ -606,7 +606,7 @@
         "host": "rsync.documentfoundation.org",
         "src": "tdf-pub",
         "dest": "/storage/tdf",
-        "options": "-avzrH --no-perms --no-owner --no-group --delete --delete-delay --delay-updates --ignore-errors --exclude \".~tmp~\"",
+        "options": "-avzrHy --no-perms --no-group --no-owner --delete --delete-delay --delay-updates --ignore-errors --exclude \".~tmp~\"",
         "syncs_per_day": 4
       },
       "official": true,
@@ -641,7 +641,7 @@
         "host": "releases.ubuntu.com",
         "src": "releases",
         "dest": "/storage/ubuntu-releases",
-        "options": "-avzrH --no-perms --no-owner --no-group --delete --delete-delay --delay-updates --ignore-errors --exclude \".~tmp~\"",
+        "options": "-avzrHy --no-perms --no-group --no-owner --delete --delete-delay --delay-updates --ignore-errors --exclude \".~tmp~\"",
         "syncs_per_day": 6
       },
       "official": true,
@@ -678,7 +678,7 @@
         "src": "voidmirror",
         "dest": "/storage/voidlinux",
         "syncs_per_day": 4,
-        "options": "-avzrH --no-perms --no-owner --no-group --delete --delete-delay --delay-updates --ignore-errors --exclude \".~tmp~\" --exclude=\".*\" --exclude=\"*.lock\" --exclude=\"*.XXXX*\""
+        "options": "-avzrHy --no-perms --no-group --no-owner --delete --delete-delay --delay-updates --ignore-errors --exclude \".~tmp~\" --exclude=\".*\" --exclude=\"*.lock\" --exclude=\"*.XXXX*\""
       },
       "official": true,
       "homepage": "https://www.voidlinux.org/",
@@ -686,6 +686,22 @@
       "publicRsync": true,
       "alternative": "http://mirrors.servercentral.com/voidlinux/",
       "icon": "img/projects/void.png"
+    },
+    "wikimedia": {
+      "name": "Wikimedia XML Dumps",
+      "page": "Miscellaneous",
+      "rsync": {
+        "host": "dumps.wikimedia.org",
+        "src": "dumpslasttwo",
+        "dest": "/storage/wikimedia",
+        "options": "-avzrHy --no-perms --no-group --no-owner --delete --delete-delay --delay-updates --ignore-errors --exclude \".~tmp~\"",
+        "syncs_per_day": 1
+      },
+      "official": true,
+      "homepage": "https://dumps.wikimedia.org/",
+      "color": "#ffffff",
+      "publicRsync": false,
+      "alternative": "http://dumps.wikimedia.your.org/"
     },
     "zorinos": {
       "name": "Zorin OS",
@@ -695,7 +711,7 @@
         "src": "isos",
         "dest": "/storage/zorinos/isos",
         "syncs_per_day": 4,
-        "options": "-avzrH --no-perms --no-owner --no-group --delete --delete-delay --delay-updates --ignore-errors --exclude \".~tmp~\""
+        "options": "-avzrHy --no-perms --no-group --no-owner --delete --delete-delay --delay-updates --ignore-errors --exclude \".~tmp~\""
       },
       "official": true,
       "homepage": "https://zorinos.com/",

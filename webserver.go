@@ -142,30 +142,35 @@ func handleManualSyncs(manual chan<- string) http.HandlerFunc {
 			return
 		}
 
-		if projectName != "all" {
-			// Get the project
+		if projectName == "all" {
+			// Trigger a sync for every project
+			if token == pullToken {
+				// Return a success message
+				fmt.Fprintf(w, "Sync requested for <i>all</i> projects")
+
+				// Sync the project
+				logging.InfoToDiscord("Manual sync requested for all projects")
+
+				for name := range projects {
+					manual <- name
+				}
+			} else {
+				http.Error(w, "Invalid access token", http.StatusForbidden)
+			}
+		} else {
+			// Trigger a sync for a single project
 			project, ok := projects[projectName]
 			if !ok {
 				http.NotFound(w, r)
 				return
 			}
+
 			if token == pullToken || token == project.AccessToken {
 				// Return a success message
 				fmt.Fprintf(w, "Sync requested for project: %s", projectName)
 
 				// Sync the project
-				logging.InfoToDiscord("**INFO** Manual sync requested for project: _", projectName, "_")
-				manual <- projectName
-			} else {
-				http.Error(w, "Invalid access token", http.StatusForbidden)
-			}
-		} else {
-			if token == pullToken {
-				// Return a success message
-				fmt.Fprintf(w, "Sync requested for all projects")
-
-				// Sync the project
-				logging.InfoToDiscord("**INFO** Manual sync requested for all projects")
+				logging.InfoToDiscord("Manual sync requested for project: _", projectName, "_")
 				manual <- projectName
 			} else {
 				http.Error(w, "Invalid access token", http.StatusForbidden)
