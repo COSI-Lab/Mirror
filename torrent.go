@@ -4,8 +4,8 @@ import (
 	"io"
 	"net/http"
 	"os"
-	"os/exec"
 	"path"
+	"path/filepath"
 	"strings"
 	"time"
 
@@ -59,15 +59,17 @@ func syncTorrents(config *ConfigFile, torrentDir, ourDir string) {
 
 		for _, searchPath := range project.Torrents {
 			go func(searchPath string) {
-				cmd := exec.Command("find", searchPath)
-				out, err := cmd.Output()
+				// Find all torrent files using glob
+				matches, err := filepath.Glob(searchPath)
 
 				if err != nil {
 					logging.Error("Failed to find torrent files: ", err)
 					return
 				}
 
-				for _, torrentPath := range strings.Split(string(out), "\n") {
+				logging.Info("Found ", len(matches), " torrent files")
+
+				for _, torrentPath := range matches {
 					filepath := strings.TrimSuffix(torrentPath, ".torrent")
 
 					torrentName := path.Base(torrentPath)

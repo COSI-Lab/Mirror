@@ -77,6 +77,7 @@ func init() {
 	pullToken = os.Getenv("PULL_TOKEN")
 	admGroupStr := os.Getenv("ADM_GROUP")
 	torrentDir = os.Getenv("TORRENT_DIR")
+	downloadDir = os.Getenv("DOWNLOAD_DIR")
 
 	if admGroupStr != "" {
 		admGroup, err = strconv.Atoi(admGroupStr)
@@ -155,7 +156,7 @@ func init() {
 		}
 
 		if downloadDir == "" {
-			logging.Warn("")
+			logging.Warn("DOWNLOAD_DIR is not set torrents will not be synced")
 		}
 	}
 }
