@@ -694,7 +694,7 @@
         "host": "dumps.wikimedia.org",
         "src": "dumpslasttwo",
         "dest": "/storage/wikimedia",
-        "options": "-avzrHy --no-perms --no-group --no-owner --delete --delete-delay --delay-updates --ignore-errors --exclude \".~tmp~\"",
+        "options": "-avzrHy -4 --no-perms --no-group --no-owner --delete --delete-delay --delay-updates --ignore-errors --exclude \".~tmp~\"",
         "syncs_per_day": 1
       },
       "official": true,
