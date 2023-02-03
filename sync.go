@@ -284,12 +284,7 @@ func handleSyncs(config *ConfigFile, status RSYNCStatus, manual <-chan string, s
 
 			go syncProject(config, status, short)
 		case short := <-manual:
-			syncLock.Lock()
-			if !syncLocks[short] {
-				syncLocks[short] = true
-				go syncProject(config, status, short)
-			}
-			syncLock.Unlock()
+			go syncProject(config, status, short)
 		}
 	}
 }
