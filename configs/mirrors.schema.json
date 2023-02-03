@@ -136,6 +136,11 @@
           "icon": {
             "type": "string",
             "description": "Local path to project logo file"
+          },
+          "torrents": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "list of globs to find torrent files. ie '/iso/*/*.torrent'"
           }
         },
         "required": [
@@ -163,7 +168,7 @@
     },
     "torrents": {
       "type": "array",
-      "description": "list of sources to pull torrents from using HTTP",
+      "description": "list of remote sources to pull torrents from using HTTP",
       "items": { 
         "type": "object",
         "depth": {

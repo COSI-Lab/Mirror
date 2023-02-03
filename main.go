@@ -46,8 +46,10 @@ var (
 	pingID string
 	// PULL_TOKEN
 	pullToken string
-	// torrent_dir
+	// TORRENT_DIR
 	torrentDir string
+	// DOWNLOAD_DIR
+	downloadDir string
 )
 
 func init() {
@@ -144,8 +146,17 @@ func init() {
 		logging.Warn("PULL_TOKEN is not set so there is no master pull token")
 	}
 
-	if torrentDir == "" {
-		logging.Warn("TORRENT_DIR is not set torrents will not be synced")
+	// check that the system is linux
+	if runtime.GOOS != "linux" && runtime.GOOS != "darwin" {
+		logging.Warn("Torrent syncing is only support on *nix systems including the `find` command")
+	} else {
+		if torrentDir == "" {
+			logging.Warn("TORRENT_DIR is not set torrents will not be synced")
+		}
+
+		if downloadDir == "" {
+			logging.Warn("")
+		}
 	}
 }
 
@@ -293,9 +304,10 @@ func main() {
 		}()
 	}
 
-	// torrent scheduler TODO handle reload
-	if torrentDir != "" {
-		ScheduleTorrents(config.Torrents, torrentDir)
+	// torrent scheduler
+	// TODO: handle reload
+	if torrentDir != "" && downloadDir != "" {
+		go HandleTorrents(config, torrentDir, downloadDir)
 	}
 
 	// Webserver

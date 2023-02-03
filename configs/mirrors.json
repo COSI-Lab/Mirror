@@ -1,8 +1,7 @@
 {
   "$schema": "./mirrors.schema.json",
   "torrents": [
-    { "url": "https://linuxmint.com/torrents/", "depth": 1, "delay": 1 },
-    { "url": "http://mirror.clarkson.edu/archlinux/iso/", "depth": 2, "delay": 0 }
+    { "url": "https://linuxmint.com/torrents/", "depth": 1, "delay": 1 }
   ],
   "mirrors": {
     "almalinux": {
@@ -20,7 +19,8 @@
       "color": "#7851a9",
       "publicRsync": true,
       "alternative": "http://mirror.lshiy.com/almalinux/",
-      "icon": "img/projects/almalinux.svg"
+      "icon": "img/projects/almalinux.svg",
+      "torrents": ["/storage/almalinux/*/isos/*/*.torrent"]
     },
     "alpine": {
       "name": "Alpine Linux",
@@ -38,7 +38,8 @@
       "color": "#cd5700",
       "publicRsync": true,
       "alternative": "http://ewr.edge.kernel.org/alpine/",
-      "icon": "img/projects/alpinelinux.svg"
+      "icon": "img/projects/alpinelinux.svg",
+      "torrents": ["/storage/alpine/*/isos/*/*.torrent"]
     },
     "archlinux": {
       "name": "Arch Linux",
@@ -55,7 +56,8 @@
       "color": "#f0d4f0",
       "publicRsync": true,
       "alternative": "http://mirrors.rit.edu/archlinux/",
-      "icon": "img/projects/arch.svg"
+      "icon": "img/projects/arch.svg",
+      "torrents": ["/storage/archlinux/iso/*/*.torrent"]
     },
     "archlinux32": {
       "name": "Arch Linux 32",
@@ -72,7 +74,8 @@
       "color": "#d8bfd8",
       "publicRsync": true,
       "alternative": "http://mirror.math.princeton.edu/pub/archlinux32/",
-      "icon": "img/projects/arch32.png"
+      "icon": "img/projects/arch32.png",
+      "torrents": ["/storage/archlinux32/archisos/*.torrent"]
     },
     "artix-linux": {
       "name": "Artix Linux",
@@ -243,7 +246,8 @@
       "color": "#ffc87c",
       "publicRsync": true,
       "alternative": "http://debian.osuosl.org/debian-cdimage/",
-      "icon": "img/projects/debian.png"
+      "icon": "img/projects/debian.png",
+      "torrents": ["/storage/debian-cd/*/*/bt-*/*.torrent"]
     },
     "eclipse": {
       "name": "Eclipse",
@@ -536,7 +540,8 @@
       "color": "#1e73be",
       "publicRsync": true,
       "alternative": "http://repo.rebornos.org/RebornOS/",
-      "icon": "img/projects/reborn.svg"
+      "icon": "img/projects/reborn.svg",
+      "torrents": ["/storage/RebornOS/sources/*.torrent"]
     },
     "RebornOS-ARM": {
       "name": "RebornOS ARM",
@@ -653,7 +658,8 @@
       "color": "#ffd300",
       "publicRsync": true,
       "alternative": "http://mirrors.mit.edu/ubuntu-releases/",
-      "icon": "img/projects/ubuntu.png"
+      "icon": "img/projects/ubuntu.png",
+      "torrents": ["/storage/ubuntu-releases/*/*.torrent"]
     },
     "videolan": {
       "name": "VLC",

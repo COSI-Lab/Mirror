@@ -114,14 +114,15 @@ type Project struct {
 		Location string `json:"location"`
 		Source   string `json:"source"`
 	} `json:"static"`
-	Color       string `json:"color"`
-	Official    bool   `json:"official"`
-	Page        string `json:"page"`
-	HomePage    string `json:"homepage"`
-	PublicRsync bool   `json:"publicRsync"`
-	Icon        string `json:"icon"`
-	Alternative string `json:"alternative"`
-	AccessToken string // Loaded from the access tokens file
+	Color       string   `json:"color"`
+	Official    bool     `json:"official"`
+	Page        string   `json:"page"`
+	HomePage    string   `json:"homepage"`
+	PublicRsync bool     `json:"publicRsync"`
+	Icon        string   `json:"icon"`
+	Alternative string   `json:"alternative"`
+	AccessToken string   // Loaded from the access tokens file
+	Torrents    []string `json:"torrents"`
 }
 
 func ParseConfig(configFile, schemaFile, tokensFile string) (config ConfigFile) {

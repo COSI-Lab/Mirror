@@ -1,10 +1,10 @@
 package main
 
 import (
-	"fmt"
 	"io"
 	"net/http"
 	"os"
+	"os/exec"
 	"path"
 	"strings"
 	"time"
@@ -13,42 +13,113 @@ import (
 	"github.com/gocolly/colly"
 )
 
-// On startup, and then every day at midnight scrape torrents from upstreams and
-// save to files to outdir. The purpose is to seed commonly used torrents
-func ScheduleTorrents(torrents []*Torrent, outdir string) {
-	scrapeTorrents(torrents, outdir)
+// HandleTorrents periodically downloads remote torrents and extracts torrents from disk
+func HandleTorrents(config *ConfigFile, torrentDir, downloadDir string) {
+	err := os.MkdirAll(downloadDir, 0755)
+	if err != nil {
+		logging.Error("Failed to create torrents downloadDir: ", err)
+		return
+	}
+
+	err = os.MkdirAll(torrentDir, 0755)
+	if err != nil {
+		logging.Error("Failed to create torrents torrentDir: ", err)
+		return
+	}
+
+	// On startup, and then every day at midnight
+	// - scrape torrents from upstreams (such as linuxmint)
+	// - search disk for torrent files and corresponding downloads
+	// - sync downloadDir
+	// - sync torrentDir
+	go scrapeTorrents(config.Torrents, torrentDir)
+	go syncTorrents(config, torrentDir, downloadDir)
 
 	// Sleep until midnight
 	now := time.Now()
 	midnight := time.Date(now.Year(), now.Month(), now.Day()+1, 0, 0, 0, 0, time.Local)
 	time.Sleep(time.Until(midnight))
-	scrapeTorrents(torrents, outdir)
+	go scrapeTorrents(config.Torrents, torrentDir)
+	go syncTorrents(config, torrentDir, downloadDir)
 
 	ticker := time.NewTicker(24 * time.Hour)
 	for range ticker.C {
-		scrapeTorrents(torrents, outdir)
+		go scrapeTorrents(config.Torrents, torrentDir)
+		go syncTorrents(config, torrentDir, downloadDir)
 	}
 }
 
-func scrapeTorrents(torrents []*Torrent, outdir string) {
-	logging.Info("Scraping torrents")
+// syncTorrents goes over all projects, finds their torrent files, the corresponding source
+// files and then creates hardlinks in the download and torrent directories
+func syncTorrents(config *ConfigFile, torrentDir, ourDir string) {
+	for _, project := range config.GetProjects() {
+		if len(project.Torrents) > 0 {
+			logging.Info("Syncing " + project.Name + " torrents")
+		}
 
-	// create outdir if it doesn't exist
-	err := os.MkdirAll(outdir, os.ModePerm)
-	if err != nil {
-		logging.Error("Failed to create scrapeTorrents outdir: ", err)
-	}
+		for _, searchPath := range project.Torrents {
+			go func(searchPath string) {
+				cmd := exec.Command("find", searchPath)
+				out, err := cmd.Output()
 
-	for _, torrent := range torrents {
-		go scrape(torrent.Depth, torrent.Delay, torrent.Url, outdir)
+				if err != nil {
+					logging.Error("Failed to find torrent files: ", err)
+					return
+				}
+
+				for _, torrentPath := range strings.Split(string(out), "\n") {
+					filepath := strings.TrimSuffix(torrentPath, ".torrent")
+
+					torrentName := path.Base(torrentPath)
+					fileName := path.Base(filepath)
+
+					_, err := os.Stat(downloadDir + "/" + fileName)
+					if err != nil {
+						if os.IsNotExist(err) {
+							// Create a hardlink
+							err = os.Link(torrentPath, downloadDir+"/"+torrentName)
+							if err != nil {
+								logging.Warn("Failed to create hardlink: ", err)
+								continue
+							}
+						} else {
+							logging.Error("Failed to stat a torrented file: ", err)
+						}
+					}
+
+					_, err = os.Stat(torrentDir + "/" + torrentName)
+					if err != nil {
+						if os.IsNotExist(err) {
+							// Create a hardlink
+							err = os.Link(torrentPath, torrentDir+"/"+torrentName)
+							if err != nil {
+								logging.Warn("Failed to create hardlink: ", err)
+								continue
+							}
+						} else {
+							logging.Error("Failed to stat a torrent file: ", err)
+						}
+					}
+				}
+			}(searchPath)
+		}
 	}
 }
 
-// Visits url and downloads all torrents to outdir to a certian depth
+// scrapeTorrents downloads all torrents from upstreams
+func scrapeTorrents(torrents []*Torrent, downloadDir string) {
+	for _, upstream := range torrents {
+		go scrape(upstream.Depth, upstream.Delay, upstream.Url, downloadDir)
+	}
+}
+
+// Visits a url and downloads all torrents to outdir
 //
-// Torrents with a name that already exists in outdir are skipped if
+// Torrents with a name that already exists are skipped if
 // the upstream file has the same file size as the one on disk
 func scrape(depth, delay int, url, outdir string) {
+	logging.Info("Scraping " + url)
+
 	// Instantiate default collector
 	c := colly.NewCollector(
 		// MaxDepth is 1, so only the links on the scraped page
@@ -57,9 +128,8 @@ func scrape(depth, delay int, url, outdir string) {
 	)
 
 	c.Limit(&colly.LimitRule{
-		DomainGlob:  "*",
-		Parallelism: 1,
-		Delay:       time.Duration(delay) * time.Second,
+		DomainGlob: "*",
+		Delay:      time.Duration(delay) * time.Second,
 	})
 
 	// On every a element which has href attribute call callback
@@ -88,19 +158,15 @@ func scrape(depth, delay int, url, outdir string) {
 					logging.Warn(err)
 				}
 			}
-		} else {
-			logging.Info("Visiting", r.URL.String())
 		}
 	})
 
 	c.Visit(url)
+	logging.Success("Finished scraping " + url)
 }
 
 // Downloads the file at `r` and saves it to `target` on disk
 func download(r *colly.Request, target string) error {
-	// Save this file to ourdir
-	fmt.Println("GET", r.URL)
-
 	res, err := http.Get(r.URL.String())
 	if err != nil {
 		return err
