@@ -53,13 +53,13 @@ func HandleTorrents(config *ConfigFile, torrentDir, downloadDir string) {
 // files and then creates hardlinks in the download and torrent directories
 func syncTorrents(config *ConfigFile, torrentDir, ourDir string) {
 	for _, project := range config.GetProjects() {
-		if project.Torrents.SearchGlob == "" {
+		if project.Torrents == "" {
 			continue
 		}
 
 		go func(project Project) {
 			// Find all torrent files using glob
-			matches, err := filepath.Glob(project.Torrents.SearchGlob + "*.torrent")
+			matches, err := filepath.Glob(project.Torrents + "*.torrent")
 
 			if err != nil {
 				logging.Error("Failed to find torrent files: ", err)
@@ -83,21 +83,7 @@ func syncTorrents(config *ConfigFile, torrentDir, ourDir string) {
 				}
 
 				fileName := strings.TrimSuffix(path.Base(torrentPath), ".torrent")
-
-				if project.Torrents.TakeDir {
-					// get the directory part of the torrent file
-					dir := path.Dir(torrentPath)
-
-					// create a hardlink to the directory named fileName
-					err = os.Link(dir, downloadDir+"/"+fileName)
-
-					if err != nil {
-						logging.Warn("Failed to create hardlink: ", err)
-						continue
-					}
-				} else {
-					addFile(project, ourDir, fileName)
-				}
+				addFile(project, ourDir, fileName)
 			}
 		}(project)
 	}
@@ -109,7 +95,7 @@ func syncTorrents(config *ConfigFile, torrentDir, ourDir string) {
 // Fetches a file from a glob and a name. Saves it to downloadDir
 func addFile(project Project, downloadDir, fileName string) {
 	// Search the glob for the corresponding file
-	files, err := filepath.Glob(project.Torrents.SearchGlob + fileName)
+	files, err := filepath.Glob(project.Torrents + fileName)
 	if err != nil {
 		logging.Error("Failed to find:", fileName, err)
 		return
