@@ -142,9 +142,8 @@
             "description": "Instructions for how to sync torrents",
             "properties": {
               "search_glob": {
-                "type": "array",
-                "items": { "type": "string" },
-                "description": "list of globs to find files. \"*.torrent\" is append to each glob when searching"
+                "type": "string",
+                "description": "globs to find files. \"*.torrent\" is append to each glob when searching"
               },
               "append": {
                 "type": "string",

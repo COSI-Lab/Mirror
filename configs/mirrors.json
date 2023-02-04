@@ -21,7 +21,7 @@
       "alternative": "http://mirror.lshiy.com/almalinux/",
       "icon": "img/projects/almalinux.svg",
       "torrents": {
-        "search_glob": ["/storage/almalinux/*/isos/*/"],
+        "search_glob": "/storage/almalinux/*/isos/*/",
         "append": ".iso"
       } 
     },
@@ -60,7 +60,7 @@
       "alternative": "http://mirrors.rit.edu/archlinux/",
       "icon": "img/projects/arch.svg",
       "torrents": {
-        "search_glob": ["/storage/archlinux/iso/*/"]
+        "search_glob": "/storage/archlinux/iso/*/"
       }
     },
     "archlinux32": {
@@ -80,7 +80,7 @@
       "alternative": "http://mirror.math.princeton.edu/pub/archlinux32/",
       "icon": "img/projects/arch32.png",
       "torrents": {
-        "search_glob": ["/storage/archlinux32/archisos/"]
+        "search_glob": "/storage/archlinux32/archisos/"
       }
     },
     "artix-linux": {
@@ -254,7 +254,7 @@
       "alternative": "http://debian.osuosl.org/debian-cdimage/",
       "icon": "img/projects/debian.png",
       "torrents": {
-        "search_glob": ["/storage/debian-cd/*/*/*/"]
+        "search_glob": "/storage/debian-cd/*/*/*/"
       }
     },
     "eclipse": {
@@ -667,7 +667,7 @@
       "alternative": "http://mirrors.mit.edu/ubuntu-releases/",
       "icon": "img/projects/ubuntu.png",
       "torrents": {
-        "search_glob": ["/storage/ubuntu-releases/*/"]
+        "search_glob": "/storage/ubuntu-releases/*/"
       }
     },
     "videolan": {
