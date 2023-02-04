@@ -7,6 +7,7 @@ import (
 	"path"
 	"path/filepath"
 	"strings"
+	"syscall"
 	"time"
 
 	"github.com/COSI-Lab/logging"
@@ -124,6 +125,16 @@ func addFile(project Project, downloadDir, fileName string) {
 		break
 	}
 
+	// Get ownership infomation of the download directory
+	info, err := os.Stat(downloadDir)
+	if err != nil {
+		logging.Warn("Failed to stat downloadDir: ", err)
+		return
+	}
+	stat := info.Sys().(*syscall.Stat_t)
+	uid := int(stat.Uid)
+	gid := int(stat.Gid)
+
 	// Check if the file is already in the download directory
 	_, err = os.Stat(downloadDir + "/" + fileName)
 	if err != nil {
@@ -132,6 +143,11 @@ func addFile(project Project, downloadDir, fileName string) {
 			err = os.Link(file, downloadDir+"/"+fileName)
 			if err != nil {
 				logging.Warn("Failed to create hardlink: ", err)
+			}
+
+			err = os.Chown(downloadDir+"/"+fileName, uid, gid)
+			if err != nil {
+				logging.Warn("Failed to chown file: ", err)
 			}
 		} else {
 			logging.Error("Failed to stat a torrent file: ", err)
