@@ -83,15 +83,28 @@ func syncTorrents(config *ConfigFile, torrentDir, ourDir string) {
 				}
 
 				fileName := strings.TrimSuffix(path.Base(torrentPath), ".torrent")
-				addFile(project, ourDir, fileName)
 
-				for _, append := range project.Torrents.Appends {
-					addFile(project, ourDir, fileName+append)
+				if project.Torrents.TakeDir {
+					// get the directory part of the torrent file
+					dir := path.Dir(torrentPath)
+
+					// create a hardlink to the directory named fileName
+					err = os.Link(dir, downloadDir+"/"+fileName)
+
+					if err != nil {
+						logging.Warn("Failed to create hardlink: ", err)
+						continue
+					}
+				} else {
+					addFile(project, ourDir, fileName)
 				}
 			}
 		}(project)
 	}
 }
+
+// ssh to mirror and forward port 9091 to localhost:9091
+// 4
 
 // Fetches a file from a glob and a name. Saves it to downloadDir
 func addFile(project Project, downloadDir, fileName string) {
