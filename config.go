@@ -124,7 +124,8 @@ type Project struct {
 	AccessToken string // Loaded from the access tokens file
 	Torrents    struct {
 		SearchGlob string   `json:"search_glob"`
-		Append     []string `json:"append"`
+		Appends    []string `json:"appends"`
+		Siblings   []string `json:"siblings"`
 	} `json:"torrents"`
 }
 
