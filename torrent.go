@@ -62,13 +62,11 @@ func syncTorrents(config *ConfigFile, torrentDir, ourDir string) {
 				return
 			}
 
-			logging.Info("Found ", len(matches), " torrent files")
+			logging.Info("Searching for ", project.Torrents.SearchGlob+"*.torrent", " found ", len(matches), " files")
 
 			for _, torrentPath := range matches {
 				torrentName := path.Base(torrentPath)
-
-				filePath := strings.TrimSuffix(torrentPath, ".torrent")
-				fileName := path.Base(filePath)
+				fileName := strings.TrimSuffix(path.Base(torrentPath), ".torrent")
 
 				if project.Torrents.Append != "" {
 					fileName += project.Torrents.Append
@@ -81,12 +79,32 @@ func syncTorrents(config *ConfigFile, torrentDir, ourDir string) {
 					continue
 				}
 
+				logging.Info("Seaching for ", project.Torrents.SearchGlob+fileName, " found ", len(files), " files")
+
+				// In case there are multiple files, pick the first one that correctly resolves to a file
+				var file string
+				for _, f := range files {
+					stat, err := os.Stat(f)
+					if err != nil {
+						logging.Warn("Failed to stat file: ", err)
+						continue
+					}
+
+					// Skip symlinks and directories
+					if stat.Mode()&os.ModeSymlink != 0 || stat.IsDir() {
+						continue
+					}
+
+					file = f
+					break
+				}
+
 				// Check if the file is already in the download directory
 				_, err = os.Stat(downloadDir + "/" + fileName)
 				if err != nil {
 					if os.IsNotExist(err) {
 						// Create a hardlink
-						err = os.Link(files[0], downloadDir+"/"+fileName)
+						err = os.Link(file, downloadDir+"/"+fileName)
 						if err != nil {
 							logging.Warn("Failed to create hardlink: ", err)
 							continue
