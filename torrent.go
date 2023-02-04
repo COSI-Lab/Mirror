@@ -53,6 +53,10 @@ func HandleTorrents(config *ConfigFile, torrentDir, downloadDir string) {
 // files and then creates hardlinks in the download and torrent directories
 func syncTorrents(config *ConfigFile, torrentDir, ourDir string) {
 	for _, project := range config.GetProjects() {
+		if project.Torrents.SearchGlob == "" {
+			continue
+		}
+
 		go func(project Project) {
 			// Find all torrent files using glob
 			matches, err := filepath.Glob(project.Torrents.SearchGlob + "*.torrent")
