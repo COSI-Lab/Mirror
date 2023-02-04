@@ -83,10 +83,10 @@ func syncTorrents(config *ConfigFile, torrentDir, ourDir string) {
 				}
 
 				fileName := strings.TrimSuffix(path.Base(torrentPath), ".torrent")
-				addFile(project, torrentPath, ourDir, fileName)
+				addFile(project, ourDir, fileName)
 
 				for _, append := range project.Torrents.Appends {
-					addFile(project, torrentPath, ourDir, fileName+append)
+					addFile(project, ourDir, fileName+append)
 				}
 			}
 		}(project)
@@ -94,16 +94,16 @@ func syncTorrents(config *ConfigFile, torrentDir, ourDir string) {
 }
 
 // Fetches a file from a glob and a name. Saves it to downloadDir
-func addFile(project Project, torrentPath, downloadDir, fileName string) {
+func addFile(project Project, downloadDir, fileName string) {
 	// Search the glob for the corresponding file
 	files, err := filepath.Glob(project.Torrents.SearchGlob + fileName)
 	if err != nil {
-		logging.Error("Failed to find file for:", torrentPath, err)
+		logging.Error("Failed to find:", fileName, err)
 		return
 	}
 
 	if len(files) == 0 {
-		logging.Warn("No files found for:", torrentPath)
+		logging.Warn("No files found for:", fileName)
 		return
 	}
 
