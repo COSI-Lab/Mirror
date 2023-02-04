@@ -22,7 +22,15 @@
       "icon": "img/projects/almalinux.svg",
       "torrents": {
         "search_glob": "/storage/almalinux/*/isos/*/",
-        "append": ".iso"
+        "append": [
+          "-boot.iso",
+          "-boot.iso.manifest",
+          "-dvd.iso",
+          "-dvd.iso.manifest",
+          "-minimal.iso",
+          "-minimal.iso.manifest",
+          "CHECKSUM"
+        ]
       } 
     },
     "alpine": {

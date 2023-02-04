@@ -70,55 +70,6 @@ func syncTorrents(config *ConfigFile, torrentDir, ourDir string) {
 
 			for _, torrentPath := range matches {
 				torrentName := path.Base(torrentPath)
-				fileName := strings.TrimSuffix(path.Base(torrentPath), ".torrent")
-
-				if project.Torrents.Append != "" {
-					fileName += project.Torrents.Append
-				}
-
-				// Search the glob for the corresponding file
-				files, err := filepath.Glob(project.Torrents.SearchGlob + fileName)
-				if err != nil || len(files) == 0 {
-					logging.Error("Failed to find file for:", torrentPath, err)
-					continue
-				}
-
-				logging.Info("Seaching for ", project.Torrents.SearchGlob+fileName, " found ", len(files), " files")
-
-				// In case there are multiple files, pick the first one that correctly resolves to a file
-				var file string
-				for _, f := range files {
-					stat, err := os.Stat(f)
-					if err != nil {
-						logging.Warn("Failed to stat file: ", err)
-						continue
-					}
-
-					// Skip symlinks and directories
-					if stat.Mode()&os.ModeSymlink != 0 || stat.IsDir() {
-						continue
-					}
-
-					file = f
-					break
-				}
-
-				// Check if the file is already in the download directory
-				_, err = os.Stat(downloadDir + "/" + fileName)
-				if err != nil {
-					if os.IsNotExist(err) {
-						// Create a hardlink
-						err = os.Link(file, downloadDir+"/"+fileName)
-						if err != nil {
-							logging.Warn("Failed to create hardlink: ", err)
-							continue
-						}
-					} else {
-						logging.Error("Failed to stat a torrent file: ", err)
-					}
-				}
-
-				// Now copy the torrent file to the torrent directory
 				_, err = os.Stat(torrentDir + "/" + torrentName)
 				if err != nil {
 					if os.IsNotExist(err) {
@@ -132,9 +83,60 @@ func syncTorrents(config *ConfigFile, torrentDir, ourDir string) {
 						logging.Error("Failed to stat a torrent file: ", err)
 					}
 				}
+
+				fileName := strings.TrimSuffix(path.Base(torrentPath), ".torrent")
+				addDownload(project, torrentPath, ourDir, fileName)
+
+				for _, append := range project.Torrents.Append {
+					addDownload(project, torrentPath, ourDir, fileName+append)
+				}
 			}
 		}(project)
 	}
+}
+
+func addDownload(project Project, torrentPath, downloadDir, fileName string) {
+	// Search the glob for the corresponding file
+	files, err := filepath.Glob(project.Torrents.SearchGlob + fileName)
+	if err != nil || len(files) == 0 {
+		logging.Error("Failed to find file for:", torrentPath, err)
+		return
+	}
+
+	logging.Info("Seaching for ", project.Torrents.SearchGlob+fileName, " found ", len(files), " files")
+
+	// In case there are multiple files, pick the first one that correctly resolves to a file
+	var file string
+	for _, f := range files {
+		stat, err := os.Stat(f)
+		if err != nil {
+			logging.Warn("Failed to stat file: ", err)
+			continue
+		}
+
+		// Skip symlinks and directories
+		if stat.Mode()&os.ModeSymlink != 0 || stat.IsDir() {
+			continue
+		}
+
+		file = f
+		break
+	}
+
+	// Check if the file is already in the download directory
+	_, err = os.Stat(downloadDir + "/" + fileName)
+	if err != nil {
+		if os.IsNotExist(err) {
+			// Create a hardlink
+			err = os.Link(file, downloadDir+"/"+fileName)
+			if err != nil {
+				logging.Warn("Failed to create hardlink: ", err)
+			}
+		} else {
+			logging.Error("Failed to stat a torrent file: ", err)
+		}
+	}
+
 }
 
 // scrapeTorrents downloads all torrents from upstreams

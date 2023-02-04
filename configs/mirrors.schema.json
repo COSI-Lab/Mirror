@@ -146,8 +146,9 @@
                 "description": "globs to find files. \"*.torrent\" is append to each glob when searching"
               },
               "append": {
-                "type": "string",
-                "description": "string to append to the end of the torrent's name after removing the suffix \".torrent\""
+                "type": "array",
+                "items": { "type": "string" },
+                "description": "strings to append to the end of the torrent's name after removing the suffix \".torrent\""
               }
             },
             "required": ["search_glob"]
