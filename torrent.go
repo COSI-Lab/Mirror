@@ -53,58 +53,65 @@ func HandleTorrents(config *ConfigFile, torrentDir, downloadDir string) {
 // files and then creates hardlinks in the download and torrent directories
 func syncTorrents(config *ConfigFile, torrentDir, ourDir string) {
 	for _, project := range config.GetProjects() {
-		if len(project.Torrents) > 0 {
-			logging.Info("Syncing " + project.Name + " torrents")
-		}
+		go func(project Project) {
+			// Find all torrent files using glob
+			matches, err := filepath.Glob(project.Torrents.SearchGlob + "*.torrent")
 
-		for _, searchPath := range project.Torrents {
-			go func(searchPath string) {
-				// Find all torrent files using glob
-				matches, err := filepath.Glob(searchPath)
+			if err != nil {
+				logging.Error("Failed to find torrent files: ", err)
+				return
+			}
 
+			logging.Info("Found ", len(matches), " torrent files")
+
+			for _, torrentPath := range matches {
+				torrentName := path.Base(torrentPath)
+
+				filePath := strings.TrimSuffix(torrentPath, ".torrent")
+				fileName := path.Base(filePath)
+
+				if project.Torrents.Append != "" {
+					fileName += project.Torrents.Append
+				}
+
+				// Search the glob for the corresponding file
+				files, err := filepath.Glob(project.Torrents.SearchGlob + fileName)
+				if err != nil || len(files) == 0 {
+					logging.Error("Failed to find file for:", torrentPath, err)
+					continue
+				}
+
+				// Check if the file is already in the download directory
+				_, err = os.Stat(downloadDir + "/" + fileName)
 				if err != nil {
-					logging.Error("Failed to find torrent files: ", err)
-					return
-				}
-
-				logging.Info("Found ", len(matches), " torrent files")
-
-				for _, torrentPath := range matches {
-					filepath := strings.TrimSuffix(torrentPath, ".torrent")
-
-					torrentName := path.Base(torrentPath)
-					fileName := path.Base(filepath)
-
-					_, err := os.Stat(downloadDir + "/" + fileName)
-					if err != nil {
-						if os.IsNotExist(err) {
-							// Create a hardlink
-							err = os.Link(filepath, downloadDir+"/"+fileName)
-							if err != nil {
-								logging.Warn("Failed to create hardlink: ", err)
-								continue
-							}
-						} else {
-							logging.Error("Failed to stat a torrented file: ", err)
+					if os.IsNotExist(err) {
+						// Create a hardlink
+						err = os.Link(files[0], downloadDir+"/"+fileName)
+						if err != nil {
+							logging.Warn("Failed to create hardlink: ", err)
+							continue
 						}
-					}
-
-					_, err = os.Stat(torrentDir + "/" + torrentName)
-					if err != nil {
-						if os.IsNotExist(err) {
-							// Create a hardlink
-							err = os.Link(torrentPath, torrentDir+"/"+torrentName)
-							if err != nil {
-								logging.Warn("Failed to create hardlink: ", err)
-								continue
-							}
-						} else {
-							logging.Error("Failed to stat a torrent file: ", err)
-						}
+					} else {
+						logging.Error("Failed to stat a torrent file: ", err)
 					}
 				}
-			}(searchPath)
-		}
+
+				// Now copy the torrent file to the torrent directory
+				_, err = os.Stat(torrentDir + "/" + torrentName)
+				if err != nil {
+					if os.IsNotExist(err) {
+						// Create a hardlink
+						err = os.Link(torrentPath, torrentDir+"/"+torrentName)
+						if err != nil {
+							logging.Warn("Failed to create hardlink: ", err)
+							continue
+						}
+					} else {
+						logging.Error("Failed to stat a torrent file: ", err)
+					}
+				}
+			}
+		}(project)
 	}
 }
 
