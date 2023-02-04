@@ -145,15 +145,9 @@
                 "type": "string",
                 "description": "globs to find files. \"*.torrent\" is append to each glob when searching"
               },
-              "appends": {
-                "type": "array",
-                "items": { "type": "string" },
-                "description": "strings to append to the end of the torrent's name after removing the suffix \".torrent\""
-              },
-              "siblings": {
-                "type": "array",
-                "items": { "type": "string" },
-                "description": "copy additional files from the same directory as the torrent"
+              "take_dir": {
+                "type": "boolean",
+                "description": "If true, the directory containing the torrent file will be copied instead of searching for a specific file"
               }
             },
             "required": ["search_glob"]
