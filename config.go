@@ -122,10 +122,7 @@ type Project struct {
 	Icon        string `json:"icon"`
 	Alternative string `json:"alternative"`
 	AccessToken string // Loaded from the access tokens file
-	Torrents    struct {
-		SearchGlob string `json:"search_glob"`
-		TakeDir    bool   `json:"take_dir"`
-	} `json:"torrents"`
+	Torrents    string `json:"torrents"`
 }
 
 func ParseConfig(configFile, schemaFile, tokensFile string) (config ConfigFile) {

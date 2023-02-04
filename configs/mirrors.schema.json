@@ -138,19 +138,8 @@
             "description": "Local path to project logo file"
           },
           "torrents": {
-            "type": "object",
-            "description": "Instructions for how to sync torrents",
-            "properties": {
-              "search_glob": {
-                "type": "string",
-                "description": "globs to find files. \"*.torrent\" is append to each glob when searching"
-              },
-              "take_dir": {
-                "type": "boolean",
-                "description": "If true, the directory containing the torrent file will be copied instead of searching for a specific file"
-              }
-            },
-            "required": ["search_glob"]
+            "type": "string",
+            "description": "globs to find files. \"*.torrent\" is append to each glob when searching"
           }
         },
         "required": [
