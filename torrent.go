@@ -97,8 +97,13 @@ func syncTorrents(config *ConfigFile, torrentDir, ourDir string) {
 func addFile(project Project, torrentPath, downloadDir, fileName string) {
 	// Search the glob for the corresponding file
 	files, err := filepath.Glob(project.Torrents.SearchGlob + fileName)
-	if err != nil || len(files) == 0 {
+	if err != nil {
 		logging.Error("Failed to find file for:", torrentPath, err)
+		return
+	}
+
+	if len(files) == 0 {
+		logging.Warn("No files found for:", torrentPath)
 		return
 	}
 
