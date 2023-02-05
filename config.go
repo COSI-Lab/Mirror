@@ -212,16 +212,6 @@ func ParseConfig(configFile, schemaFile, tokensFile string) (config ConfigFile) 
 		}
 	}
 
-	// print all project names to the log
-	var names []string = make([]string, len(config.Mirrors))
-	for _, project := range config.Mirrors {
-		names = append(names, project.Name)
-	}
-	// sort the names
-	sort.Strings(names)
-	// each name 1 line
-	log.Println("Projects: ", strings.Join(names, "\n"))
-
 	return config
 }
 

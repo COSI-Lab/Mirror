@@ -156,7 +156,7 @@ func addFile(project Project, downloadDir, fileName string) {
 			}
 
 			// Make the file group writable
-			err = os.Chmod(downloadDir+"/"+file, fs.FileMode(0775))
+			err = os.Chmod(downloadDir+"/"+fileName, fs.FileMode(0775))
 			if err != nil {
 				logging.Warn("Failed to chmod file: ", err)
 			}
