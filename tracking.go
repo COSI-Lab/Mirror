@@ -151,7 +151,7 @@ func SetTransmissionStatistics() error {
 		return err
 	}
 
-	ratioFloat, err := strconv.ParseFloat(ratio, 64)
+	ratioFloat, err := strconv.ParseFloat(strings.TrimSpace(ratio), 64)
 	if err != nil {
 		return err
 	}
