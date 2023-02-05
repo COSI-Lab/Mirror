@@ -46,7 +46,7 @@ func init() {
 	}
 }
 
-// HandleStatistics recieves parsed log entries over channels and tracks the useful information
+// HandleStatistics receives parsed log entries over channels and tracks the useful information
 // The statistics object should be created before this function can be run.
 func HandleStatistics(nginxEntries chan *NginxLogEntry, rsyncdEntries chan *RsyncdLogEntry) {
 	// We send the latest stats to influxdb every minute

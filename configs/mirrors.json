@@ -5,6 +5,26 @@
       "url": "https://linuxmint.com/torrents/",
       "depth": 1,
       "delay": 1
+    },
+    {
+      "url": "https://torrents.artixlinux.org/torrents.php",
+      "depth": 1,
+      "delay": 1
+    },
+    {
+      "url": "https://download.documentfoundation.org/libreoffice/stable/",
+      "depth": 5,
+      "delay": 1
+    },
+    {
+      "url": "https://manjaro.org/download/",
+      "depth": 1,
+      "delay": 1
+    },
+    {
+      "url": "https://www.raspberrypi.com/software/operating-systems/",
+      "depth": 1,
+      "delay": 1
     }
   ],
   "mirrors": {
@@ -131,7 +151,8 @@
       "color": "#0abab5",
       "publicRsync": true,
       "alternative": "http://mirrors.rit.edu/centos/",
-      "icon": "img/projects/centos.svg"
+      "icon": "img/projects/centos.svg",
+      "torrents": "/storage/centos/*/isos/*/*.torrent"
     },
     "centos9": {
       "name": "CentOS Stream 9",
@@ -338,7 +359,8 @@
       "color": "#7c4848",
       "publicRsync": true,
       "alternative": "http://mirrors.rit.edu/ipfire/",
-      "icon": "img/projects/ipfire.png"
+      "icon": "img/projects/ipfire.png",
+      "torrents": "/storage/ipfire/releases/*/*/"
     },
     "isabelle": {
       "name": "Isabelle",
@@ -389,7 +411,8 @@
       "color": "#03a9f4",
       "publicRsync": true,
       "alternative": "http://repo.linuxliteos.com/linuxlite",
-      "icon": "img/projects/linux-lite.png"
+      "icon": "img/projects/linux-lite.png",
+      "torrents": "/storage/linux-lite/isos/*/"
     },
     "linuxmint-images": {
       "name": "LinuxMint Images",
@@ -492,7 +515,8 @@
       "color": "#ff6fff",
       "publicRsync": true,
       "alternative": "http://mirrors.mit.edu/parrot/",
-      "icon": "img/projects/parrot.svg"
+      "icon": "img/projects/parrot.svg",
+      "torrents": "/storage/parrot/iso/*/"
     },
     "raspian": {
       "name": "Raspbian",
@@ -601,7 +625,8 @@
       "page": "Software",
       "static": {
         "location": "/storage/templeos",
-        "source": "https://templeos.org/"
+        "source": "https://templeos.org/",
+        "description": "This project is no longer receiving updates."
       },
       "official": false,
       "homepage": "https://templeos.org/",
@@ -626,6 +651,20 @@
       "publicRsync": true,
       "alternative": "http://ftp.osuosl.org/pub/tdf/",
       "icon": "img/projects/libreoffice.png"
+    },
+    "torrents": {
+      "name": "Torrents",
+      "page": "Miscellaneous",
+      "static": {
+        "location": "/storage/torrents",
+        "source": "",
+        "description": "An index of all torrents currently seeded by the mirror."
+      },
+      "official": false,
+      "homepage": "https://mirror.clarkson.edu",
+      "color": "#a500a5",
+      "publicRsync": false,
+      "icon": "img/projects/transmission.png"
     },
     "ubuntu": {
       "name": "Ubuntu",
@@ -713,7 +752,8 @@
       "homepage": "https://dumps.wikimedia.org/",
       "color": "#ffffff",
       "publicRsync": false,
-      "alternative": "http://dumps.wikimedia.your.org/"
+      "alternative": "http://dumps.wikimedia.your.org/",
+      "icon": "img/wikimedia.png"
     },
     "zorinos": {
       "name": "Zorin OS",
