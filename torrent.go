@@ -93,9 +93,6 @@ func syncTorrents(config *ConfigFile, torrentDir, ourDir string) {
 	}
 }
 
-// ssh to mirror and forward port 9091 to localhost:9091
-// 4
-
 // Fetches a file from a glob and a name. Saves it to downloadDir
 func addFile(project Project, downloadDir, fileName string) {
 	// Search the glob for the corresponding file
