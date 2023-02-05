@@ -6,6 +6,9 @@ import (
 	"fmt"
 	"net"
 	"os"
+	"os/exec"
+	"strconv"
+	"strings"
 	"sync"
 	"time"
 
@@ -15,16 +18,23 @@ import (
 )
 
 type NetStat struct {
-	BytesSent int
-	BytesRecv int
-	Requests  int
+	BytesSent int64
+	BytesRecv int64
+	Requests  int64
 }
 type DistroStatistics map[string]*NetStat
+type TransmissionStatistics struct {
+	Uploaded   int64
+	Downloaded int64
+	Torrents   int
+	Ratio      float64
+}
 type Statistics struct {
 	sync.RWMutex
-	nginx    DistroStatistics
-	clarkson DistroStatistics
-	rsyncd   NetStat
+	nginx        DistroStatistics
+	clarkson     DistroStatistics
+	transmission TransmissionStatistics
+	rsyncd       NetStat
 }
 
 var statistics Statistics
@@ -55,6 +65,10 @@ func HandleStatistics(nginxEntries chan *NginxLogEntry, rsyncdEntries chan *Rsyn
 	for {
 		select {
 		case <-ticker.C:
+			err := SetTransmissionStatistics()
+			if err != nil {
+				logging.Error(err)
+			}
 			Sendstatistics()
 		case entry := <-nginxEntries:
 			statistics.Lock()
@@ -98,6 +112,93 @@ func HandleStatistics(nginxEntries chan *NginxLogEntry, rsyncdEntries chan *Rsyn
 	}
 }
 
+// Get the latest statistics from Transmission
+func SetTransmissionStatistics() error {
+	// Get the count by running transmission-remote -l
+	// The output is in the form of a table, so we can just count the lines - 2 for the head and tail
+	cmd := exec.Command("transmission-remote", "-n \"transmission:\"", "-l")
+	out, err := cmd.Output()
+	if err != nil {
+		return err
+	}
+	lines := strings.Split(string(out), "\n")
+	torrents := len(lines) - 2
+
+	// Get the total upload and download by running transmission-remote -st
+	cmd = exec.Command("transmission-remote", "-n \"transmission:\"", "-st")
+	out, err = cmd.Output()
+	if err != nil {
+		return err
+	}
+
+	// Get the TOTAL uploaded, downloaded and ratio
+	lines = strings.Split(string(out), "\n")
+	uploaded := strings.Split(lines[9], ":")[1]
+	downloaded := strings.Split(lines[10], ":")[1]
+	ratio := strings.Split(lines[11], ":")[1]
+
+	// Convert the human readable sizes to bytes
+	uploadedBytes, err := HumanReadableSizeToBytes(uploaded)
+	if err != nil {
+		return err
+	}
+	downloadedBytes, err := HumanReadableSizeToBytes(downloaded)
+	if err != nil {
+		return err
+	}
+
+	ratioFloat, err := strconv.ParseFloat(ratio, 64)
+	if err != nil {
+		return err
+	}
+
+	// Set the statistics
+	statistics.Lock()
+	statistics.transmission.Torrents = torrents
+	statistics.transmission.Uploaded = uploadedBytes
+	statistics.transmission.Downloaded = downloadedBytes
+	statistics.transmission.Ratio = ratioFloat
+	statistics.Unlock()
+
+	return nil
+}
+
+// HumanReadableSizeToBytes converts a human readable size to bytes
+//
+// Examples:
+//
+//	"1.0 KB" -> 1000
+//	"1.0   MB" -> 1000000
+//	"1.0 GB" -> 1000000000
+func HumanReadableSizeToBytes(size string) (int64, error) {
+	// Get the size and unit
+	size = strings.TrimSpace(size)
+	unit := size[len(size)-2:]
+	size = size[:len(size)-2]
+
+	// Convert the size to an int
+	sizeInt, err := strconv.ParseInt(size, 10, 64)
+	if err != nil {
+		return 0, err
+	}
+
+	// Convert the unit to bytes
+	switch unit {
+	case "KB":
+		return sizeInt * 1000, nil
+	case "MB":
+		return sizeInt * 1000 * 1000, nil
+	case "GB":
+		return sizeInt * 1000 * 1000 * 1000, nil
+	case "TB":
+		return sizeInt * 1000 * 1000 * 1000 * 1000, nil
+	case "PB":
+		return sizeInt * 1000 * 1000 * 1000 * 1000 * 1000, nil
+	default:
+		return 0, fmt.Errorf("Unknown unit %s", unit)
+	}
+}
+
 // Sends the latest statistics to the database
 func Sendstatistics() {
 	if influxReadOnly {
@@ -128,15 +229,21 @@ func Sendstatistics() {
 			}, t)
 		writer.WritePoint(p)
 	}
-	p := influxdb2.NewPoint("rsyncd", map[string]string{}, map[string]interface{}{
+	p := influxdb2.NewPoint("transmission", map[string]string{}, map[string]interface{}{
+		"downloaded": statistics.transmission.Downloaded,
+		"uploaded":   statistics.transmission.Uploaded,
+		"torrents":   statistics.transmission.Torrents,
+		"ratio":      statistics.transmission.Ratio,
+	}, t)
+	writer.WritePoint(p)
+	p = influxdb2.NewPoint("rsyncd", map[string]string{}, map[string]interface{}{
 		"bytes_sent": statistics.rsyncd.BytesSent,
 		"bytes_recv": statistics.rsyncd.BytesRecv,
 		"requests":   statistics.rsyncd.Requests,
 	}, t)
 	writer.WritePoint(p)
 
-	// Never forget to release the lock.
-	// Just to be safe let go of this lock before attempting to log.
+	// To be safe we release the lock before logging because logging takes a seperate lock
 	statistics.RUnlock()
 
 	logging.Info("Sent statistics")
@@ -244,7 +351,7 @@ func QueryDistroStatistics(projects map[string]*Project, measurement string) (la
 					fmt.Printf("%T %v\n", dp.ValueByKey("_value"), dp.ValueByKey("_value"))
 					continue
 				}
-				stats[distro].BytesSent = int(sent)
+				stats[distro].BytesSent = sent
 			case "bytes_recv":
 				received, ok := dp.ValueByKey("_value").(int64)
 				if !ok {
@@ -252,7 +359,7 @@ func QueryDistroStatistics(projects map[string]*Project, measurement string) (la
 					fmt.Printf("%T %v\n", dp.ValueByKey("_value"), dp.ValueByKey("_value"))
 					continue
 				}
-				stats[distro].BytesRecv = int(received)
+				stats[distro].BytesRecv = received
 			case "requests":
 				requests, ok := dp.ValueByKey("_value").(int64)
 				if !ok {
@@ -260,7 +367,7 @@ func QueryDistroStatistics(projects map[string]*Project, measurement string) (la
 					fmt.Printf("%T %v\n", dp.ValueByKey("_value"), dp.ValueByKey("_value"))
 					continue
 				}
-				stats[distro].Requests = int(requests)
+				stats[distro].Requests = requests
 			}
 		} else {
 			logging.Warn("QueryDistroStatistics Flux Query Error", result.Err())
@@ -323,7 +430,7 @@ func QueryRsyncdStatistics() (stat NetStat, err error) {
 					fmt.Printf("%T %v\n", dp.ValueByKey("_value"), dp.ValueByKey("_value"))
 					continue
 				}
-				statistics.rsyncd.BytesSent = int(sent)
+				statistics.rsyncd.BytesSent = sent
 			case "bytes_recv":
 				received, ok := dp.ValueByKey("_value").(int64)
 				if !ok {
@@ -331,7 +438,7 @@ func QueryRsyncdStatistics() (stat NetStat, err error) {
 					fmt.Printf("%T %v\n", dp.ValueByKey("_value"), dp.ValueByKey("_value"))
 					continue
 				}
-				statistics.rsyncd.BytesRecv = int(received)
+				statistics.rsyncd.BytesRecv = received
 			case "requests":
 				requests, ok := dp.ValueByKey("_value").(int64)
 				if !ok {
@@ -339,7 +446,7 @@ func QueryRsyncdStatistics() (stat NetStat, err error) {
 					fmt.Printf("%T %v\n", dp.ValueByKey("_value"), dp.ValueByKey("_value"))
 					continue
 				}
-				statistics.rsyncd.Requests = int(requests)
+				statistics.rsyncd.Requests = requests
 			}
 		} else {
 			logging.Warn("InitNGINXStats Flux Query Error", result.Err())
