@@ -69,6 +69,11 @@ func syncTorrents(config *ConfigFile, torrentDir, ourDir string) {
 			}
 
 			for _, torrentPath := range matches {
+				fileName := strings.TrimSuffix(path.Base(torrentPath), ".torrent")
+				addFile(project, ourDir, fileName)
+
+				// Add the torrent file _after_ copying the actual file
+				// This should skip the verification step
 				torrentName := path.Base(torrentPath)
 				_, err = os.Stat(torrentDir + "/" + torrentName)
 				if err != nil {
@@ -83,9 +88,6 @@ func syncTorrents(config *ConfigFile, torrentDir, ourDir string) {
 						logging.Error("Failed to stat a torrent file: ", err)
 					}
 				}
-
-				fileName := strings.TrimSuffix(path.Base(torrentPath), ".torrent")
-				addFile(project, ourDir, fileName)
 			}
 		}(project)
 	}
@@ -99,12 +101,10 @@ func addFile(project Project, downloadDir, fileName string) {
 	// Search the glob for the corresponding file
 	files, err := filepath.Glob(project.Torrents + fileName)
 	if err != nil {
-		logging.Error("Failed to find:", fileName, err)
 		return
 	}
 
 	if len(files) == 0 {
-		logging.Warn("No files found for:", fileName)
 		return
 	}
 
