@@ -181,7 +181,7 @@ func HumanReadableSizeToBytes(size string) (int64, error) {
 	size = size[:len(size)-2]
 
 	// Convert the size to an int
-	sizeInt, err := strconv.ParseInt(size, 10, 64)
+	sizeFloat, err := strconv.ParseFloat(size, 64)
 	if err != nil {
 		return 0, err
 	}
@@ -189,15 +189,15 @@ func HumanReadableSizeToBytes(size string) (int64, error) {
 	// Convert the unit to bytes
 	switch unit {
 	case "KB":
-		return sizeInt * 1000, nil
+		return int64(sizeFloat * 1000), nil
 	case "MB":
-		return sizeInt * 1000 * 1000, nil
+		return int64(sizeFloat * 1000 * 1000), nil
 	case "GB":
-		return sizeInt * 1000 * 1000 * 1000, nil
+		return int64(sizeFloat * 1000 * 1000 * 1000), nil
 	case "TB":
-		return sizeInt * 1000 * 1000 * 1000 * 1000, nil
+		return int64(sizeFloat * 1000 * 1000 * 1000 * 1000), nil
 	case "PB":
-		return sizeInt * 1000 * 1000 * 1000 * 1000 * 1000, nil
+		return int64(sizeFloat * 1000 * 1000 * 1000 * 1000 * 1000), nil
 	default:
 		return 0, fmt.Errorf("Unknown unit %s", unit)
 	}
