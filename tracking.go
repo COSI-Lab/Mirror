@@ -116,7 +116,7 @@ func HandleStatistics(nginxEntries chan *NginxLogEntry, rsyncdEntries chan *Rsyn
 func SetTransmissionStatistics() error {
 	// Get the count by running transmission-remote -l
 	// The output is in the form of a table, so we can just count the lines - 2 for the head and tail
-	cmd := exec.Command("sh", "-c \"transmission-remote -n 'transmission:' -l\"")
+	cmd := exec.Command("transmission-remote", "-ne", "-l")
 	cmd.Env = append(os.Environ(), "TR_AUTH=transmission:")
 	out, err := cmd.CombinedOutput()
 	logging.Info(cmd, string(out))
@@ -127,7 +127,7 @@ func SetTransmissionStatistics() error {
 	torrents := len(lines) - 2
 
 	// Get the total upload and download by running transmission-remote -st
-	cmd = exec.Command("sh", "-c \"transmission-remote -n 'transmission:' -st\"")
+	cmd = exec.Command("transmission-remote", "-ne", "-st")
 	cmd.Env = append(os.Environ(), "TR_AUTH=transmission:")
 	logging.Info(cmd)
 	out, err = cmd.Output()
