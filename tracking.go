@@ -181,7 +181,7 @@ func HumanReadableSizeToBytes(size string) (int64, error) {
 	size = size[:len(size)-2]
 
 	// Convert the size to an int
-	sizeFloat, err := strconv.ParseFloat(size, 64)
+	sizeFloat, err := strconv.ParseFloat(strings.TrimSpace(size), 64)
 	if err != nil {
 		return 0, err
 	}
