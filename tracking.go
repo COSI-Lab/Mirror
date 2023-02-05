@@ -117,6 +117,7 @@ func SetTransmissionStatistics() error {
 	// Get the count by running transmission-remote -l
 	// The output is in the form of a table, so we can just count the lines - 2 for the head and tail
 	cmd := exec.Command("transmission-remote", "-n \"transmission:\"", "-l")
+	logging.Info(cmd)
 	out, err := cmd.Output()
 	if err != nil {
 		return err
@@ -126,6 +127,7 @@ func SetTransmissionStatistics() error {
 
 	// Get the total upload and download by running transmission-remote -st
 	cmd = exec.Command("transmission-remote", "-n \"transmission:\"", "-st")
+	logging.Info(cmd)
 	out, err = cmd.Output()
 	if err != nil {
 		return err
