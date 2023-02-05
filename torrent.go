@@ -2,6 +2,7 @@ package main
 
 import (
 	"io"
+	"io/fs"
 	"net/http"
 	"os"
 	"path"
@@ -131,9 +132,13 @@ func addFile(project Project, downloadDir, fileName string) {
 		logging.Warn("Failed to stat downloadDir: ", err)
 		return
 	}
+
+	// gid is that of the downloadDir
 	stat := info.Sys().(*syscall.Stat_t)
-	uid := int(stat.Uid)
 	gid := int(stat.Gid)
+
+	// uid is the current user
+	uid := os.Geteuid()
 
 	// Check if the file is already in the download directory
 	_, err = os.Stat(downloadDir + "/" + fileName)
@@ -148,6 +153,12 @@ func addFile(project Project, downloadDir, fileName string) {
 			err = os.Chown(downloadDir+"/"+fileName, uid, gid)
 			if err != nil {
 				logging.Warn("Failed to chown file: ", err)
+			}
+
+			// Make the file group writable
+			err = os.Chmod(downloadDir+"/"+file, fs.FileMode(0775))
+			if err != nil {
+				logging.Warn("Failed to chmod file: ", err)
 			}
 		} else {
 			logging.Error("Failed to stat a torrent file: ", err)
