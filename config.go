@@ -111,8 +111,9 @@ type Project struct {
 		Password     string // Loaded from password file
 	} `json:"rsync"`
 	Static struct {
-		Location string `json:"location"`
-		Source   string `json:"source"`
+		Location    string `json:"location"`
+		Source      string `json:"source"`
+		Description string `json:"description"`
 	} `json:"static"`
 	Color       string `json:"color"`
 	Official    bool   `json:"official"`
@@ -211,6 +212,16 @@ func ParseConfig(configFile, schemaFile, tokensFile string) (config ConfigFile) 
 		}
 	}
 
+	// print all project names to the log
+	var names []string = make([]string, len(config.Mirrors))
+	for _, project := range config.Mirrors {
+		names = append(names, project.Name)
+	}
+	// sort the names
+	sort.Strings(names)
+	// each name 1 line
+	log.Println("Projects: ", strings.Join(names, "\n"))
+
 	return config
 }
 
@@ -239,7 +250,7 @@ log file = /var/log/rsyncd.log
 log format = %t %o %a %m %f %b
 dont compress = *.gz *.tgz *.zip *.z *.Z *.rpm *.deb *.bz2 *.tbz2 *.xz *.txz *.rar
 refuse options = checksum delete
-{{ range .Mirrors }}
+{{ range . }}
 [{{ .Short }}]
 	comment = {{ .Name }}
 	path = /storage/{{ .Short }}
@@ -248,10 +259,16 @@ refuse options = checksum delete
 	ignore nonreadable = yes{{ end }}
 `
 
-	// Apply the template
+	var filteredProjects []*Project
+	for _, project := range config.Mirrors {
+		if project.PublicRsync {
+			filteredProjects = append(filteredProjects, project)
+		}
+	}
+
 	t := template.Must(template.New("rsyncd.conf").Parse(tmpl))
 	var buf bytes.Buffer
-	err := t.Execute(&buf, config)
+	err := t.Execute(&buf, filteredProjects)
 
 	if err != nil {
 		log.Fatal("Could not create rsyncd.conf: ", err.Error())
@@ -266,7 +283,6 @@ refuse options = checksum delete
 
 // In case of emergencies this can generate a nginx config file to redirect to alternative mirrors
 func createNginxRedirects(config *ConfigFile) {
-	//rewrite ^{{short}}/(.*)$ {{Alternative}}/$1 permanent;
 	tmpl := `# This is a generated file. Do not edit manually.
 server {
 	listen 80 default;
@@ -283,7 +299,7 @@ server {
 	rewrite ^/linuxmint/iso/images/(.*)$ /linuxmint-images/$1 permanent;
 	rewrite ^/linuxmint/packages/(.*)$ /linuxmint-packages/$1 permanent;	
 	
-	# Redirect all projects to other mirrors{{ range .Mirrors }}
+	# Redirect all projects to other mirrors{{ range . }}
 	rewrite ^/{{ .Short }}/(.*)$ {{ .Alternative }}$1 redirect;{{ end }}
 
 	# Other wise redirect 404 to 503.html
@@ -293,17 +309,22 @@ server {
 	}
 }
 `
+	var filteredProjects []*Project
+	for _, project := range config.Mirrors {
+		if project.Alternative != "" {
+			filteredProjects = append(filteredProjects, project)
+		}
+	}
 
-	// Apply the template
 	t := template.Must(template.New("nginx.conf").Parse(tmpl))
 	var buf bytes.Buffer
-	err := t.Execute(&buf, config)
+	err := t.Execute(&buf, filteredProjects)
 
 	if err != nil {
 		log.Fatal("Could not create nginx.conf: ", err.Error())
 	}
 
-	// save to nginx.conf
+	// save to /tmp/nginx.conf
 	err = os.WriteFile("/tmp/nginx.conf", buf.Bytes(), 0644)
 	if err != nil {
 		logging.Error("Could not write nginx.conf: ", err.Error())

@@ -125,7 +125,7 @@ func addFile(project Project, downloadDir, fileName string) {
 		break
 	}
 
-	// Get ownership infomation of the download directory
+	// Get ownership information of the download directory
 	info, err := os.Stat(downloadDir)
 	if err != nil {
 		logging.Warn("Failed to stat downloadDir: ", err)

@@ -102,9 +102,13 @@
               "source": {
                 "type": "string",
                 "description": "Location that we originally cloned from"
+              },
+              "description": {
+                "type": "string",
+                "description": "Description of the project to be displayed on the website"
               }
             },
-            "required": ["location", "source"]
+            "required": ["location", "source", "description"]
           },
           "official": {
             "description": "Are we an official mirror for this software",
@@ -148,8 +152,7 @@
           "page",
           "homepage",
           "color",
-          "publicRsync",
-          "alternative"
+          "publicRsync"
         ],
         "oneOf": [
           {
