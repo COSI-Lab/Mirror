@@ -10,6 +10,7 @@ import (
 	"strconv"
 	"strings"
 	"sync"
+	"syscall"
 	"time"
 
 	"github.com/COSI-Lab/logging"
@@ -112,22 +113,60 @@ func HandleStatistics(nginxEntries chan *NginxLogEntry, rsyncdEntries chan *Rsyn
 	}
 }
 
+// Start a command and allow it to cancel after a certain amount of time
+func runCommand(cmd *exec.Cmd, d time.Duration) error {
+	cmd.Start()
+
+	done := make(chan error, 1)
+	go func() {
+		done <- cmd.Wait()
+	}()
+
+	select {
+	case <-time.After(d):
+		if err := cmd.Process.Kill(); err != nil {
+			return err
+		}
+		return errors.New("transmission-remote timed out")
+	case err := <-done:
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+
 // Get the latest statistics from Transmission
 func SetTransmissionStatistics() error {
 	// Get the count by running transmission-remote -l
 	// The output is in the form of a table, so we can just count the lines - 2 for the head and tail
 	cmd := exec.Command("transmission-remote", "-ne", "-l")
 	cmd.Env = append(os.Environ(), "TR_AUTH=transmission:")
+
+	err := runCommand(cmd, 5*time.Second)
+	if err != nil {
+		return err 
+	}
+
 	out, err := cmd.Output()
 	if err != nil {
 		return err
 	}
+
 	lines := strings.Split(string(out), "\n")
 	torrents := len(lines) - 2
 
 	// Get the total upload and download by running transmission-remote -st
 	cmd = exec.Command("transmission-remote", "-ne", "-st")
 	cmd.Env = append(os.Environ(), "TR_AUTH=transmission:")
+
+	err = runCommand(cmd, 5*time.Second)
+	if err != nil {
+		return err 
+	}
+
 	out, err = cmd.Output()
 	if err != nil {
 		return err
