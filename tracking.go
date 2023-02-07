@@ -10,7 +10,6 @@ import (
 	"strconv"
 	"strings"
 	"sync"
-	"syscall"
 	"time"
 
 	"github.com/COSI-Lab/logging"
@@ -137,7 +136,6 @@ func runCommand(cmd *exec.Cmd, d time.Duration) error {
 	return nil
 }
 
-
 // Get the latest statistics from Transmission
 func SetTransmissionStatistics() error {
 	// Get the count by running transmission-remote -l
@@ -147,7 +145,7 @@ func SetTransmissionStatistics() error {
 
 	err := runCommand(cmd, 5*time.Second)
 	if err != nil {
-		return err 
+		return err
 	}
 
 	out, err := cmd.Output()
@@ -164,7 +162,7 @@ func SetTransmissionStatistics() error {
 
 	err = runCommand(cmd, 5*time.Second)
 	if err != nil {
-		return err 
+		return err
 	}
 
 	out, err = cmd.Output()
