@@ -7,9 +7,9 @@
         <h2>
             {{ .Name }} {{if .Official }} (Official Mirror) {{ end }}
         </h2>
-        {{ if eq (.SyncStyle) ("static") }} (STATIC) 
+        {{ if eq (.SyncStyle) ("static") }}
         <p>
-            This project is no longer recieving updates.
+            {{ .Static.Description }}
         </p>
         {{ end }}
         <p>

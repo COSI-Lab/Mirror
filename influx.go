@@ -102,7 +102,7 @@ func (l LineChart) Less(i, j int) bool {
 	return l.Times[i] < l.Times[j]
 }
 
-// Gets the total network bytes sent and recieved for the last week in 1 hour blocks
+// Gets the total network bytes sent and received for the last week in 1 hour blocks
 func QueryWeeklyNetStats() (line LineChart, err error) {
 	// You can paste this into the influxdb data explorer
 	/*
