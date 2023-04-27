@@ -1,7 +1,7 @@
-var collapsable = document.getElementsByClassName("toc-heading");
+var collapsible = document.getElementsByClassName("toc-heading");
 
-for (let i = 0; i < collapsable.length; i++) {
-  collapsable[i].addEventListener("click", function () {
+for (let i = 0; i < collapsible.length; i++) {
+  collapsible[i].addEventListener("click", function () {
     this.classList.toggle("toc-heading-extended");
     var content = this.nextElementSibling;
     if (content.style.display === "block") {

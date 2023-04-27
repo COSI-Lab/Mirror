@@ -12,7 +12,7 @@ $EDITOR blender.secret
 
 ## Third party configs
 
-Some projects ask that syncs be preformed using a seperate script. Typically these scripts are rsync wrappers. Currently these configs are for third party scripts.
+Some projects ask that syncs be preformed using a separate script. Typically these scripts are rsync wrappers. Currently these configs are for third party scripts.
 
 | project | config                                               | script                                                       |
 | :------ | :--------------------------------------------------- | :----------------------------------------------------------- |  

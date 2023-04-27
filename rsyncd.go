@@ -16,8 +16,8 @@ import (
 
 type RsyncdLogEntry struct {
 	time time.Time
-	sent int
-	recv int
+	sent int64
+	recv int64
 }
 
 func ReadRsyncdLogFile(logFile string, ch chan *RsyncdLogEntry) (err error) {
@@ -132,13 +132,13 @@ func parseRsyncdLine(line string) (*RsyncdLogEntry, error) {
 	}
 
 	// part 5 is the number of bytes sent
-	sent, err := strconv.Atoi(parts[4])
+	sent, err := strconv.ParseInt(parts[4], 10, 64)
 	if err != nil {
 		fmt.Println(err)
 		return nil, ParseLineError{}
 	}
 
-	recv, err := strconv.Atoi(parts[8])
+	recv, err := strconv.ParseInt(parts[8], 10, 64)
 	if err != nil {
 		fmt.Println(err)
 		return nil, ParseLineError{}

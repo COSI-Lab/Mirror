@@ -1,0 +1,5 @@
+[default.extend-words]
+templeos = "templeos"
+
+[files]
+extend-exclude = ["scripts"]

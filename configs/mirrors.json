@@ -1,5 +1,32 @@
 {
   "$schema": "./mirrors.schema.json",
+  "torrents": [
+    {
+      "url": "https://linuxmint.com/torrents/",
+      "depth": 1,
+      "delay": 1
+    },
+    {
+      "url": "https://torrents.artixlinux.org/torrents.php",
+      "depth": 1,
+      "delay": 1
+    },
+    {
+      "url": "https://download.documentfoundation.org/libreoffice/stable/",
+      "depth": 5,
+      "delay": 1
+    },
+    {
+      "url": "https://manjaro.org/download/",
+      "depth": 1,
+      "delay": 1
+    },
+    {
+      "url": "https://www.raspberrypi.com/software/operating-systems/",
+      "depth": 1,
+      "delay": 1
+    }
+  ],
   "mirrors": {
     "almalinux": {
       "name": "AlmaLinux",
@@ -16,7 +43,8 @@
       "color": "#7851a9",
       "publicRsync": true,
       "alternative": "http://mirror.lshiy.com/almalinux/",
-      "icon": "img/projects/almalinux.svg"
+      "icon": "img/projects/almalinux.svg",
+      "torrents": "/storage/almalinux/*/isos/*/"
     },
     "alpine": {
       "name": "Alpine Linux",
@@ -51,7 +79,8 @@
       "color": "#f0d4f0",
       "publicRsync": true,
       "alternative": "http://mirrors.rit.edu/archlinux/",
-      "icon": "img/projects/arch.svg"
+      "icon": "img/projects/arch.svg",
+      "torrents": "/storage/archlinux/iso/*/"
     },
     "archlinux32": {
       "name": "Arch Linux 32",
@@ -68,7 +97,8 @@
       "color": "#d8bfd8",
       "publicRsync": true,
       "alternative": "http://mirror.math.princeton.edu/pub/archlinux32/",
-      "icon": "img/projects/arch32.png"
+      "icon": "img/projects/arch32.png",
+      "torrents": "/storage/archlinux32/archisos/"
     },
     "artix-linux": {
       "name": "Artix Linux",
@@ -121,7 +151,8 @@
       "color": "#0abab5",
       "publicRsync": true,
       "alternative": "http://mirrors.rit.edu/centos/",
-      "icon": "img/projects/centos.svg"
+      "icon": "img/projects/centos.svg",
+      "torrents": "/storage/centos/*/isos/*/*.torrent"
     },
     "centos9": {
       "name": "CentOS Stream 9",
@@ -239,7 +270,8 @@
       "color": "#ffc87c",
       "publicRsync": true,
       "alternative": "http://debian.osuosl.org/debian-cdimage/",
-      "icon": "img/projects/debian.png"
+      "icon": "img/projects/debian.png",
+      "torrents": "/storage/debian-cd/*/*/*/"
     },
     "eclipse": {
       "name": "Eclipse",
@@ -327,7 +359,8 @@
       "color": "#7c4848",
       "publicRsync": true,
       "alternative": "http://mirrors.rit.edu/ipfire/",
-      "icon": "img/projects/ipfire.png"
+      "icon": "img/projects/ipfire.png",
+      "torrents": "/storage/ipfire/releases/*/*/"
     },
     "isabelle": {
       "name": "Isabelle",
@@ -378,7 +411,8 @@
       "color": "#03a9f4",
       "publicRsync": true,
       "alternative": "http://repo.linuxliteos.com/linuxlite",
-      "icon": "img/projects/linux-lite.png"
+      "icon": "img/projects/linux-lite.png",
+      "torrents": "/storage/linux-lite/isos/*/"
     },
     "linuxmint-images": {
       "name": "LinuxMint Images",
@@ -481,7 +515,8 @@
       "color": "#ff6fff",
       "publicRsync": true,
       "alternative": "http://mirrors.mit.edu/parrot/",
-      "icon": "img/projects/parrot.svg"
+      "icon": "img/projects/parrot.svg",
+      "torrents": "/storage/parrot/iso/*/"
     },
     "raspian": {
       "name": "Raspbian",
@@ -590,7 +625,8 @@
       "page": "Software",
       "static": {
         "location": "/storage/templeos",
-        "source": "https://templeos.org/"
+        "source": "https://templeos.org/",
+        "description": "This project is no longer receiving updates."
       },
       "official": false,
       "homepage": "https://templeos.org/",
@@ -615,6 +651,20 @@
       "publicRsync": true,
       "alternative": "http://ftp.osuosl.org/pub/tdf/",
       "icon": "img/projects/libreoffice.png"
+    },
+    "torrents": {
+      "name": "Torrents",
+      "page": "Miscellaneous",
+      "static": {
+        "location": "/storage/torrents",
+        "source": "",
+        "description": "An index of all torrents currently seeded by the mirror."
+      },
+      "official": false,
+      "homepage": "https://mirror.clarkson.edu",
+      "color": "#a500a5",
+      "publicRsync": false,
+      "icon": "img/projects/transmission.png"
     },
     "ubuntu": {
       "name": "Ubuntu",
@@ -649,7 +699,8 @@
       "color": "#ffd300",
       "publicRsync": true,
       "alternative": "http://mirrors.mit.edu/ubuntu-releases/",
-      "icon": "img/projects/ubuntu.png"
+      "icon": "img/projects/ubuntu.png",
+      "torrents": "/storage/ubuntu-releases/*/"
     },
     "videolan": {
       "name": "VLC",
@@ -701,7 +752,8 @@
       "homepage": "https://dumps.wikimedia.org/",
       "color": "#ffffff",
       "publicRsync": false,
-      "alternative": "http://dumps.wikimedia.your.org/"
+      "alternative": "http://dumps.wikimedia.your.org/",
+      "icon": "img/wikimedia.png"
     },
     "zorinos": {
       "name": "Zorin OS",

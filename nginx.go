@@ -33,8 +33,8 @@ type NginxLogEntry struct {
 	Url       string
 	Version   string
 	Status    int
-	BytesSent int
-	BytesRecv int
+	BytesSent int64
+	BytesRecv int64
 	Agent     string
 }
 
@@ -194,8 +194,8 @@ func parseNginxLine(line string) (*NginxLogEntry, error) {
 	}
 	entry.Status = status
 
-	// Bytes sent
-	bytesSent, err := strconv.Atoi(quoteList[4])
+	// Bytes sent int64
+	bytesSent, err := strconv.ParseInt(quoteList[4], 10, 64)
 	if err != nil {
 		// this should never fail
 		return nil, errors.New("could not parse bytes_sent")
@@ -203,7 +203,7 @@ func parseNginxLine(line string) (*NginxLogEntry, error) {
 	entry.BytesSent = bytesSent
 
 	// Bytes received
-	bytesRecv, err := strconv.Atoi(quoteList[5])
+	bytesRecv, err := strconv.ParseInt(quoteList[5], 10, 64)
 	if err != nil {
 		return nil, errors.New("could not parse bytes_recv")
 	}
