@@ -1,6 +1,6 @@
 module github.com/COSI_Lab/Mirror
 
-go 1.18
+go 1.20
 
 require (
 	github.com/COSI-Lab/datarithms v1.0.2
@@ -11,7 +11,7 @@ require (
 	github.com/gorilla/mux v1.8.0
 	github.com/gorilla/websocket v1.5.0
 	github.com/influxdata/influxdb-client-go/v2 v2.12.2
-	github.com/joho/godotenv v1.5.0
+	github.com/joho/godotenv v1.5.1
 	github.com/nxadm/tail v1.4.8
 	github.com/wcharczuk/go-chart/v2 v2.1.0
 	github.com/xeipuuv/gojsonschema v1.2.0
@@ -38,9 +38,9 @@ require (
 	github.com/temoto/robotstxt v1.1.2 // indirect
 	github.com/xeipuuv/gojsonpointer v0.0.0-20190905194746-02993c407bfb // indirect
 	github.com/xeipuuv/gojsonreference v0.0.0-20180127040603-bd5ef7bd5415 // indirect
-	golang.org/x/image v0.3.0 // indirect
-	golang.org/x/net v0.5.0 // indirect
-	golang.org/x/sys v0.4.0 // indirect
+	golang.org/x/image v0.5.0 // indirect
+	golang.org/x/net v0.7.0 // indirect
+	golang.org/x/sys v0.5.0 // indirect
 	golang.org/x/text v0.6.0 // indirect
 	google.golang.org/appengine v1.6.7 // indirect
 	google.golang.org/protobuf v1.28.1 // indirect
