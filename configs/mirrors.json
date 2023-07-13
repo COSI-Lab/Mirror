@@ -474,7 +474,7 @@
         "src": "builds",
         "dest": "/storage/msys2",
         "options": "-avzrHy --no-perms --no-group --no-owner --delete --delete-delay --delay-updates --ignore-errors --exclude \".~tmp~\"",
-        "syncs_per_day": 1
+        "syncs_per_day": 4
       },
       "official": true,
       "homepage": "https://www.msys2.org/",
