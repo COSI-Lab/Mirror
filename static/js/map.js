@@ -1,6 +1,7 @@
 // How long points are displayed (in milliseconds)
 const displayTimeSeconds = 3600;
-const DISPLAY_TIME = 1000 * displayTimeSeconds;
+const MILLISECONDS_PER_SECOND = 1000
+const DISPLAY_TIME = MILLISECONDS_PER_SECOND * displayTimeSeconds;
 var circles = [];
 
 // Connects to the websocket endpoint
@@ -89,7 +90,7 @@ window.onload = async function () {
       // The color is passed from the template
       ctx.fillStyle = distros[circle[2]][1];
       ctx.beginPath();
-      ctx.globalAlpha = 1 - delta / DISPLAY_TIME;
+      ctx.globalAlpha = 1 - (DISPLAY_TIME < 6000 ? 0 : (delta / (DISPLAY_TIME * 100)));
       ctx.arc(
         circle[0] * canvas.width,
         circle[1] * canvas.height,
@@ -109,15 +110,15 @@ window.onload = async function () {
     let startX = 10;
     let startY = canvas.height * 0.30;
 
-    let numberOfEntries = distros.map((d) => d[3]).reduce((a, b) => a + b);
-    if (numberOfEntries == 0) {
+    let legendEntries = distros.map((d) => d[3]).reduce((a, b) => a + b);
+    if (legendEntries == 0) {
       await new Promise((r) => setTimeout(r, 15));
       continue;
     }
-    console.log(numberOfEntries)
+    console.log(legendEntries)
 
     // Show rectangle
-    let height = 15 * numberOfEntries;
+    let height = 15 * legendEntries;
     let width = 135;
     ctx.globalAlpha = 1;
     ctx.fillStyle = "#383838";
@@ -132,21 +133,22 @@ window.onload = async function () {
     // Print each visible distro
     ctx.font = "15px Arial";
     ctx.textAlign = "left";
-    const sorted = [...distros].sort((a, b) => b[2] - a[2]);
-    for (let i = 0; i < sorted.length; i++) {
-      if (sorted[i][3] == 1) {
+    const sortedLegend = [...distros].sort((a, b) => b[2] - a[2]);
+    for (let i = 0; i < sortedLegend.length; i++) {
+      if (sortedLegend[i][3] == 1) {
         if (startY + incY > canvas.height * 0.9) {
           incY = 0;
           incX += 130;
         }
-        ctx.fillStyle = sorted[i][1];
-        ctx.fillText(sorted[i][0], startX + incX, startY + incY);
+        ctx.fillStyle = sortedLegend[i][1];
+        ctx.fillText(sortedLegend[i][0], startX + incX, startY + incY);
         incY += 15;
-        sorted[i][3] = 0;
+        sortedLegend[i][3] = 0;
       }
     }
 
     // Run around 60 fps
-    await new Promise((r) => setTimeout(r, 1000 / 60));
+    const framesPerSecond = 5
+    await new Promise((handler) => setTimeout(handler, MILLISECONDS_PER_SECOND / framesPerSecond));
   }
 };
