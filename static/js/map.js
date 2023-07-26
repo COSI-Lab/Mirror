@@ -1,10 +1,11 @@
 // How long points are displayed (in milliseconds)
-const DISPLAY_TIME = 1000 * 30;
+const displayTimeSeconds = 60;
+const DISPLAY_TIME = 1000 * displayTimeSeconds;
 var circles = [];
 
 // Connects to the websocket endpoint
 function connect() {
-  let ws_scheme = window.location.protocol == "https:" ? "wss://" : "ws://";
+  let ws_scheme = window.location.protocol === "https:" ? "wss://" : "ws://";
 
   let socket = new WebSocket(ws_scheme + window.location.host + "/ws");
   socket.binaryType = "arraybuffer";
@@ -19,12 +20,12 @@ function connect() {
     for (let i = 0; i < buffer.length; i += 5) {
       // First byte is the distro id
       const distro = buffer[i];
-      const lat = buffer[i+1] << 8 | buffer[i+2];
-      const long = buffer[i+3] << 8 | buffer[i+4];
+      const lat = buffer[i + 1] << 8 | buffer[i + 2];
+      const long = buffer[i + 3] << 8 | buffer[i + 4];
 
       // Convert into x and y coordinates and put them on scale of 0-1
       const x = long / 4096;
-      const y = (4096 - lat)  / 4096;
+      const y = (4096 - lat) / 4096;
 
       // Add new data points to the front of the list
       circles.unshift([x, y, distro, new Date().getTime()]);
@@ -146,6 +147,6 @@ window.onload = async function () {
     }
 
     // Run around 60 fps
-    await new Promise((r) => setTimeout(r, 1000/60));
+    await new Promise((r) => setTimeout(r, 1000 / 60));
   }
 };
