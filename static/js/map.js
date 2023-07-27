@@ -1,5 +1,5 @@
 // How long points are displayed (in milliseconds)
-const displayTimeSeconds = 3600;
+const displayTimeSeconds = 900;
 const MILLISECONDS_PER_SECOND = 1000
 const DISPLAY_TIME = MILLISECONDS_PER_SECOND * displayTimeSeconds;
 var circles = [];
