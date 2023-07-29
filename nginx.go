@@ -19,7 +19,7 @@ import (
 
 // It is critical that NGINX uses the following log format:
 /*
- * log_format config '"$remote_addr" "$time_local" "$request" "$status" "$body_bytes_sent" "$request_length" "$http_user_agent"';
+ * log_format config '"$time_local" "$remote_addr" "$request" "$status" "$body_bytes_sent" "$request_length" "$http_user_agent"';
  * access_log /var/log/nginx/access.log config;
  */
 
@@ -104,20 +104,10 @@ func TailNginxLogFile(logFile string, lastUpdated time.Time, channels ...chan *N
 
 // parseNginxDate parses a single line of the nginx log file and returns the time.Time of the line
 func parseNginxDate(line string) (time.Time, error) {
-	// "$remote_addr" "$time_local" "$request" "$status" "$body_bytes_sent" "$request_length" "$http_user_agent";
-	quoteList := reQuotes.FindAllString(line, -1)
-
-	if len(quoteList) != 7 {
-		return time.Time{}, errors.New("invalid number of quotes")
-	}
-
-	// Time
-	t := "\"02/Jan/2006:15:04:05 -0700\""
-	tm, err := time.Parse(t, quoteList[1])
+	tm, err := time.Parse("\"02/Jan/2006:15:04:05 -0700\"", reQuotes.FindString(line))
 	if err != nil {
 		return time.Time{}, err
 	}
-
 	return tm, nil
 }
 
@@ -126,7 +116,7 @@ func parseNginxDate(line string) (time.Time, error) {
 // If the log file is not in the correct format or if some other part of the parsing fails
 // this function will return an error
 func parseNginxLine(line string) (*NginxLogEntry, error) {
-	// "$remote_addr" "$time_local" "$request" "$status" "$body_bytes_sent" "$request_length" "$http_user_agent";
+	// "$time_local" "$remote_addr" "$request" "$status" "$body_bytes_sent" "$request_length" "$http_user_agent";
 	quoteList := reQuotes.FindAllString(line, -1)
 
 	if len(quoteList) != 7 {
@@ -141,8 +131,16 @@ func parseNginxLine(line string) (*NginxLogEntry, error) {
 	var entry NginxLogEntry
 	var err error
 
+	// Time
+	t := "02/Jan/2006:15:04:05 -0700"
+	tm, err := time.Parse(t, quoteList[0])
+	if err != nil {
+		return nil, err
+	}
+	entry.Time = tm
+
 	// IPv4 or IPv6 address
-	entry.IP = net.ParseIP(quoteList[0])
+	entry.IP = net.ParseIP(quoteList[1])
 	if entry.IP == nil {
 		return nil, errors.New("failed to parse ip")
 	}
@@ -158,14 +156,6 @@ func parseNginxLine(line string) (*NginxLogEntry, error) {
 	} else {
 		entry.City = nil
 	}
-
-	// Time
-	t := "02/Jan/2006:15:04:05 -0700"
-	tm, err := time.Parse(t, quoteList[1])
-	if err != nil {
-		return nil, err
-	}
-	entry.Time = tm
 
 	// Method url http version
 	split := strings.Split(quoteList[2], " ")
