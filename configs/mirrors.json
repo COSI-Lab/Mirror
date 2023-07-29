@@ -556,10 +556,10 @@
       "name": "RebornOS",
       "page": "Distributions",
       "rsync": {
-        "host": "mirrors.dotsrc.org",
-        "src": "osdn/storage/g/r/re/rebornos/repo/RebornOS",
+        "host": "144.126.251.157",
+        "src": "rsync",
         "dest": "/storage/RebornOS",
-        "options": "-avzrHy --no-perms --no-group --no-owner --delete --delete-delay --delay-updates --ignore-errors --exclude \".~tmp~\"",
+        "options": "-vrlptHy --no-perms --no-owner --no-group --safe-links --delete-delay --delay-updates",
         "syncs_per_day": 2
       },
       "official": true,
