@@ -183,10 +183,10 @@ func main() {
 	}()
 
 	// Enforce we are running linux or macos
-	//	if runtime.GOOS != "linux" && runtime.GOOS != "darwin" {
-	//		fmt.Println("This program is only meant to be run on *nix systems")
-	//		os.Exit(1)
-	//	}
+	if runtime.GOOS != "linux" && runtime.GOOS != "darwin" {
+		fmt.Println("This program is only meant to be run on *nix systems")
+		os.Exit(1)
+	}
 
 	// Do not run as root
 	if os.Geteuid() == 0 {
