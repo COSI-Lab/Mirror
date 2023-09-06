@@ -330,7 +330,7 @@
         "options": "-avzrHy --no-perms --no-group --no-owner --delete --delete-delay --delay-updates --ignore-errors --exclude \".~tmp~\" --exclude \"/releases/historical\"",
         "syncs_per_day": 6
       },
-      "official": false,
+      "official": true,
       "homepage": "https://www.gentoo.org/",
       "color": "#30d5c8",
       "publicRsync": true,
