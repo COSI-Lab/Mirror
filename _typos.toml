@@ -1,5 +1,6 @@
 [default.extend-words]
 templeos = "templeos"
+WRONLY = "WRONLY"
 
 [files]
 extend-exclude = ["scripts"]

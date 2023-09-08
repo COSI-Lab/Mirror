@@ -1,5 +1,11 @@
 {
   "$schema": "./mirrors.schema.json",
+  "subnets": {
+    "clarkson": [
+      "128.153.0.0/16",
+      "2605:6480::/32"
+    ]
+  },
   "torrents": [
     {
       "url": "https://linuxmint.com/torrents/",
@@ -64,7 +70,6 @@
         "src": "alpine",
         "dest": "/storage/alpine",
         "options": "-avzrHy --no-perms --no-group --no-owner --delete --delete-delay --delay-updates --ignore-errors --exclude \".~tmp~\"",
-        "sync_file": "last-updated",
         "syncs_per_day": 4
       },
       "official": true,

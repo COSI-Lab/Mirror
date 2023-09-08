@@ -1,17 +1,19 @@
 package main
 
 import (
+	"context"
+	"errors"
 	"fmt"
+	"net"
 	"os"
 	"os/signal"
 	"runtime"
-	"runtime/debug"
-	"strconv"
-	"syscall"
 	"time"
 
+	"github.com/COSI-Lab/Mirror/config"
+	"github.com/COSI-Lab/Mirror/logging"
 	"github.com/COSI-Lab/geoip"
-	"github.com/COSI-Lab/logging"
+	"github.com/gofrs/flock"
 	"github.com/joho/godotenv"
 )
 
@@ -19,8 +21,6 @@ var geoipHandler *geoip.GeoIPHandler
 
 // .env variables
 var (
-	// ADM_GROUP
-	admGroup int = 0
 	// HOOK_URL and PING_URL and handled in the logging packages
 	// MAXMIND_LICENSE_KEY
 	maxmindLicenseKey string
@@ -53,9 +53,6 @@ var (
 )
 
 func init() {
-	// Print it's process ID
-	logging.Info("PID:", os.Getpid())
-
 	// Load the environment variables
 	err := godotenv.Load()
 	if err != nil {
@@ -75,32 +72,8 @@ func init() {
 	hookURL = os.Getenv("HOOK_URL")
 	pingID = os.Getenv("PING_ID")
 	pullToken = os.Getenv("PULL_TOKEN")
-	admGroupStr := os.Getenv("ADM_GROUP")
 	torrentDir = os.Getenv("TORRENT_DIR")
 	downloadDir = os.Getenv("DOWNLOAD_DIR")
-
-	if admGroupStr != "" {
-		admGroup, err = strconv.Atoi(admGroupStr)
-
-		if err != nil {
-			logging.Warn("environment variable ADM_GROUP", err)
-		} else {
-			// Verify adm is in our list of groups
-			groups, err := os.Getgroups()
-			if err != nil {
-				logging.Warn("Could not get groups")
-			}
-			var foundAdmGroup bool
-			for _, group := range groups {
-				if group == admGroup {
-					foundAdmGroup = true
-				}
-			}
-			if !foundAdmGroup {
-				logging.Warn("ADM_GROUP is not in the list of usable groups")
-			}
-		}
-	}
 
 	// Check if the environment variables are set
 	if maxmindLicenseKey == "" {
@@ -161,27 +134,92 @@ func init() {
 	}
 }
 
-func loadConfig() *ConfigFile {
-	config := ParseConfig("configs/mirrors.json", "configs/mirrors.schema.json", "configs/tokens.txt")
-	return &config
+func loadConfig() (*config.File, error) {
+	configFile, err := os.Open("configs/mirrors.json")
+	if err != nil {
+		return nil, errors.New("Could not open mirrors.json: " + err.Error())
+	}
+	defer configFile.Close()
+
+	schemaFile, err := os.Open("configs/mirrors.schema.json")
+	if err != nil {
+		return nil, errors.New("Could not open mirrors.schema.json: " + err.Error())
+	}
+	defer schemaFile.Close()
+
+	config, err := config.ReadProjectConfig(configFile, schemaFile)
+	if err != nil {
+		return nil, err
+	}
+
+	return config, config.Validate()
 }
 
-var restartCount int
+func loadTokens() (*config.Tokens, error) {
+	tokensFile, err := os.Open("configs/tokens.toml")
+	if err != nil {
+		return nil, errors.New("Could not open tokens.toml: " + err.Error())
+	}
+
+	tokens, err := config.ReadTokens(tokensFile)
+	if err != nil {
+		return nil, err
+	}
+
+	return tokens, nil
+}
+
+func startNGINX(config *config.File) (chan<- NGINXLogEntry, time.Time, error) {
+	nginxAg := NewNGINXProjectAggregator()
+	nginxAg.AddMeasurement("nginx", func(re NGINXLogEntry) bool {
+		return true
+	})
+
+	// Add subnet aggregators
+	for name, subnetStrings := range config.Subnets {
+		subnets := make([]*net.IPNet, 0)
+		for _, subnetString := range subnetStrings {
+			_, subnet, err := net.ParseCIDR(subnetString)
+			if err != nil {
+				logging.Warn("Failed to parse subnet", subnetString, "for", name)
+				continue
+			}
+			subnets = append(subnets, subnet)
+		}
+
+		if len(subnets) == 0 {
+			logging.Warn("No valid subnets for", name)
+			continue
+		}
+
+		nginxAg.AddMeasurement(name, func(re NGINXLogEntry) bool {
+			for _, subnet := range subnets {
+				if subnet.Contains(re.IP) {
+					return true
+				}
+			}
+			return false
+		})
+
+		logging.Info("Added subnet aggregator for", name)
+	}
+
+	nginxMetrics := make(chan NGINXLogEntry)
+	nginxLastUpdated, err := StartAggregator[NGINXLogEntry](nginxAg, nginxMetrics, reader, writer)
+
+	return nginxMetrics, nginxLastUpdated, err
+}
+
+func startRSYNC() (chan<- RsyncdLogEntry, time.Time, error) {
+	rsyncAg := NewRSYNCProjectAggregator()
+
+	rsyncMetrics := make(chan RsyncdLogEntry)
+	rsyncLastUpdated, err := StartAggregator[RsyncdLogEntry](rsyncAg, rsyncMetrics, reader, writer)
+
+	return rsyncMetrics, rsyncLastUpdated, err
+}
 
 func main() {
-	defer func() {
-		if r := recover(); r != nil {
-			restartCount++
-			if restartCount > 3 {
-				logging.PanicWithAttachment(debug.Stack(), "Program panicked more than 3 times in an hour! Exiting.")
-				os.Exit(1)
-			}
-
-			logging.PanicWithAttachment(debug.Stack(), "Program panicked and attempted to restart itself. Someone should ssh in and check it out.")
-			main()
-		}
-	}()
-
 	// Enforce we are running linux or macos
 	if runtime.GOOS != "linux" && runtime.GOOS != "darwin" {
 		fmt.Println("This program is only meant to be run on *nix systems")
@@ -193,21 +231,42 @@ func main() {
 		fmt.Println("This program should no longer be run as root")
 	}
 
-	// Setup logging
-	logging.Setup(hookURL, pingID)
+	// Manage lock file to prevent multiple instances from running simultaneously
+	f := flock.New(os.TempDir() + "/mirror.lock")
+	interrupt := make(chan os.Signal, 1)
+	signal.Notify(interrupt, os.Interrupt)
+	go func() {
+		<-interrupt
+		if f.Locked() {
+			f.Unlock()
+		}
+		os.Exit(0)
+	}()
+
+	locked, err := f.TryLock()
+	if err != nil {
+		logging.Error(f.Path(), " could not be locked: ", err)
+		os.Exit(1)
+	}
+	if !locked {
+		logging.Error(f.Path(), " is already locked")
+		os.Exit(1)
+	}
 
 	// Parse the config file
-	config := loadConfig()
+	cfg, err := loadConfig()
+	if err != nil {
+		logging.Error("Failed to load config file:", err)
+		os.Exit(1)
+	}
 
-	// Update the rsyncd.conf file based on the config file
-	createRsyncdConfig(config)
-	// createNginxRedirects(config)
-
-	// We will always run the mirror map
-	map_entries := make(chan *NginxLogEntry, 100)
+	tokens, err := loadTokens()
+	if err != nil {
+		logging.Error("Failed to load tokens file:", err)
+		os.Exit(1)
+	}
 
 	// GeoIP lookup
-	var err error
 	if maxmindLicenseKey != "" {
 		geoipHandler, err = geoip.NewGeoIPHandler(maxmindLicenseKey)
 		if err != nil {
@@ -215,115 +274,65 @@ func main() {
 		}
 	}
 
-	// Connect to the database
-	if influxToken == "" {
-		if nginxTail != "" {
-			// zero date
-			var zero time.Time
-			go TailNginxLogFile(nginxTail, zero, map_entries)
-		} else {
-			// if nginxTail is empty we attempt to read a local access log for testing
-			go ReadNginxLogFile("access.log", map_entries)
-		}
-	} else {
+	// Update rsyncd.conf file based on the config file
+	rsyncd_conf, err := os.OpenFile("/etc/rsyncd.conf", os.O_CREATE|os.O_WRONLY, 0644)
+	if err != nil {
+		logging.Error("Could not open rsyncd.conf: ", err.Error())
+	}
+	err = cfg.CreateRsyncdConfig(rsyncd_conf)
+	if err != nil {
+		logging.Error("Failed to create rsyncd.conf: ", err.Error())
+	}
+
+	nginxChannels := make([]chan<- NGINXLogEntry, 0)
+	nginxLastUpdated := time.Now()
+	rsyncChannels := make([]chan<- RsyncdLogEntry, 0)
+	rsyncLastUpdated := time.Now()
+
+	if influxToken != "" {
+		// Setup reader and writer for influxdb
 		SetupInfluxClients(influxToken)
-		logging.Success("Connected to InfluxDB")
 
-		// Stats handling
-		nginxEntries := make(chan *NginxLogEntry, 100)
-		rsyncdEntries := make(chan *RsyncdLogEntry, 100)
-
-		lastUpdated, err := InitStatistics(config.Mirrors)
-
+		// Start the nginx aggregator
+		nginxMetrics, lastupdated, err := startNGINX(cfg)
 		if err != nil {
-			logging.Error("Failed to initialize statistics. Not tracking statistics", err)
+			logging.Error("Failed to start nginx aggregator:", err)
+			nginxLastUpdated = time.Now()
 		} else {
-			logging.Success("Initialized statistics")
-			go HandleStatistics(nginxEntries, rsyncdEntries)
+			nginxChannels = append(nginxChannels, nginxMetrics)
+			nginxLastUpdated = lastupdated
+		}
 
-			if nginxTail != "" {
-				go TailNginxLogFile(nginxTail, lastUpdated, nginxEntries, map_entries)
-			} else {
-				// if nginxTail is empty we attempt to read a local file for testing
-				go ReadNginxLogFile("access.log", nginxEntries, map_entries)
-			}
-
-			if rsyncdTail != "" {
-				go TailRSyncdLogFile(rsyncdTail, lastUpdated, rsyncdEntries)
-			} else {
-				// if rsyncdTail is empty we attempt to read a local file for testing
-				go ReadRsyncdLogFile("rsyncd.log", rsyncdEntries)
-			}
+		// Start the rsync aggregator
+		rsyncMetrics, lastupdated, err := startRSYNC()
+		if err != nil {
+			logging.Error("Failed to start rsync aggregator:", err)
+			rsyncLastUpdated = time.Now()
+		} else {
+			rsyncChannels = append(rsyncChannels, rsyncMetrics)
+			rsyncLastUpdated = lastupdated
 		}
 	}
 
-	// Listen for sighup
-	sighup := make(chan os.Signal, 1)
-	signal.Notify(sighup, syscall.SIGHUP)
-
-	var manual chan string
-
-	if schedulerPaused {
-		go func() {
-			for {
-				<-sighup
-				logging.Info("Received SIGHUP")
-
-				config = loadConfig()
-				logging.Info("Reloaded config")
-
-				WebserverLoadConfig(config)
-				logging.Info("Reloaded projects page")
-			}
-		}()
-	} else {
-		// rsync scheduler
-		stop := make(chan struct{})
-		manual = make(chan string)
-		rsyncStatus := make(RSYNCStatus)
-		go handleSyncs(config, rsyncStatus, manual, stop)
-
-		go func() {
-			for {
-				<-sighup
-				logging.Info("Received SIGHUP")
-
-				config = loadConfig()
-				logging.Info("Reloaded config")
-
-				WebserverLoadConfig(config)
-				logging.Info("Reloaded projects page")
-
-				// stop the rsync scheduler
-				stop <- struct{}{}
-				<-stop
-
-				// restart the rsync scheduler
-				rsyncStatus := make(RSYNCStatus)
-				go handleSyncs(config, rsyncStatus, manual, stop)
-			}
-		}()
-	}
+	manual := make(chan string)
+	scheduler := NewScheduler(cfg, context.Background())
+	go scheduler.Start(manual)
 
 	// torrent scheduler
-	// TODO: handle reload
 	if torrentDir != "" && downloadDir != "" {
-		go HandleTorrents(config, torrentDir, downloadDir)
+		go HandleTorrents(cfg, torrentDir, downloadDir)
 	}
 
-	// Webserver
-	WebserverLoadConfig(config)
-	go HandleWebserver(manual, map_entries)
+	// WebServer
+	mapEntries := make(chan NGINXLogEntry)
+	nginxChannels = append(nginxChannels, mapEntries)
 
-	go HandleCheckIn()
+	WebServerLoadConfig(cfg, tokens)
+	go HandleWebServer(manual, mapEntries)
 
-	go checkOldLogs()
+	go TailNGINXLogFile(nginxTail, nginxLastUpdated, nginxChannels)
+	go TailRSYNCLogFile(rsyncdTail, rsyncLastUpdated, rsyncChannels)
 
-	for {
-		logging.Info(runtime.NumGoroutine(), "goroutines")
-		time.Sleep(time.Hour)
-
-		// Reset the restart count
-		restartCount = 0
-	}
+	// Wait forever
+	select {}
 }

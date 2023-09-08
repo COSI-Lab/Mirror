@@ -1,0 +1,17 @@
+# These are access tokens that can be used to trigger manual syncs of projects
+# 
+# Tokens have 3 fields. A human name describing who/what they have been created for, 
+# the token itself, and a list of projects that the token can be used to sync.
+# If the project list is empty the token can be used to sync all projects
+# 
+# The format is toml, here is an example
+
+[[tokens]]
+name = "chris"
+token = "1234567890"
+projects = []
+
+[[tokens]]
+name = "blender team"
+token = "0987654321"
+projects = ["blender"]

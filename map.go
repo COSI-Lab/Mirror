@@ -4,7 +4,7 @@ import (
 	"net"
 	"net/http"
 
-	"github.com/COSI-Lab/logging"
+	"github.com/COSI-Lab/Mirror/logging"
 	"github.com/gorilla/mux"
 	"github.com/gorilla/websocket"
 )
@@ -13,7 +13,7 @@ var upgrader = websocket.Upgrader{}
 var h hub
 
 // Upgrade the connection to a websocket and start the client
-func HandleWebsocket(w http.ResponseWriter, r *http.Request) {
+func handleWebsocket(w http.ResponseWriter, r *http.Request) {
 	// Upgrade the connection to a websocket
 	conn, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
@@ -100,7 +100,7 @@ func (c *client) write() {
 }
 
 func MapRouter(r *mux.Router, broadcast chan []byte) {
-	r.HandleFunc("/ws", HandleWebsocket)
+	r.HandleFunc("/ws", handleWebsocket)
 	r.HandleFunc("/health", handleHealth)
 
 	// Create a new hub
@@ -115,7 +115,7 @@ func MapRouter(r *mux.Router, broadcast chan []byte) {
 	go h.run()
 }
 
-func entriesToMessages(entries chan *NginxLogEntry, messages chan []byte) {
+func entriesToMessages(entries <-chan NGINXLogEntry, messages chan<- []byte) {
 	// Send groups of 8 messages
 	ch := make(chan []byte)
 	go func() {
@@ -131,27 +131,23 @@ func entriesToMessages(entries chan *NginxLogEntry, messages chan []byte) {
 	// Track the previous IP to avoid sending duplicate data
 	prevIP := net.IPv4(0, 0, 0, 0)
 	for {
-		// Read from the channel
 		entry := <-entries
 
-		// If the lookup failed, skip this entry
-		if entry == nil || entry.City == nil {
-			continue
-		}
-
-		// Skip if the IP is the same as the previous one
+		// Skip the entry if it's an immediate duplicate
 		if prevIP.Equal(entry.IP) {
 			continue
 		}
-
-		// Update the previous IP
 		prevIP = entry.IP
 
-		// Get the distro
-		project, ok := projects[entry.Distro]
-		if !ok {
+		if entry.City == nil {
 			continue
 		}
+
+		// Maps project names to project structs
+		if projects[entry.Project] != nil {
+			continue
+		}
+		id := projects[entry.Project].ID
 
 		// Get the location
 		lat_ := entry.City.Location.Latitude
@@ -169,7 +165,7 @@ func entriesToMessages(entries chan *NginxLogEntry, messages chan []byte) {
 		// Create a new message
 		msg := make([]byte, 5)
 		// First byte is the project ID
-		msg[0] = project.Id
+		msg[0] = id
 		// Second and Third byte are the latitude
 		msg[1] = byte(lat >> 8)
 		msg[2] = byte(lat & 0xFF)

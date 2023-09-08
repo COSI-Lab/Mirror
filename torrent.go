@@ -11,12 +11,13 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/COSI-Lab/logging"
+	"github.com/COSI-Lab/Mirror/config"
+	"github.com/COSI-Lab/Mirror/logging"
 	"github.com/gocolly/colly"
 )
 
 // HandleTorrents periodically downloads remote torrents and extracts torrents from disk
-func HandleTorrents(config *ConfigFile, torrentDir, downloadDir string) {
+func HandleTorrents(cfg *config.File, torrentDir, downloadDir string) {
 	err := os.MkdirAll(downloadDir, 0755)
 	if err != nil {
 		logging.Error("Failed to create torrents downloadDir: ", err)
@@ -34,32 +35,32 @@ func HandleTorrents(config *ConfigFile, torrentDir, downloadDir string) {
 	// - search disk for torrent files and corresponding downloads
 	// - sync downloadDir
 	// - sync torrentDir
-	go scrapeTorrents(config.Torrents, torrentDir)
-	go syncTorrents(config, torrentDir, downloadDir)
+	go scrapeTorrents(cfg.Torrents, torrentDir)
+	go syncTorrents(cfg, torrentDir, downloadDir)
 
 	// Sleep until midnight
 	now := time.Now()
 	midnight := time.Date(now.Year(), now.Month(), now.Day()+1, 0, 0, 0, 0, time.Local)
 	time.Sleep(time.Until(midnight))
-	go scrapeTorrents(config.Torrents, torrentDir)
-	go syncTorrents(config, torrentDir, downloadDir)
+	go scrapeTorrents(cfg.Torrents, torrentDir)
+	go syncTorrents(cfg, torrentDir, downloadDir)
 
 	ticker := time.NewTicker(24 * time.Hour)
 	for range ticker.C {
-		go scrapeTorrents(config.Torrents, torrentDir)
-		go syncTorrents(config, torrentDir, downloadDir)
+		go scrapeTorrents(cfg.Torrents, torrentDir)
+		go syncTorrents(cfg, torrentDir, downloadDir)
 	}
 }
 
 // syncTorrents goes over all projects, finds their torrent files, the corresponding source
 // files and then creates hardlinks in the download and torrent directories
-func syncTorrents(config *ConfigFile, torrentDir, ourDir string) {
-	for _, project := range config.GetProjects() {
+func syncTorrents(cfg *config.File, torrentDir, ourDir string) {
+	for _, project := range cfg.GetProjects() {
 		if project.Torrents == "" {
 			continue
 		}
 
-		go func(project Project) {
+		go func(project config.Project) {
 			// Find all torrent files using glob
 			matches, err := filepath.Glob(project.Torrents + "*.torrent")
 
@@ -94,7 +95,7 @@ func syncTorrents(config *ConfigFile, torrentDir, ourDir string) {
 }
 
 // Fetches a file from a glob and a name. Saves it to downloadDir
-func addFile(project Project, downloadDir, fileName string) {
+func addFile(project config.Project, downloadDir, fileName string) {
 	// Search the glob for the corresponding file
 	files, err := filepath.Glob(project.Torrents + fileName)
 	if err != nil {
@@ -165,9 +166,9 @@ func addFile(project Project, downloadDir, fileName string) {
 }
 
 // scrapeTorrents downloads all torrents from upstreams
-func scrapeTorrents(torrents []*Torrent, downloadDir string) {
+func scrapeTorrents(torrents []*config.ScrapeTarget, downloadDir string) {
 	for _, upstream := range torrents {
-		go scrape(upstream.Depth, upstream.Delay, upstream.Url, downloadDir)
+		go scrape(upstream.Depth, upstream.Delay, upstream.URL, downloadDir)
 	}
 }
 

@@ -7,30 +7,11 @@ import (
 	"sort"
 	"time"
 
-	"github.com/COSI-Lab/logging"
+	"github.com/COSI-Lab/Mirror/logging"
 	"github.com/influxdata/influxdb-client-go/v2/api"
 	"github.com/wcharczuk/go-chart/v2"
 	"github.com/wcharczuk/go-chart/v2/drawing"
 )
-
-// Every day creates ands sends a progress report to the discord channel regarding the health of the server
-func HandleCheckIn() {
-	for {
-		// Target sending report at 7:00 AM local time
-		now := time.Now()
-		target := time.Date(now.Year(), now.Month(), now.Day(), 7, 0, 0, 0, time.Local)
-		if now.After(target) {
-			target = target.Add(24 * time.Hour)
-		}
-
-		// Sleep until target time
-		time.Sleep(target.Sub(now))
-
-		// Post the daily progress report to the discord channel (dd-mm-yyyy)
-		todays_date := time.Now().Format("02-01-2006")
-		logging.InfoToDiscord(fmt.Sprintf("Daily progress report: https://mirror.clarkson.edu/stats/total/daily_sent?data=%s", todays_date))
-	}
-}
 
 // You can paste this into the influxdb data explorer
 /*
