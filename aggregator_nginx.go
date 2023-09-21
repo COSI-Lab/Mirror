@@ -189,6 +189,7 @@ func (aggregator *NGINXProjectAggregator) Aggregate(entry NGINXLogEntry) {
 	}
 }
 
+// Send the aggregated statistics to influxdb
 func (aggregator *NGINXProjectAggregator) Send(writer api.WriteAPI) {
 	t := time.Now()
 
@@ -213,7 +214,7 @@ type NGINXLogEntry struct {
 	Time      time.Time
 	Method    string
 	Project   string
-	Url       string
+	URL       string
 	Version   string
 	Status    int
 	BytesSent int64
@@ -323,11 +324,11 @@ func parseNginxLine(line string) (entry NGINXLogEntry, err error) {
 		return entry, errors.New("invalid number of strings in request")
 	}
 	entry.Method = split[0]
-	entry.Url = split[1]
+	entry.URL = split[1]
 	entry.Version = split[2]
 
 	// Project is the top part of the URL path
-	u, err := url.Parse(entry.Url)
+	u, err := url.Parse(entry.URL)
 	if err != nil {
 		log.Fatal(err)
 	}

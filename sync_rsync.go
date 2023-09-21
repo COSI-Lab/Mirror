@@ -37,7 +37,9 @@ func init() {
 	rsyncErrorCodes[35] = "Timeout waiting for daemon connection"
 }
 
-func RsyncErrorCodeToString(code int) string {
+// RSYNCErrorCodeToString converts an rsync error code to a string
+// If the error code is not known, it returns "Unknown"
+func RSYNCErrorCodeToString(code int) string {
 	if msg, ok := rsyncErrorCodes[code]; ok {
 		return msg
 	}
@@ -45,8 +47,8 @@ func RsyncErrorCodeToString(code int) string {
 	return "Unknown"
 }
 
-// RsyncTask implements the Task interface from `scheduler`
-type RsyncTask struct {
+// RSYNCTask implements the Task interface from `scheduler`
+type RSYNCTask struct {
 	// Project `short` name
 	short    string
 	args     []string
@@ -54,8 +56,8 @@ type RsyncTask struct {
 	password string
 }
 
-// NewRsyncTask creates a new RsyncTask from a config.Rsync
-func NewRsyncTask(declaration *config.Rsync, short string) *RsyncTask {
+// NewRSYNCTask creates a new RsyncTask from a config.Rsync
+func NewRSYNCTask(declaration *config.Rsync, short string) *RSYNCTask {
 	args := make([]string, 0)
 
 	if declaration.User != "" {
@@ -74,29 +76,28 @@ func NewRsyncTask(declaration *config.Rsync, short string) *RsyncTask {
 			logging.Error("Failed to read password file:", err)
 		}
 
-		return &RsyncTask{
+		return &RSYNCTask{
 			short:    short,
 			args:     args,
 			stages:   declaration.Stages,
 			password: string(password),
 		}
-	} else {
-		return &RsyncTask{
-			short:    short,
-			args:     args,
-			stages:   declaration.Stages,
-			password: "",
-		}
+	}
+
+	return &RSYNCTask{
+		short:    short,
+		args:     args,
+		stages:   declaration.Stages,
+		password: "",
 	}
 }
 
 // Run runs the script, blocking until it finishes
-// See: Aggregator.Run
-func (r *RsyncTask) Run(stdout, stderr io.Writer, status chan<- logging.LogEntryT, ctx context.Context) TaskStatus {
+func (r *RSYNCTask) Run(ctx context.Context, stdout, stderr io.Writer, status chan<- logging.LogEntryT) TaskStatus {
 	status <- logging.InfoLogEntry(fmt.Sprintf("%s: Starting rsync", r.short))
 
 	for i := 0; i < len(r.stages); i++ {
-		status := r.RunStage(stdout, stderr, status, ctx, i)
+		status := r.RunStage(ctx, stdout, stderr, status, i)
 		if status != TaskStatusSuccess {
 			return status
 		}
@@ -106,7 +107,7 @@ func (r *RsyncTask) Run(stdout, stderr io.Writer, status chan<- logging.LogEntry
 }
 
 // RunStage runs a single stage of the rsync task
-func (r *RsyncTask) RunStage(stdout, stderr io.Writer, status chan<- logging.LogEntryT, ctx context.Context, stage int) TaskStatus {
+func (r *RSYNCTask) RunStage(ctx context.Context, stdout, stderr io.Writer, status chan<- logging.LogEntryT, stage int) TaskStatus {
 	// join r.args and r.stages[stage]
 	args := make([]string, len(r.args))
 	copy(args, r.args)
@@ -149,6 +150,6 @@ func (r *RsyncTask) RunStage(stdout, stderr io.Writer, status chan<- logging.Log
 		return TaskStatusSuccess
 	}
 
-	status <- logging.ErrorLogEntry(fmt.Sprintf("%s: Stage %d failed with exit code %d (%s)", r.short, stage, cmd.ProcessState.ExitCode(), RsyncErrorCodeToString(cmd.ProcessState.ExitCode())))
+	status <- logging.ErrorLogEntry(fmt.Sprintf("%s: Stage %d failed with exit code %d (%s)", r.short, stage, cmd.ProcessState.ExitCode(), RSYNCErrorCodeToString(cmd.ProcessState.ExitCode())))
 	return TaskStatusFailure
 }

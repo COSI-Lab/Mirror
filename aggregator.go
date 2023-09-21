@@ -48,3 +48,11 @@ type NetStat struct {
 	BytesRecv int64
 	Requests  int64
 }
+
+// ParseLineError is an error type when parsing a line in the rsyncd or nginx feed
+type ParseLineError struct{}
+
+// Error returns the error message
+func (e ParseLineError) Error() string {
+	return "Failed to parse line"
+}

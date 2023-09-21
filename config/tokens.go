@@ -11,6 +11,7 @@ type Tokens struct {
 	Tokens []Token `toml:"tokens"`
 }
 
+// ReadTokens reads the tokens.toml file into a Tokens struct
 func ReadTokens(r io.Reader) (tokens *Tokens, err error) {
 	err = toml.NewDecoder(r).Decode(&tokens)
 	if err != nil {
@@ -38,6 +39,7 @@ type Token struct {
 	Projects []string `toml:"projects"`
 }
 
+// HasProject returns true if the token has permission to trigger a manual sync for the given project
 func (token *Token) HasProject(project string) bool {
 	// Empty project list means all projects
 	if len(token.Projects) == 0 {

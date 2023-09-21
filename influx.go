@@ -14,6 +14,7 @@ import (
 var writer api.WriteAPI
 var reader api.QueryAPI
 
+// SetupInfluxClients connects to influxdb and sets up the db clients
 func SetupInfluxClients(token string) {
 	// create new client with default option for server url authenticate by token
 	options := influxdb2.DefaultOptions()
@@ -27,8 +28,7 @@ func SetupInfluxClients(token string) {
 	reader = client.QueryAPI("COSI")
 }
 
-// Gets the bytes sent for each project in the last 24 hours
-// Returns a sorted list of bytes sent for each project
+// QueryBytesSentByProject gets the bytes sent by each project in the last 24 hours
 func QueryBytesSentByProject() (map[string]int64, error) {
 	// Map from short names to bytes sent
 	bytesSent := make(map[string]int64)
@@ -78,29 +78,30 @@ func QueryBytesSentByProject() (map[string]int64, error) {
 	return bytesSent, nil
 }
 
-// implements the sort interface
+// LineChart is a type for sorting data needed to create a line chart
 type LineChart struct {
 	Sent  []float64
 	Recv  []float64
 	Times []int64
 }
 
-func (l LineChart) Len() int {
+func (l *LineChart) Len() int {
 	return len(l.Sent)
 }
 
-func (l LineChart) Swap(i, j int) {
+func (l *LineChart) Swap(i, j int) {
 	l.Sent[i], l.Sent[j] = l.Sent[j], l.Sent[i]
 	l.Recv[i], l.Recv[j] = l.Recv[j], l.Recv[i]
 	l.Times[i], l.Times[j] = l.Times[j], l.Times[i]
 }
 
-func (l LineChart) Less(i, j int) bool {
+func (l *LineChart) Less(i, j int) bool {
 	return l.Times[i] < l.Times[j]
 }
 
-// Gets the total network bytes sent and received for the last week in 1 hour blocks
-func QueryWeeklyNetStats() (line LineChart, err error) {
+// QueryWeeklyNetStats gets the bytes sent and received by the server in the last week
+// Aggregates the data into 1 hour intervals
+func QueryWeeklyNetStats() (line *LineChart, err error) {
 	// You can paste this into the influxdb data explorer
 	/*
 		from(bucket: "system")
@@ -114,7 +115,7 @@ func QueryWeeklyNetStats() (line LineChart, err error) {
 	result, err := reader.Query(context.Background(), "from(bucket: \"system\") |> range(start: -7d, stop: now()) |> filter(fn: (r) => r[\"_measurement\"] == \"net\" and r[\"interface\"] == \"enp8s0\") |> filter(fn: (r) => r[\"_field\"] == \"bytes_sent\" or r[\"_field\"] == \"bytes_recv\") |> aggregateWindow(every: 1h, fn: last) |> derivative(unit: 1s, nonNegative: true) |> yield(name: \"nonnegative derivative\")")
 
 	if err != nil {
-		return LineChart{}, err
+		return nil, err
 	}
 
 	sent := make([]float64, 0)
@@ -154,7 +155,7 @@ func QueryWeeklyNetStats() (line LineChart, err error) {
 		}
 	}
 
-	line = LineChart{
+	line = &LineChart{
 		Sent:  sent,
 		Recv:  recv,
 		Times: times,

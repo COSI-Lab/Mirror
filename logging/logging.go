@@ -126,7 +126,7 @@ func WarnF(format string, v ...interface{}) {
 	logf(WarnT, format, v...)
 }
 
-// Warning logs a message with [WARN] tag and a newline
+// Warn logs a message with [WARN] tag and a newline
 func Warn(v ...interface{}) {
 	logln(WarnT, v...)
 }

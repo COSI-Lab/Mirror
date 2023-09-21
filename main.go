@@ -210,11 +210,11 @@ func startNGINX(config *config.File) (chan<- NGINXLogEntry, time.Time, error) {
 	return nginxMetrics, nginxLastUpdated, err
 }
 
-func startRSYNC() (chan<- RsyncdLogEntry, time.Time, error) {
+func startRSYNC() (chan<- RSCYNDLogEntry, time.Time, error) {
 	rsyncAg := NewRSYNCProjectAggregator()
 
-	rsyncMetrics := make(chan RsyncdLogEntry)
-	rsyncLastUpdated, err := StartAggregator[RsyncdLogEntry](rsyncAg, rsyncMetrics, reader, writer)
+	rsyncMetrics := make(chan RSCYNDLogEntry)
+	rsyncLastUpdated, err := StartAggregator[RSCYNDLogEntry](rsyncAg, rsyncMetrics, reader, writer)
 
 	return rsyncMetrics, rsyncLastUpdated, err
 }
@@ -275,18 +275,18 @@ func main() {
 	}
 
 	// Update rsyncd.conf file based on the config file
-	rsyncd_conf, err := os.OpenFile("/etc/rsyncd.conf", os.O_CREATE|os.O_WRONLY, 0644)
+	rsyncdConf, err := os.OpenFile("/etc/rsyncd.conf", os.O_CREATE|os.O_WRONLY, 0644)
 	if err != nil {
 		logging.Error("Could not open rsyncd.conf: ", err.Error())
 	}
-	err = cfg.CreateRsyncdConfig(rsyncd_conf)
+	err = cfg.CreateRSCYNDConfig(rsyncdConf)
 	if err != nil {
 		logging.Error("Failed to create rsyncd.conf: ", err.Error())
 	}
 
 	nginxChannels := make([]chan<- NGINXLogEntry, 0)
 	nginxLastUpdated := time.Now()
-	rsyncChannels := make([]chan<- RsyncdLogEntry, 0)
+	rsyncChannels := make([]chan<- RSCYNDLogEntry, 0)
 	rsyncLastUpdated := time.Now()
 
 	if influxToken != "" {
@@ -315,7 +315,7 @@ func main() {
 	}
 
 	manual := make(chan string)
-	scheduler := NewScheduler(cfg, context.Background())
+	scheduler := NewScheduler(context.Background(), cfg)
 	go scheduler.Start(manual)
 
 	// torrent scheduler

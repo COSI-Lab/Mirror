@@ -24,7 +24,7 @@ type File struct {
 	Projects map[string]*Project `json:"mirrors"`
 }
 
-// ParseConfig reads the main mirrors.json file and checks that it matches the schema
+// ReadProjectConfig reads the main mirrors.json file and checks that it matches the schema
 func ReadProjectConfig(cfg, schema io.Reader) (config *File, err error) {
 	// read cfg and schema into byte arrays
 	cfgBytes, err := io.ReadAll(cfg)
@@ -101,10 +101,10 @@ func (config *File) GetProjects() []Project {
 	return projects
 }
 
-// CreateRsyncdConfig writes a rsyncd.conf file to the given writer based on the config
+// CreateRSCYNDConfig writes a rsyncd.conf file to the given writer based on the config
 //
 // Consider passing a bufio.Write to this function
-func (config *File) CreateRsyncdConfig(w io.Writer) error {
+func (config *File) CreateRSCYNDConfig(w io.Writer) error {
 	tmpl := `# This is a generated file. Do not edit manually.
 	uid = nobody
 	gid = nogroup

@@ -39,11 +39,10 @@ func (s *Calendar[T]) NextJob() (task T, dt time.Duration) {
 	return s.tasks[s.iterator-1], dt
 }
 
-// Scheduling algorithm
-func BuildCalendar[T any](tasks []T, timesPerDay []uint) Calendar[T] {
-	total_jobs := uint(0)
+func buildCalendar[T any](tasks []T, timesPerDay []uint) Calendar[T] {
+	totalJobs := uint(0)
 	for _, n := range timesPerDay {
-		total_jobs += n
+		totalJobs += n
 	}
 
 	// Compute least common multiple of all sync frequencies
@@ -73,10 +72,10 @@ func BuildCalendar[T any](tasks []T, timesPerDay []uint) Calendar[T] {
 		lcm = lcm * n / a
 	}
 
-	jobs := make([]T, total_jobs)
-	times := make([]float32, total_jobs)
+	jobs := make([]T, totalJobs)
+	times := make([]float32, totalJobs)
 
-	var interval float32 = 1.0 / float32(total_jobs)
+	var interval float32 = 1.0 / float32(totalJobs)
 	c := 0
 	for i := uint(0); i < lcm; i++ {
 		for idx, task := range tasks {
@@ -85,7 +84,7 @@ func BuildCalendar[T any](tasks []T, timesPerDay []uint) Calendar[T] {
 				// emit a job
 				tasks[c] = task
 				times[c] = interval * float32(c)
-				c += 1
+				c++
 			}
 		}
 	}
@@ -104,7 +103,8 @@ func (s *Calendar[T]) ForEach(f func(*T)) {
 	}
 }
 
-// Finds the first task that satisfies the predicate
+// Find returns a pointer to the first task that satisfies the predicate
+// If no task satisfies the predicate, nil is returned
 func (s *Calendar[T]) Find(f func(T) bool) *T {
 	for i := range s.tasks {
 		if f(s.tasks[i]) {

@@ -29,14 +29,14 @@ const (
 	TaskStatusStopped
 )
 
-// Tasks are the units of work to be preformed by the scheduler
+// Task is the units of work to be preformed by the scheduler
 //
 // Each task runs in its own go-routine and the scheduler ensures that only one instance of task `Run` will be called at a time
 type Task interface {
-	Run(stdout io.Writer, stderr io.Writer, status chan<- logging.LogEntryT, context context.Context) TaskStatus
+	Run(context context.Context, stdout io.Writer, stderr io.Writer, status chan<- logging.LogEntryT) TaskStatus
 }
 
-type sync_result_t struct {
+type syncResult struct {
 	start  time.Time
 	end    time.Time
 	status TaskStatus
@@ -57,7 +57,7 @@ type SchedulerTask struct {
 	short string
 
 	queue   *datarithms.CircularQueue[logging.LogEntryT]
-	results *datarithms.CircularQueue[sync_result_t]
+	results *datarithms.CircularQueue[syncResult]
 
 	channel chan logging.LogEntryT
 	stdout  *bufio.Writer
@@ -65,12 +65,12 @@ type SchedulerTask struct {
 	task    Task
 }
 
-func NewScheduler(config *config.File, ctx context.Context) Scheduler {
+// NewScheduler creates a new scheduler from a config.File
+func NewScheduler(ctx context.Context, config *config.File) Scheduler {
 	failed := false
 	month := time.Now().UTC().Month()
 
-	tasks := make([]*SchedulerTask, 0, len(config.Projects))
-	timesPerDay := make([]uint, 0, len(config.Projects))
+	builer := scheduler.NewCalendarBuilder[*SchedulerTask]()
 
 	for short, project := range config.Projects {
 		var task Task
@@ -78,7 +78,7 @@ func NewScheduler(config *config.File, ctx context.Context) Scheduler {
 
 		switch project.SyncStyle {
 		case "rsync":
-			task = NewRsyncTask(project.Rsync, short)
+			task = NewRSYNCTask(project.Rsync, short)
 			syncsPerDay = project.Rsync.SyncsPerDay
 		case "script":
 			task = NewScriptTask(project.Script, short)
@@ -88,7 +88,7 @@ func NewScheduler(config *config.File, ctx context.Context) Scheduler {
 		}
 
 		q := datarithms.NewCircularQueue[logging.LogEntryT](64)
-		results := datarithms.NewCircularQueue[sync_result_t](64)
+		results := datarithms.NewCircularQueue[syncResult](64)
 
 		channel := make(chan logging.LogEntryT, 64)
 		go func() {
@@ -113,7 +113,7 @@ func NewScheduler(config *config.File, ctx context.Context) Scheduler {
 			failed = true
 		}
 
-		tasks = append(tasks, &SchedulerTask{
+		builer.AddTask(&SchedulerTask{
 			running: false,
 			short:   short,
 			queue:   q,
@@ -122,8 +122,7 @@ func NewScheduler(config *config.File, ctx context.Context) Scheduler {
 			stdout:  bufio.NewWriter(stdout),
 			stderr:  bufio.NewWriter(stderr),
 			task:    task,
-		})
-		timesPerDay = append(timesPerDay, syncsPerDay)
+		}, syncsPerDay)
 	}
 
 	if failed {
@@ -133,7 +132,7 @@ func NewScheduler(config *config.File, ctx context.Context) Scheduler {
 
 	return Scheduler{
 		ctx:      ctx,
-		calendar: scheduler.BuildCalendar[*SchedulerTask](tasks, timesPerDay),
+		calendar: builer.Build(),
 	}
 }
 
@@ -197,11 +196,11 @@ func (t *SchedulerTask) runTask(ctx context.Context) {
 
 	go func() {
 		start := time.Now()
-		status := t.task.Run(t.stdout, t.stderr, t.channel, ctx)
+		status := t.task.Run(ctx, t.stdout, t.stderr, t.channel)
 		t.stdout.Flush()
 		t.stderr.Flush()
 		end := time.Now()
-		t.results.Push(sync_result_t{
+		t.results.Push(syncResult{
 			start:  start,
 			end:    end,
 			status: status,

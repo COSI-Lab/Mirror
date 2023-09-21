@@ -13,6 +13,7 @@ import (
 	"github.com/wcharczuk/go-chart/v2/drawing"
 )
 
+// QueryDailyNginxStats gets the hourly nginx statistics from influxdb
 // You can paste this into the influxdb data explorer
 /*
 from(bucket: "public")
@@ -41,14 +42,17 @@ func QueryDailyNginxStats() (*api.QueryTableResult, error) {
 	return nil, errors.New("Error querying influxdb")
 }
 
+// TimeSentPair is a simple product type for storing a time and the number of bytes sent
 type TimeSentPair struct {
 	t    time.Time
 	sent int64
 }
 
+// PrepareDailySendStats prepares the daily send statistics for each distro
+//
 // For each distro return a slice of (time, bytes_sent) pairs for each hour in the last 24 hours
-// It should be expected that the returned slices will be of length 24 but it is not guaranteed
-// It is guaranteed that the returned slices will be in chronological order
+// It should be expected that the returned slices will be of length 24, but this is not guaranteed
+// It is guaranteed that the returned time slices will be in chronological order
 func PrepareDailySendStats() (map[string][]TimeSentPair, error) {
 	result, err := QueryDailyNginxStats()
 	if err != nil {
@@ -97,7 +101,7 @@ func PrepareDailySendStats() (map[string][]TimeSentPair, error) {
 	return distroMap, nil
 }
 
-// Create a bar chart for the bandwidth sent per hour
+// CreateBarChart uses the go-chart library to create a bar chart from the given data
 func CreateBarChart(timeSentPairs []TimeSentPair, project string) chart.BarChart {
 	style := chart.Style{
 		FillColor:   drawing.ColorFromHex("#00bcd4"),

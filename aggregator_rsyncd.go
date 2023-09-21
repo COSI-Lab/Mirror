@@ -17,15 +17,18 @@ import (
 	"github.com/nxadm/tail"
 )
 
-type RsyncdAggregator struct {
+// RSYNCDAggregator is an Aggregator for rsyncd statistics
+type RSYNCDAggregator struct {
 	stat NetStat
 }
 
-func NewRSYNCProjectAggregator() *RsyncdAggregator {
-	return &RsyncdAggregator{}
+// NewRSYNCProjectAggregator returns a new RSYNCDAggregator
+func NewRSYNCProjectAggregator() *RSYNCDAggregator {
+	return &RSYNCDAggregator{}
 }
 
-func (a *RsyncdAggregator) Init(reader api.QueryAPI) (lastUpdated time.Time, err error) {
+// Init initializes the aggregator with the last known value from influxdb
+func (a *RSYNCDAggregator) Init(reader api.QueryAPI) (lastUpdated time.Time, err error) {
 	// You can paste this into the influxdb data explorer
 	/*
 		from(bucket: "stats")
@@ -103,13 +106,15 @@ func (a *RsyncdAggregator) Init(reader api.QueryAPI) (lastUpdated time.Time, err
 	return lastUpdated, nil
 }
 
-func (a *RsyncdAggregator) Aggregate(entry RsyncdLogEntry) {
+// Aggregate adds a RSCYNDLogEntry into the aggregator
+func (a *RSYNCDAggregator) Aggregate(entry RSCYNDLogEntry) {
 	a.stat.BytesSent += entry.sent
 	a.stat.BytesRecv += entry.recv
 	a.stat.Requests++
 }
 
-func (a *RsyncdAggregator) Send(writer api.WriteAPI) {
+// Send the aggregated statistics to influxdb
+func (a *RSYNCDAggregator) Send(writer api.WriteAPI) {
 	t := time.Now()
 
 	p := influxdb2.NewPoint("rsyncd", map[string]string{}, map[string]interface{}{
@@ -120,13 +125,15 @@ func (a *RsyncdAggregator) Send(writer api.WriteAPI) {
 	writer.WritePoint(p)
 }
 
-type RsyncdLogEntry struct {
+// RSCYNDLogEntry is a struct that represents a single line in the rsyncd log file
+type RSCYNDLogEntry struct {
 	time time.Time
 	sent int64
 	recv int64
 }
 
-func TailRSYNCLogFile(logFile string, lastUpdated time.Time, channels []chan<- RsyncdLogEntry) {
+// TailRSYNCLogFile tails the rsyncd log file and sends each line to the given channel
+func TailRSYNCLogFile(logFile string, lastUpdated time.Time, channels []chan<- RSCYNDLogEntry) {
 	// Find the offset of the line where the date is past lastUpdated
 	start := time.Now()
 
@@ -163,7 +170,7 @@ func TailRSYNCLogFile(logFile string, lastUpdated time.Time, channels []chan<- R
 
 	// Parse each line as we receive it
 	for line := range tail.Lines {
-		entry, err := parseRsyncdLine(line.Text)
+		entry, err := parseRSCYNDLine(line.Text)
 
 		if err == nil {
 			for ch := range channels {
@@ -171,12 +178,6 @@ func TailRSYNCLogFile(logFile string, lastUpdated time.Time, channels []chan<- R
 			}
 		}
 	}
-}
-
-type ParseLineError struct{}
-
-func (e ParseLineError) Error() string {
-	return "Failed to parse line"
 }
 
 func parseRSYNCDate(line string) (time.Time, error) {
@@ -201,7 +202,7 @@ func parseRSYNCDate(line string) (time.Time, error) {
 	return t, nil
 }
 
-func parseRsyncdLine(line string) (entry RsyncdLogEntry, err error) {
+func parseRSCYNDLine(line string) (entry RSCYNDLogEntry, err error) {
 	// 2022/04/20 20:00:10 [pid] sent XXX bytes  received XXX bytes  total size XXX
 
 	// Split the line over whitespace

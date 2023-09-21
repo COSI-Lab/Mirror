@@ -14,7 +14,7 @@ import (
 
 var tmpls *template.Template
 var projects map[string]*config.Project
-var projectsById []config.Project
+var projectsByID []config.Project
 var projectsGrouped config.ProjectsGrouped
 var tokens *config.Tokens
 var dataLock = &sync.RWMutex{}
@@ -40,7 +40,7 @@ func handleHome(w http.ResponseWriter, r *http.Request) {
 
 func handleMap(w http.ResponseWriter, r *http.Request) {
 	dataLock.RLock()
-	err := tmpls.ExecuteTemplate(w, "map.gohtml", projectsById)
+	err := tmpls.ExecuteTemplate(w, "map.gohtml", projectsByID)
 	dataLock.RUnlock()
 
 	if err != nil {
@@ -172,17 +172,17 @@ func handleHealth(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 }
 
-// Reload distributions and software arrays
+// WebServerLoadConfig loads a new config file to define the projects
 func WebServerLoadConfig(cfg *config.File, t *config.Tokens) {
 	dataLock.Lock()
-	projectsById = cfg.GetProjects()
+	projectsByID = cfg.GetProjects()
 	projectsGrouped = cfg.GetProjectsByPage()
 	projects = cfg.Projects
 	tokens = t
 	dataLock.Unlock()
 }
 
-// HandleWebserver starts the webserver and listens for incoming connections
+// HandleWebServer starts the webserver and listens for incoming connections
 // manual is a channel that project short names are sent down to manually trigger a projects rsync
 // entries is a channel that contains log entries that are disabled by the mirror map
 func HandleWebServer(manual chan<- string, entries <-chan NGINXLogEntry) {

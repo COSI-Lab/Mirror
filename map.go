@@ -99,6 +99,8 @@ func (c *client) write() {
 	}
 }
 
+// MapRouter adds map routes to the provided router
+// Any messages sent to the broadcast channel will be forwarded to all connected clients
 func MapRouter(r *mux.Router, broadcast chan []byte) {
 	r.HandleFunc("/ws", handleWebsocket)
 	r.HandleFunc("/health", handleHealth)
@@ -150,17 +152,17 @@ func entriesToMessages(entries <-chan NGINXLogEntry, messages chan<- []byte) {
 		id := projects[entry.Project].ID
 
 		// Get the location
-		lat_ := entry.City.Location.Latitude
-		long_ := entry.City.Location.Longitude
+		_lat := entry.City.Location.Latitude
+		_long := entry.City.Location.Longitude
 
-		if lat_ == 0 && long_ == 0 {
+		if _lat == 0 && _long == 0 {
 			continue
 		}
 
 		// convert [-90, 90] latitude to [0, 4096] pixels
-		lat := int16((lat_ + 90) * 4096 / 180)
+		lat := int16((_lat + 90) * 4096 / 180)
 		// convert [-180, 180] longitude to [0, 4096] pixels
-		long := int16((long_ + 180) * 4096 / 360)
+		long := int16((_long + 180) * 4096 / 360)
 
 		// Create a new message
 		msg := make([]byte, 5)
