@@ -7,7 +7,7 @@ Monolithic software for our [mirror](https://mirror.clarkson.edu) that handles t
 ## Setup
 
 ```cli
-git clone --recurse_submodule git@github.com:COSI-Lab/Mirror.git
+git clone --recurse-submodule https://github.com/COSI-Lab/Mirror
 ```
 
 ## `.env`
