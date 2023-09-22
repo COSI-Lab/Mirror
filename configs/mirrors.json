@@ -253,9 +253,7 @@
       "page": "Distributions",
       "script": {
         "command": "./scripts/archvsync/bin/ftpsync",
-        "arguments": [
-          "sync:all"
-        ],
+        "arguments": ["sync:all"],
         "syncs_per_day": 4
       },
       "official": true,
@@ -308,10 +306,7 @@
       "script": {
         "syncs_per_day": 4,
         "command": "./scripts/quick-fedora-mirror/quick-fedora-mirror",
-        "arguments": [
-          "-c",
-          "configs/quick-fedora-mirror.conf"
-        ]
+        "arguments": ["-c", "configs/quick-fedora-mirror.conf"]
       },
       "official": true,
       "homepage": "https://www.fedoraproject.org/",
@@ -321,7 +316,7 @@
       "icon": "img/projects/fedora.png"
     },
     "gentoo": {
-      "name": "Gentoo (Pending Official)",
+      "name": "Gentoo",
       "page": "Distributions",
       "rsync": {
         "host": "masterdistfiles.gentoo.org",
