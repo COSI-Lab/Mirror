@@ -27,11 +27,6 @@
       "delay": 1
     },
     {
-      "url": "https://www.rebornos.org/download-arm/",
-      "depth": 1,
-      "delay": 1
-    },
-    {
       "url": "https://www.rebornos.org/download/",
       "depth": 1,
       "delay": 1
@@ -594,12 +589,10 @@
     "RebornOS-ARM": {
       "name": "RebornOS ARM",
       "page": "Distributions",
-      "rsync": {
-        "host": "de.mirror.rebornos.org",
-        "src": "rebornos",
-        "dest": "/storage/RebornOS-ARM",
-        "options": "-avzrHy --no-perms --no-group --no-owner --delete --delete-delay --delay-updates --ignore-errors --exclude \".~tmp~\"",
-        "syncs_per_day": 2
+      "static": {
+        "location": "/storage/RebornOS-Arm",
+        "source": "https://rebornos.org/download-arm/",
+        "description": "RebornOS-ARM has been moved to a new project called BredOS For support and newer versions please visit their website. <a>https://bredos.org/</a>"
       },
       "official": true,
       "homepage": "https://rebornos.org/",
