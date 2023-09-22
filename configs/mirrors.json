@@ -281,7 +281,7 @@
       "icon": "img/projects/debian.png",
       "torrents": "/storage/debian-cd/*/*/*/"
     },
-    "DragonflyBSD": {
+    "dragonflybsd": {
       "name": "DragonflyBSD",
       "page": "Distributions",
       "rsync": {
