@@ -281,6 +281,23 @@
       "icon": "img/projects/debian.png",
       "torrents": "/storage/debian-cd/*/*/*/"
     },
+    "DragonflyBSD": {
+      "name": "DragonflyBSD",
+      "page": "Distributions",
+      "rsync": {
+        "host": "mirror-master.dragonflybsd.org",
+        "src": "",
+        "dest": "/storage/dragonflybsd",
+        "options": "-avzrHy --no-perms --no-group --no-owner --delete --delete-delay --delay-updates --ignore-errors --exclude \".~tmp~\"",
+        "syncs_per_day": 4
+      },
+      "official": false,
+      "homepage": "https://www.dragonflybsd.org/",
+      "color": "#eeeeee",
+      "publicRsync": true,
+      "alternative": "http://mirrors.nycbug.org/pub/DragonflyBSD/",
+      "icon": "img/projects/dragonflybsd.png"
+    },
     "eclipse": {
       "name": "Eclipse",
       "page": "Software",
