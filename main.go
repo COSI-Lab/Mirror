@@ -26,30 +26,6 @@ var (
 	maxmindLicenseKey string
 	// INFLUX_TOKEN
 	influxToken string
-	// INFLUX_READ_ONLY
-	influxReadOnly bool
-	// NGINX_TAIL
-	nginxTail string
-	// RSYNCD_TAIL
-	rsyncdTail string
-	// SCHEDULER_PAUSED
-	schedulerPaused bool
-	// RSYNC_DRY_RUN
-	syncDryRun bool
-	// RSYNC_LOGS
-	syncLogs string
-	// WEB_SERVER_CACHE
-	webServerCache bool
-	// HOOK_URL
-	hookURL string
-	// PING_ID
-	pingID string
-	// PULL_TOKEN
-	pullToken string
-	// TORRENT_DIR
-	torrentDir string
-	// DOWNLOAD_DIR
-	downloadDir string
 )
 
 func init() {
@@ -62,18 +38,6 @@ func init() {
 	// Parse the necessary environment variables
 	maxmindLicenseKey = os.Getenv("MAXMIND_LICENSE_KEY")
 	influxToken = os.Getenv("INFLUX_TOKEN")
-	influxReadOnly = os.Getenv("INFLUX_READ_ONLY") == "true"
-	nginxTail = os.Getenv("NGINX_TAIL")
-	rsyncdTail = os.Getenv("RSYNCD_TAIL")
-	schedulerPaused = os.Getenv("SCHEDULER_PAUSED") == "true"
-	syncDryRun = os.Getenv("RSYNC_DRY_RUN") == "true" || os.Getenv("SYNC_DRY_RUN") == "true"
-	syncLogs = os.Getenv("RSYNC_LOGS")
-	webServerCache = os.Getenv("WEB_SERVER_CACHE") == "true"
-	hookURL = os.Getenv("HOOK_URL")
-	pingID = os.Getenv("PING_ID")
-	pullToken = os.Getenv("PULL_TOKEN")
-	torrentDir = os.Getenv("TORRENT_DIR")
-	downloadDir = os.Getenv("DOWNLOAD_DIR")
 
 	// Check if the environment variables are set
 	if maxmindLicenseKey == "" {
@@ -84,53 +48,9 @@ func init() {
 		logging.Warn("No INFLUX_TOKEN environment variable found. InfluxDB will not be used")
 	}
 
-	if influxReadOnly {
-		logging.Warn("INFLUX_READ_ONLY is set, InfluxDB will only be used for reading")
-	}
-
-	if nginxTail == "" {
-		logging.Warn("No NGINX_TAIL environment variable found. Live tail will not be used and will instead attempt to read ./access.log")
-	}
-
-	if rsyncdTail == "" {
-		logging.Warn("No RSYNCD_TAIL environment variable found. Live tail will not be used and will instead attempt to read ./rsyncd.log")
-	}
-
-	if schedulerPaused {
-		logging.Warn("SCHEDULER_PAUSED is set, the scheduler will not run and projects will never be synced")
-	}
-
-	if syncDryRun {
-		logging.Warn("RSYNC_DRY_RUN is set, all rsyncs will be run in dry-run mode")
-	}
-
-	if syncLogs == "" {
-		logging.Warn("No RSYNC_LOGS environment variable found. Persisent logs are not being saved")
-	}
-
-	if !webServerCache {
-		logging.Warn("WEB_SERVER_CACHE is disabled. Expensive websever requests will not be cached")
-	}
-
-	if hookURL == "" || pingID == "" {
-		logging.Warn("HOOK_URL and PING_ID are required. Discord webhooks will not be used")
-	}
-
-	if pullToken == "" {
-		logging.Warn("PULL_TOKEN is not set so there is no master pull token")
-	}
-
 	// check that the system is linux
 	if runtime.GOOS != "linux" && runtime.GOOS != "darwin" {
 		logging.Warn("Torrent syncing is only support on *nix systems including the `find` command")
-	} else {
-		if torrentDir == "" {
-			logging.Warn("TORRENT_DIR is not set torrents will not be synced")
-		}
-
-		if downloadDir == "" {
-			logging.Warn("DOWNLOAD_DIR is not set torrents will not be synced")
-		}
 	}
 }
 
@@ -318,11 +238,6 @@ func main() {
 	scheduler := NewScheduler(context.Background(), cfg)
 	go scheduler.Start(manual)
 
-	// torrent scheduler
-	if torrentDir != "" && downloadDir != "" {
-		go HandleTorrents(cfg, torrentDir, downloadDir)
-	}
-
 	// WebServer
 	mapEntries := make(chan NGINXLogEntry)
 	nginxChannels = append(nginxChannels, mapEntries)
@@ -330,8 +245,8 @@ func main() {
 	WebServerLoadConfig(cfg, tokens)
 	go HandleWebServer(manual, mapEntries)
 
-	go TailNGINXLogFile(nginxTail, nginxLastUpdated, nginxChannels)
-	go TailRSYNCLogFile(rsyncdTail, rsyncLastUpdated, rsyncChannels)
+	go TailNGINXLogFile("/var/log/nginx/access.log", nginxLastUpdated, nginxChannels)
+	go TailRSYNCLogFile("/var/log/nginx/rsyncd.log", rsyncLastUpdated, rsyncChannels)
 
 	// Wait forever
 	select {}

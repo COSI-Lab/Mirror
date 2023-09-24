@@ -18,8 +18,6 @@ func SetupInfluxClients(token string) {
 
 	client := influxdb2.NewClientWithOptions("https://mirror.clarkson.edu:8086", token, options)
 
-	if !influxReadOnly {
-		writer = client.WriteAPI("COSI", "stats")
-	}
+	writer = client.WriteAPI("COSI", "stats")
 	reader = client.QueryAPI("COSI")
 }
