@@ -276,13 +276,13 @@
       "icon": "img/projects/debian.png",
       "torrents": "/storage/debian-cd/*/*/*/"
     },
-    "dragonflybsd": {
-      "name": "DragonflyBSD",
+    "dragonflybsd-img": {
+      "name": "DragonflyBSD Disc Images",
       "page": "Distributions",
       "rsync": {
         "host": "avalon.dragonflybsd.org",
         "src": "iso-images",
-        "dest": "/storage/dragonflybsd",
+        "dest": "/storage/dragonflybsd-img",
         "options": "-avzrHy --no-perms --no-group --no-owner --delete --delete-delay --delay-updates --ignore-errors --exclude \".~tmp~\"",
         "syncs_per_day": 4
       },
@@ -299,7 +299,7 @@
       "rsync": {
         "host": "avalon.dragonflybsd.org",
         "src": "dports",
-        "dest": "/storage/dragonflybsd-packages",
+        "dest": "/storage/dragonflybsd",
         "options": "-avzrHy --no-perms --no-group --no-owner --delete --delete-delay --delay-updates --ignore-errors --exclude \".~tmp~\"",
         "syncs_per_day": 4
       },
