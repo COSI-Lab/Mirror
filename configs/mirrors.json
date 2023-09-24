@@ -276,6 +276,40 @@
       "icon": "img/projects/debian.png",
       "torrents": "/storage/debian-cd/*/*/*/"
     },
+    "dragonflybsd-img": {
+      "name": "DragonflyBSD Disc Images",
+      "page": "Distributions",
+      "rsync": {
+        "host": "avalon.dragonflybsd.org",
+        "src": "iso-images",
+        "dest": "/storage/dragonflybsd-img",
+        "options": "-avzrHy --no-perms --no-group --no-owner --delete --delete-delay --delay-updates --ignore-errors --exclude \".~tmp~\"",
+        "syncs_per_day": 4
+      },
+      "official": false,
+      "homepage": "https://www.dragonflybsd.org/",
+      "color": "#eeeeee",
+      "publicRsync": true,
+      "alternative": "http://mirrors.nycbug.org/pub/DragonflyBSD/",
+      "icon": "img/projects/dragonflybsd.png"
+    },
+    "dragonflybsd": {
+      "name": "DragonflyBSD Packages",
+      "page": "Distributions",
+      "rsync": {
+        "host": "avalon.dragonflybsd.org",
+        "src": "dports",
+        "dest": "/storage/dragonflybsd",
+        "options": "-avzrHy --no-perms --no-group --no-owner --delete --delete-delay --delay-updates --ignore-errors --exclude \".~tmp~\"",
+        "syncs_per_day": 4
+      },
+      "official": false,
+      "homepage": "https://www.dragonflybsd.org/",
+      "color": "#eeeeee",
+      "publicRsync": true,
+      "alternative": "http://mirrors.nycbug.org/pub/DragonflyBSD/",
+      "icon": "img/projects/dragonflybsd.png"
+    },
     "eclipse": {
       "name": "Eclipse",
       "page": "Software",
