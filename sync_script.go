@@ -30,7 +30,7 @@ func NewScriptTask(declaration *config.Script, short string) *ScriptTask {
 }
 
 // Run runs the script, blocking until it finishes
-func (s *ScriptTask) Run(ctx context.Context, stdout, stderr io.Writer, status chan<- logging.LogEntryT) TaskStatus {
+func (s *ScriptTask) Run(ctx context.Context, stdout, stderr io.Writer, status chan<- logging.LogEntry) TaskStatus {
 	status <- logging.InfoLogEntry(fmt.Sprintf("%s: Starting script", s.short))
 	cmd := exec.Command(s.command, s.arguments...)
 	cmd.Stdout = stdout

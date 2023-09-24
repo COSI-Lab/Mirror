@@ -46,53 +46,60 @@ func (mt messageType) String() string {
 	}
 }
 
-// LogEntryT enables programmatic creation of log entries
-type LogEntryT struct {
+// LogEntry enables programmatic creation of log entries
+type LogEntry struct {
 	typ     messageType
 	time    time.Time
 	message string
 }
 
-// NewLogEntry creates a new LogEntryT with the current time
-func NewLogEntry(mt messageType, message string) LogEntryT {
-	return LogEntryT{
+// NewLogEntry creates a new LogEntry with the current time
+func NewLogEntry(mt messageType, message string) LogEntry {
+	return LogEntry{
 		typ:     mt,
 		time:    time.Now(),
 		message: message,
 	}
 }
 
-// InfoLogEntry creates a new LogEntryT with the current time and [INFO] tag
-func InfoLogEntry(message string) LogEntryT {
+// InfoLogEntry creates a new LogEntry with the current time and [INFO] tag
+func InfoLogEntry(message string) LogEntry {
 	return NewLogEntry(InfoT, message)
 }
 
-// WarnLogEntry creates a new LogEntryT with the current time and [WARN] tag
-func WarnLogEntry(message string) LogEntryT {
+// WarnLogEntry creates a new LogEntry with the current time and [WARN] tag
+func WarnLogEntry(message string) LogEntry {
 	return NewLogEntry(WarnT, message)
 }
 
-// ErrorLogEntry creates a new LogEntryT with the current time and [ERROR] tag
-func ErrorLogEntry(message string) LogEntryT {
+// ErrorLogEntry creates a new LogEntry with the current time and [ERROR] tag
+func ErrorLogEntry(message string) LogEntry {
 	return NewLogEntry(ErrorT, message)
 }
 
-// PanicLogEntry creates a new LogEntryT with the current time and [PANIC] tag
-func PanicLogEntry(message string) LogEntryT {
+// PanicLogEntry creates a new LogEntry with the current time and [PANIC] tag
+func PanicLogEntry(message string) LogEntry {
 	return NewLogEntry(PanicT, message)
 }
 
-// SuccessLogEntry creates a new LogEntryT with the current time and [SUCCESS] tag
-func SuccessLogEntry(message string) LogEntryT {
+// SuccessLogEntry creates a new LogEntry with the current time and [SUCCESS] tag
+func SuccessLogEntry(message string) LogEntry {
 	return NewLogEntry(SuccessT, message)
 }
 
-func (le LogEntryT) String() string {
+func (le LogEntry) String() string {
 	if le.message[len(le.message)-1] != '\n' {
 		return fmt.Sprintf("%s %s %s\n", time.Now().Format(tm), le.typ.String(), le.message)
 	}
 
 	return fmt.Sprintf("%s %s %s", time.Now().Format(tm), le.typ.String(), le.message)
+}
+
+// Log prints the log entry to stdout
+func (le LogEntry) Log() {
+	logger.Lock()
+	fmt.Print(le.String())
+	logger.Unlock()
 }
 
 func logf(mt messageType, format string, v ...interface{}) {
@@ -171,11 +178,4 @@ func Logf(mt messageType, format string, v ...interface{}) {
 // Log logs a message with provided tag and a newline
 func Log(mt messageType, v ...interface{}) {
 	logln(mt, v...)
-}
-
-// LogEntry logs a LogEntryT
-func LogEntry(le LogEntryT) {
-	logger.Lock()
-	fmt.Print(le.String())
-	logger.Unlock()
 }

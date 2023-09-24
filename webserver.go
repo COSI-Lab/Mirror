@@ -9,7 +9,6 @@ import (
 	"github.com/COSI-Lab/Mirror/config"
 	"github.com/COSI-Lab/Mirror/logging"
 	"github.com/gorilla/mux"
-	"github.com/wcharczuk/go-chart/v2"
 )
 
 var tmpls *template.Template
@@ -62,64 +61,6 @@ func handleProjects(w http.ResponseWriter, r *http.Request) {
 	dataLock.RUnlock()
 	if err != nil {
 		logging.Warn("handleProjects,", projects, err)
-	}
-}
-
-// The /stats page
-func handleStats(w http.ResponseWriter, r *http.Request) {
-	// get bar chart data
-	line, err := QueryWeeklyNetStats()
-	if err != nil {
-		logging.Warn("handleStats;", err)
-		return
-	}
-
-	err = tmpls.ExecuteTemplate(w, "statistics.gohtml", line)
-	if err != nil {
-		logging.Warn("handleStats;", err)
-	}
-}
-
-// The /stats/{project}/{statistic} endpoint
-// Supported statistics:
-//   - daily_sent
-func handleStatistics(w http.ResponseWriter, r *http.Request) {
-	// Get the statistic name
-	vars := mux.Vars(r)
-	project := vars["project"]
-	statistic := vars["statistic"]
-
-	if project == "" || statistic == "" {
-		w.WriteHeader(http.StatusBadRequest)
-		return
-	}
-
-	switch statistic {
-	case "daily_sent":
-		// Get the bar chart data
-		stats, err := PrepareDailySendStats()
-		if err != nil {
-			logging.Warn("handleStatistics /daily_sent", err)
-			w.WriteHeader(http.StatusInternalServerError)
-			return
-		}
-
-		// Create the bar chart for the to
-		if data, ok := stats[project]; ok {
-			graph := CreateBarChart(data, project)
-			// render the chart as PNG
-			err = graph.Render(chart.PNG, w)
-			if err != nil {
-				logging.Warn("handleStatistics /daily_sent", err)
-				w.WriteHeader(http.StatusInternalServerError)
-				return
-			}
-			w.Header().Set("Content-Type", "image/png")
-		} else {
-			w.WriteHeader(http.StatusNotFound)
-		}
-	default:
-		w.WriteHeader(http.StatusBadRequest)
 	}
 }
 
@@ -200,8 +141,6 @@ func HandleWebServer(manual chan<- string, entries <-chan NGINXLogEntry) {
 	r.HandleFunc("/home", handleHome)
 	r.HandleFunc("/projects", handleProjects)
 	r.HandleFunc("/history", handleHistory)
-	r.HandleFunc("/stats/{project}/{statistic}", handleStatistics)
-	r.HandleFunc("/stats", handleStats)
 	r.HandleFunc("/sync/{project}", handleManualSyncs(manual))
 	r.HandleFunc("/health", handleHealth)
 

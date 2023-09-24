@@ -20,7 +20,7 @@ type Aggregator[T any] interface {
 
 // StartAggregator starts the aggregator with the given Aggregator implementation, channel of type T, influxdb QueryAPI and WriteAPI.
 // It returns the lastUpdated time and an error if any occurred during initialization.
-func StartAggregator[T any](aggregator Aggregator[T], c <-chan T, reader api.QueryAPI, writer api.WriteAPI) (lastUpdated time.Time, err error) {
+func StartAggregator[T any](aggregator Aggregator[T], c <-chan T) (lastUpdated time.Time, err error) {
 	lastUpdated, err = aggregator.Init(reader)
 	if err != nil {
 		return lastUpdated, err

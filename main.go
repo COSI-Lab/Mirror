@@ -205,7 +205,7 @@ func startNGINX(config *config.File) (chan<- NGINXLogEntry, time.Time, error) {
 	}
 
 	nginxMetrics := make(chan NGINXLogEntry)
-	nginxLastUpdated, err := StartAggregator[NGINXLogEntry](nginxAg, nginxMetrics, reader, writer)
+	nginxLastUpdated, err := StartAggregator[NGINXLogEntry](nginxAg, nginxMetrics)
 
 	return nginxMetrics, nginxLastUpdated, err
 }
@@ -214,7 +214,7 @@ func startRSYNC() (chan<- RSCYNDLogEntry, time.Time, error) {
 	rsyncAg := NewRSYNCProjectAggregator()
 
 	rsyncMetrics := make(chan RSCYNDLogEntry)
-	rsyncLastUpdated, err := StartAggregator[RSCYNDLogEntry](rsyncAg, rsyncMetrics, reader, writer)
+	rsyncLastUpdated, err := StartAggregator[RSCYNDLogEntry](rsyncAg, rsyncMetrics)
 
 	return rsyncMetrics, rsyncLastUpdated, err
 }

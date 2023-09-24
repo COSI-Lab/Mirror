@@ -96,7 +96,7 @@ func buildCalendar[T any](tasks []T, timesPerDay []uint) Calendar[T] {
 	}
 }
 
-// Applies a function to each task in the calendar
+// ForEach applies a function to each task in the calendar
 func (s *Calendar[T]) ForEach(f func(*T)) {
 	for i := range s.tasks {
 		f(&s.tasks[i])

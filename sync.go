@@ -23,8 +23,6 @@ const (
 	TaskStatusSuccess TaskStatus = iota
 	// TaskStatusFailure indicates that the task failed to complete
 	TaskStatusFailure
-	// TaskStatusTimeout indicates that the task failed to complete within the allotted time
-	TaskStatusTimeout
 	// TaskStatusStopped indicates that the task was stopped before it could complete by the scheduler
 	TaskStatusStopped
 )
@@ -33,7 +31,7 @@ const (
 //
 // Each task runs in its own go-routine and the scheduler ensures that only one instance of task `Run` will be called at a time
 type Task interface {
-	Run(context context.Context, stdout io.Writer, stderr io.Writer, status chan<- logging.LogEntryT) TaskStatus
+	Run(context context.Context, stdout io.Writer, stderr io.Writer, status chan<- logging.LogEntry) TaskStatus
 }
 
 type syncResult struct {
@@ -56,10 +54,10 @@ type SchedulerTask struct {
 
 	short string
 
-	queue   *datarithms.CircularQueue[logging.LogEntryT]
+	queue   *datarithms.CircularQueue[logging.LogEntry]
 	results *datarithms.CircularQueue[syncResult]
 
-	channel chan logging.LogEntryT
+	channel chan logging.LogEntry
 	stdout  *bufio.Writer
 	stderr  *bufio.Writer
 	task    Task
@@ -87,10 +85,10 @@ func NewScheduler(ctx context.Context, config *config.File) Scheduler {
 			continue
 		}
 
-		q := datarithms.NewCircularQueue[logging.LogEntryT](64)
+		q := datarithms.NewCircularQueue[logging.LogEntry](64)
 		results := datarithms.NewCircularQueue[syncResult](64)
 
-		channel := make(chan logging.LogEntryT, 64)
+		channel := make(chan logging.LogEntry, 64)
 		go func() {
 			for {
 				select {

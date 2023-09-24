@@ -93,7 +93,7 @@ func NewRSYNCTask(declaration *config.Rsync, short string) *RSYNCTask {
 }
 
 // Run runs the script, blocking until it finishes
-func (r *RSYNCTask) Run(ctx context.Context, stdout, stderr io.Writer, status chan<- logging.LogEntryT) TaskStatus {
+func (r *RSYNCTask) Run(ctx context.Context, stdout, stderr io.Writer, status chan<- logging.LogEntry) TaskStatus {
 	status <- logging.InfoLogEntry(fmt.Sprintf("%s: Starting rsync", r.short))
 
 	for i := 0; i < len(r.stages); i++ {
@@ -107,7 +107,7 @@ func (r *RSYNCTask) Run(ctx context.Context, stdout, stderr io.Writer, status ch
 }
 
 // RunStage runs a single stage of the rsync task
-func (r *RSYNCTask) RunStage(ctx context.Context, stdout, stderr io.Writer, status chan<- logging.LogEntryT, stage int) TaskStatus {
+func (r *RSYNCTask) RunStage(ctx context.Context, stdout, stderr io.Writer, status chan<- logging.LogEntry, stage int) TaskStatus {
 	// join r.args and r.stages[stage]
 	args := make([]string, len(r.args))
 	copy(args, r.args)
