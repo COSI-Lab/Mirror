@@ -293,7 +293,7 @@
       "alternative": "http://mirrors.nycbug.org/pub/DragonflyBSD/",
       "icon": "img/projects/dragonflybsd.png"
     },
-    "dragonflybsd-packages": {
+    "dragonflybsd": {
       "name": "DragonflyBSD Packages",
       "page": "Distributions",
       "rsync": {
