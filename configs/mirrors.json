@@ -609,7 +609,7 @@
       "static": {
         "location": "/storage/RebornOS-Arm",
         "source": "https://rebornos.org/download-arm/",
-        "description": "RebornOS-ARM has been moved to a new project called BredOS For support and newer versions please visit their website. <a>https://bredos.org/</a>"
+        "description": "RebornOS-ARM has been moved to a new project called BredOS For support and newer versions please visit their website https://bredos.org/."
       },
       "official": true,
       "homepage": "https://rebornos.org/",
