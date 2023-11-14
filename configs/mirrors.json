@@ -573,8 +573,8 @@
       "name": "ravynOS",
       "page": "Distributions",
       "rsync": {
-        "host": "mirror2.sandyriver.net",
-        "src": "pub/ravynos/",
+        "host": "mirrors.nomadlogic.org",
+        "src": "www",
         "dest": "/storage/ravynos",
         "options": "-avz --no-perms --no-owner --no-group --delete --no-inc-recursive --safe-links",
         "syncs_per_day": 1
@@ -758,7 +758,7 @@
         "user": "vmirror",
         "password_file": "voidlinux.secret",
         "host": "alpha.de.repo.voidlinux.org",
-        "src": "voidmirror",
+        "src": "voidlinux",
         "dest": "/storage/voidlinux",
         "syncs_per_day": 4,
         "options": "-avzrHy --no-perms --no-group --no-owner --delete --delete-delay --delay-updates --ignore-errors --exclude \".~tmp~\" --exclude=\".*\" --exclude=\"*.lock\" --exclude=\"*.XXXX*\""
