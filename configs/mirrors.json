@@ -276,6 +276,21 @@
       "icon": "img/projects/debian.png",
       "torrents": "/storage/debian-cd/*/*/*/"
     },
+    "debian-archive": {
+      "name": "Debian Archive",
+      "page": "Distributions",
+      "rsync": {
+        "host": "rsync.archive.debian.org",
+        "src": "debian-archive",
+        "dest": "/storage/debian-archive",
+        "options": "-avzrHy --no-perms --no-group --no-owner --delete --delete-delay --delay-updates --ignore-errors --exclude \".~tmp~\"",
+        "syncs_per_day": 1
+      },
+      "official": false,
+      "color": "#ffc87c",
+      "homepage": "",
+      "publicRsync": true
+    },
     "dragonflybsd-img": {
       "name": "DragonflyBSD Disc Images",
       "page": "Distributions",
@@ -651,6 +666,21 @@
       "publicRsync": true,
       "alternative": "http://mirror1.slitaz.org/",
       "icon": "img/projects/slitaz.svg"
+    },
+    "tailsos": {
+      "name": "TailsOS",
+      "page": "Distributions",
+      "rsync": {
+        "options": "-avzrHy --no-perms --no-group --no-owner --delete --delete-delay --delay-updates --ignore-errors --exclude \".~tmp~\"",
+        "host": "mirrors.rsync.tails.boum.org",
+        "src": "amnesia-archive",
+        "dest": "/storage/tailsos",
+        "syncs_per_day": 24
+      },
+      "homepage": "https://tails.net",
+      "color": "#56347c",
+      "publicRsync": true,
+      "official": false
     },
     "templeos": {
       "name": "TempleOS",
