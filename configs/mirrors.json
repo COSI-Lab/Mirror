@@ -567,7 +567,7 @@
       "icon": "img/projects/parrot.svg",
       "torrents": "/storage/parrot/iso/*/"
     },
-    "raspian": {
+    "raspbian": {
       "name": "Raspbian",
       "page": "Distributions",
       "script": {
