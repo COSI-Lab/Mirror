@@ -289,7 +289,8 @@
       "official": false,
       "color": "#ffc87c",
       "homepage": "",
-      "publicRsync": true
+      "publicRsync": true,
+      "icon": "img/projects/debian.png"
     },
     "dragonflybsd-img": {
       "name": "DragonflyBSD Disc Images",
@@ -680,7 +681,8 @@
       "homepage": "https://tails.net",
       "color": "#56347c",
       "publicRsync": true,
-      "official": false
+      "official": false,
+      "icon": "img/projects/tailsos.svg"
     },
     "templeos": {
       "name": "TempleOS",
