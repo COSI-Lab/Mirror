@@ -23,7 +23,10 @@
         </p>
         {{ if eq (.SyncStyle) ("rsync") }}
         <p>
+            {{ if eq (.Short) ("blender") }}
+            {{ else }}        
             Upstream Mirror: rsync://{{ .Rsync.Host }}/{{ .Rsync.Src }}
+            {{ end }}
             <br>
             Syncs per day: {{ .Rsync.SyncsPerDay }}
         </p>
@@ -42,7 +45,7 @@
     </div>
     {{ end }}
 </div>
-{{end}}
+{{ end }}
 
 <head>
     <title>Mirror - Projects</title>
