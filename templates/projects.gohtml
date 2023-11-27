@@ -26,8 +26,8 @@
             {{ if eq (.Short) ("blender") }}
             {{ else }}        
             Upstream Mirror: rsync://{{ .Rsync.Host }}/{{ .Rsync.Src }}
-            {{ end }}
             <br>
+            {{ end }}
             Syncs per day: {{ .Rsync.SyncsPerDay }}
         </p>
         {{ end }}
