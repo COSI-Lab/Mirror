@@ -6,15 +6,17 @@ import (
 	"net/http"
 	"sync"
 
-	"github.com/COSI-Lab/logging"
+	"github.com/COSI-Lab/Mirror/aggregator"
+	"github.com/COSI-Lab/Mirror/config"
+	"github.com/COSI-Lab/Mirror/logging2"
 	"github.com/gorilla/mux"
-	"github.com/wcharczuk/go-chart/v2"
 )
 
 var tmpls *template.Template
-var projects map[string]*Project
-var projectsById []Project
-var projectsGrouped ProjectsGrouped
+var projects map[string]*config.Project
+var projectsByID []config.Project
+var projectsGrouped config.ProjectsGrouped
+var tokens *config.Tokens
 var dataLock = &sync.RWMutex{}
 
 func init() {
@@ -25,24 +27,24 @@ func init() {
 		},
 	}).ParseGlob("templates/*.gohtml"))
 
-	logging.Info(tmpls.DefinedTemplates())
+	logging2.Info(tmpls.DefinedTemplates())
 }
 
 func handleHome(w http.ResponseWriter, r *http.Request) {
 	err := tmpls.ExecuteTemplate(w, "home.gohtml", "")
 
 	if err != nil {
-		logging.Warn("handleHome;", err)
+		logging2.Warn("handleHome;", err)
 	}
 }
 
 func handleMap(w http.ResponseWriter, r *http.Request) {
 	dataLock.RLock()
-	err := tmpls.ExecuteTemplate(w, "map.gohtml", projectsById)
+	err := tmpls.ExecuteTemplate(w, "map.gohtml", projectsByID)
 	dataLock.RUnlock()
 
 	if err != nil {
-		logging.Warn("handleMap;", err)
+		logging2.Warn("handleMap;", err)
 	}
 }
 
@@ -50,7 +52,7 @@ func handleHistory(w http.ResponseWriter, r *http.Request) {
 	err := tmpls.ExecuteTemplate(w, "history.gohtml", "")
 
 	if err != nil {
-		logging.Warn("handleHistory;", err)
+		logging2.Warn("handleHistory;", err)
 	}
 }
 
@@ -59,70 +61,14 @@ func handleProjects(w http.ResponseWriter, r *http.Request) {
 	err := tmpls.ExecuteTemplate(w, "projects.gohtml", projectsGrouped)
 	dataLock.RUnlock()
 	if err != nil {
-		logging.Warn("handleProjects,", projects, err)
+		logging2.Warn("handleProjects,", projects, err)
 	}
 }
 
-// The /stats page
-func handleStats(w http.ResponseWriter, r *http.Request) {
-	// get bar chart data
-	line, err := QueryWeeklyNetStats()
-	if err != nil {
-		logging.Warn("handleStats;", err)
-		return
-	}
-
-	err = tmpls.ExecuteTemplate(w, "statistics.gohtml", line)
-	if err != nil {
-		logging.Warn("handleStats;", err)
-	}
-}
-
-// The /stats/{project}/{statistic} endpoint
-// Supported statistics:
-//   - daily_sent
-func handleStatistics(w http.ResponseWriter, r *http.Request) {
-	// Get the statistic name
-	vars := mux.Vars(r)
-	project := vars["project"]
-	statistic := vars["statistic"]
-
-	if project == "" || statistic == "" {
-		w.WriteHeader(http.StatusBadRequest)
-		return
-	}
-
-	switch statistic {
-	case "daily_sent":
-		// Get the bar chart data
-		stats, err := PrepareDailySendStats()
-		if err != nil {
-			logging.Warn("handleStatistics /daily_sent", err)
-			w.WriteHeader(http.StatusInternalServerError)
-			return
-		}
-
-		// Create the bar chart for the to
-		if data, ok := stats[project]; ok {
-			graph := CreateBarChart(data, project)
-			// render the chart as PNG
-			err = graph.Render(chart.PNG, w)
-			if err != nil {
-				logging.Warn("handleStatistics /daily_sent", err)
-				w.WriteHeader(http.StatusInternalServerError)
-				return
-			}
-			w.Header().Set("Content-Type", "image/png")
-		} else {
-			w.WriteHeader(http.StatusNotFound)
-		}
-	default:
-		w.WriteHeader(http.StatusBadRequest)
-	}
-}
-
-// handleManualSyncs is a endpoint that allows a privileged user to manually cause a project to sync
-// Access token is included in the query string. The http method is not considered.
+// handleManualSyncs is an endpoint that allows privileged users to manually trigger a project to sync
+// Access token must be included in the query string.
+// HTTP method is ignored
+//
 // /sync/{project}?token={token}
 func handleManualSyncs(manual chan<- string) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -133,7 +79,7 @@ func handleManualSyncs(manual chan<- string) http.HandlerFunc {
 
 		// Get the project name
 		vars := mux.Vars(r)
-		projectName := vars["project"]
+		project := vars["project"]
 
 		// Get the access token
 		token := r.URL.Query().Get("token")
@@ -142,40 +88,19 @@ func handleManualSyncs(manual chan<- string) http.HandlerFunc {
 			return
 		}
 
-		if projectName == "all" {
-			// Trigger a sync for every project
-			if token == pullToken {
-				// Return a success message
-				fmt.Fprintf(w, "Sync requested for <i>all</i> projects")
-
-				// Sync the project
-				logging.InfoToDiscord("Manual sync requested for all projects")
-
-				for name := range projects {
-					manual <- name
-				}
-			} else {
-				http.Error(w, "Invalid access token", http.StatusForbidden)
-			}
-		} else {
-			// Trigger a sync for a single project
-			project, ok := projects[projectName]
-			if !ok {
-				http.NotFound(w, r)
-				return
-			}
-
-			if token == pullToken || token == project.AccessToken {
-				// Return a success message
-				fmt.Fprintf(w, "Sync requested for project: %s", projectName)
-
-				// Sync the project
-				logging.InfoToDiscord("Manual sync requested for project: _", projectName, "_")
-				manual <- projectName
-			} else {
-				http.Error(w, "Invalid access token", http.StatusForbidden)
-			}
+		// Check if this token exists
+		t := tokens.GetToken(token)
+		if t == nil || !t.HasProject(project) {
+			http.Error(w, "Invalid access token", http.StatusForbidden)
+			return
 		}
+
+		// Return a success message
+		fmt.Fprintf(w, "Sync successfully requested for project: %s", project)
+
+		// Sync the project
+		logging2.Info("Manual sync requested for project %q", project)
+		manual <- project
 	}
 }
 
@@ -184,25 +109,24 @@ func handleHealth(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 }
 
-// Reload distributions and software arrays
-func WebserverLoadConfig(config *ConfigFile) {
+// WebServerLoadConfig loads a new config file to define the projects
+func WebServerLoadConfig(cfg *config.File, t *config.Tokens) {
 	dataLock.Lock()
-	projectsById = config.GetProjects()
-	projectsGrouped = config.GetProjectsByPage()
-	projects = config.Mirrors
+	projectsByID = cfg.GetProjects()
+	projectsGrouped = cfg.GetProjectsByPage()
+	projects = cfg.Projects
+	tokens = t
 	dataLock.Unlock()
 }
 
-// HandleWebserver starts the webserver and listens for incoming connections
+// HandleWebServer starts the webserver and listens for incoming connections
 // manual is a channel that project short names are sent down to manually trigger a projects rsync
 // entries is a channel that contains log entries that are disabled by the mirror map
-func HandleWebserver(manual chan<- string, entries chan *NginxLogEntry) {
+func HandleWebServer(manual chan<- string, entries <-chan aggregator.NGINXLogEntry) {
 	r := mux.NewRouter()
 
-	cache = make(map[string]*CacheEntry)
-
 	// Setup the map
-	r.Handle("/map", cachingMiddleware(handleMap))
+	r.HandleFunc("/map", handleMap)
 	mapMessages := make(chan []byte)
 	go entriesToMessages(entries, mapMessages)
 	MapRouter(r.PathPrefix("/map").Subrouter(), mapMessages)
@@ -210,24 +134,23 @@ func HandleWebserver(manual chan<- string, entries chan *NginxLogEntry) {
 	// Handlers for the other pages
 	// redirect / to /home
 	r.Handle("/", http.RedirectHandler("/home", http.StatusTemporaryRedirect))
-	r.Handle("/home", cachingMiddleware(handleHome))
-	r.Handle("/projects", cachingMiddleware(handleProjects))
-	r.Handle("/history", cachingMiddleware(handleHistory))
-	r.Handle("/stats/{project}/{statistic}", cachingMiddleware(handleStatistics))
-	r.Handle("/stats", cachingMiddleware(handleStats))
-	r.Handle("/sync/{project}", handleManualSyncs(manual))
+	r.HandleFunc("/home", handleHome)
+	r.HandleFunc("/projects", handleProjects)
+	r.HandleFunc("/history", handleHistory)
+	r.HandleFunc("/sync/{project}", handleManualSyncs(manual))
 	r.HandleFunc("/health", handleHealth)
-	r.HandleFunc("/ws", HandleWebsocket)
 
 	// Static files
-	r.PathPrefix("/").Handler(cachingMiddleware(http.FileServer(http.Dir("static")).ServeHTTP))
+	r.PathPrefix("/").Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		http.FileServer(http.Dir("static")).ServeHTTP(w, r)
+	}))
 
-	// Serve on 8080
+	// Serve on 8012
 	l := &http.Server{
 		Addr:    ":8012",
 		Handler: r,
 	}
 
-	logging.Success("Serving on http://localhost:8012")
+	logging2.Success("Serving on http://localhost:8012")
 	go l.ListenAndServe()
 }

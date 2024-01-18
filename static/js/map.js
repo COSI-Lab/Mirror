@@ -4,48 +4,55 @@ const MILLISECONDS_PER_SECOND = 1000
 const DISPLAY_TIME = MILLISECONDS_PER_SECOND * displayTimeSeconds;
 var circles = [];
 
-// Connects to the websocket endpoint
+// Circle class
+class Circle {
+  constructor(x, y, distro, time) {
+    this.x = x;
+    this.y = y;
+    this.distro = distro;
+    this.time = time;
+  }
+}
+
+// Connects to the websocket
 function connect() {
   let ws_scheme = window.location.protocol === "https:" ? "wss://" : "ws://";
 
   let socket = new WebSocket(ws_scheme + window.location.host + "/ws");
   socket.binaryType = "arraybuffer";
 
-  socket.onopen = function (e) {
-    console.log("Connected!", e);
-  };
   socket.onmessage = async function (message) {
     const buffer = new Uint8Array(message.data);
+    const time = new Date().getTime();
 
-    // 8 message at 5 bytes = 40 bytes
+    // Messages are sent in large groups, where every 5 bytes is a new data point
     for (let i = 0; i < buffer.length; i += 5) {
-      // First byte is the distro id
+      // u8 distro id
       const distro = buffer[i];
+      // u16 lat
       const lat = buffer[i + 1] << 8 | buffer[i + 2];
+      // u16 long
       const long = buffer[i + 3] << 8 | buffer[i + 4];
 
-      // Convert into x and y coordinates and put them on scale of 0-1
+      // Convert lat long into (x, y) coordinates for the map and scale them between 0-1
       const x = long / 4096;
       const y = (4096 - lat) / 4096;
 
-      // Add new data points to the front of the list
-      circles.unshift([x, y, distro, new Date().getTime()]);
+      // Add new data points to the end of the array
+      circles.push(new Circle(x, y, distro, time));
 
       // count hits
       distros[distro][2] += 1;
-
-      // block this thread for a bit
-      await new Promise((r) => setTimeout(r, Math.random() * 500));
     }
   };
-  socket.onclose = function (e) {
-    console.log("Disconnected!", e);
-  };
-  socket.onerror = function (e) {
-    console.log("Error!", e);
 
-    // Try to reconnect after 5 seconds
+  socket.onclose = function (e) {
+    console.log("Disconnected from server, reconnecting in 5 seconds...");
     setTimeout(connect, 5000);
+  };
+
+  socket.onerror = function (e) {
+    console.error(e);
   };
 
   return socket;
@@ -68,42 +75,39 @@ window.onload = async function () {
   window.onresize();
 
   while (true) {
-    let checkTime = new Date().getTime();
-
+    // Clear the canvas
     ctx.globalAlpha = 1;
     ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
 
-    for (let i = 0; i < circles.length; i++) {
-      let circle = circles[i];
-      distros[circle[2]][3] = 1;
+    // Remove old data points
+    const time = new Date().getTime();
 
-      // Time difference
-      const delta = checkTime - circles[i][3];
+    // Find the index of the first data point that is too old
+    let index = circles.findIndex((c) => time - c[3] > DISPLAY_TIME);
+    if (index != -1) {
+      circles.splice(0, index);
+    }
 
-      // Remove old data points
-      if (delta > DISPLAY_TIME) {
-        // We know all future indexes are older
-        circles = circles.slice(0, i);
-        break;
-      }
-
-      // The color is passed from the template
-      ctx.fillStyle = distros[circle[2]][1];
+    // Draw each circle
+    for (const circle of circles) {
+      const color = distros[circle.distro][1];
+      ctx.fillStyle = color;
       ctx.beginPath();
-      ctx.globalAlpha = 1 - (DISPLAY_TIME < 6000 ? 0 : (delta / (DISPLAY_TIME * 100)));
+      ctx.globalAlpha = 1 - ((time - circle.time) / DISPLAY_TIME);
       ctx.arc(
-        circle[0] * canvas.width,
-        circle[1] * canvas.height,
-        2.0,
+        circle.x * canvas.width,
+        circle.y * canvas.height,
+        2.0, // Radius
         0,
-        2 * Math.PI,
+        2 * Math.PI, // Full circle
         false
       );
       ctx.closePath();
       ctx.fill();
     }
 
-    // Print the legend
+    // Draw the legend
+    // TODO: Putting this on the canvas and doesn't scale well
     ctx.beginPath();
     let incX = 0;
     let incY = 0;
@@ -147,7 +151,6 @@ window.onload = async function () {
       }
     }
 
-    // Run around 60 fps
     const framesPerSecond = 5
     await new Promise((handler) => setTimeout(handler, MILLISECONDS_PER_SECOND / framesPerSecond));
   }

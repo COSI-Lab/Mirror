@@ -1,344 +1,214 @@
 package main
 
 import (
+	"bufio"
+	"context"
 	"fmt"
+	"io"
 	"os"
-	"os/exec"
-	"strings"
 	"sync"
 	"time"
 
-	"github.com/COSI-Lab/datarithms"
-	"github.com/COSI-Lab/logging"
+	"github.com/COSI-Lab/Mirror/config"
+	"github.com/COSI-Lab/Mirror/datarithms2"
+	"github.com/COSI-Lab/Mirror/logging2"
+	"github.com/COSI-Lab/Mirror/scheduler"
 )
 
-type Status struct {
-	StartTime int64 `json:"startTime"`
-	EndTime   int64 `json:"endTime"`
-	ExitCode  int   `json:"exitCode"`
+// TaskStatus is an enum of possible return statuses for a task
+type TaskStatus int
+
+const (
+	// TaskStatusSuccess indicates that the task completed successfully
+	TaskStatusSuccess TaskStatus = iota
+	// TaskStatusFailure indicates that the task failed to complete
+	TaskStatusFailure
+	// TaskStatusStopped indicates that the task was stopped before it could complete by the scheduler
+	TaskStatusStopped
+)
+
+// Task is the units of work to be preformed by the scheduler
+//
+// Each task runs in its own go-routine and the scheduler ensures that only one instance of task `Run` will be called at a time
+type Task interface {
+	Run(context context.Context, stdout io.Writer, stderr io.Writer, status chan<- logging2.LogEntry) TaskStatus
 }
-type RSYNCStatus map[string]*datarithms.CircularQueue[Status]
 
-var rsyncErrorCodes map[int]string
-var syncLock sync.Mutex
-var syncLocks = make(map[string]bool)
+type syncResult struct {
+	start  time.Time
+	end    time.Time
+	status TaskStatus
+}
 
-func init() {
-	rsyncErrorCodes = make(map[int]string)
-	rsyncErrorCodes[0] = "Success"
-	rsyncErrorCodes[1] = "Syntax or usage error"
-	rsyncErrorCodes[2] = "Protocol incompatibility"
-	rsyncErrorCodes[3] = "Errors selecting input/output files, dirs"
-	rsyncErrorCodes[4] = "Requested action not supported: an attempt was made to manipulate 64-bit files on a platform that cannot support them; or an option was specified that is supported by the client and not by the server."
-	rsyncErrorCodes[5] = "Error starting client-server protocol"
-	rsyncErrorCodes[6] = "Daemon unable to append to log-file"
-	rsyncErrorCodes[10] = "Error in socket I/O"
-	rsyncErrorCodes[11] = "Error in file I/O"
-	rsyncErrorCodes[12] = "Error in rsync protocol data stream"
-	rsyncErrorCodes[13] = "Errors with program diagnostics"
-	rsyncErrorCodes[14] = "Error in IPC code"
-	rsyncErrorCodes[20] = "Received SIGUSR1 or SIGINT"
-	rsyncErrorCodes[21] = "Some error returned by waitpid()"
-	rsyncErrorCodes[22] = "Error allocating core memory buffers"
-	rsyncErrorCodes[23] = "Partial transfer due to error"
-	rsyncErrorCodes[24] = "Partial transfer due to vanished source files"
-	rsyncErrorCodes[25] = "The --max-delete limit stopped deletions"
-	rsyncErrorCodes[30] = "Timeout in data send/receive"
-	rsyncErrorCodes[35] = "Timeout waiting for daemon connection"
+// Scheduler is the main task scheduler. It's passed a context that can be used to stop all associated tasks
+type Scheduler struct {
+	ctx context.Context
 
-	// Create the log directory
-	if syncLogs != "" {
-		err := os.MkdirAll(syncLogs, 0755)
+	calendar scheduler.Calendar[*SchedulerTask]
+}
 
+// SchedulerTask wraps a `task` to provide storage for stdout, stderr, and a channel for logging
+type SchedulerTask struct {
+	sync.Mutex
+	running bool
+
+	short string
+
+	queue   *datarithms2.CircularQueue[logging2.LogEntry]
+	results *datarithms2.CircularQueue[syncResult]
+
+	channel chan logging2.LogEntry
+	stdout  *bufio.Writer
+	stderr  *bufio.Writer
+	task    Task
+}
+
+// NewScheduler creates a new scheduler from a config.File
+func NewScheduler(ctx context.Context, config *config.File) (Scheduler, error) {
+	month := time.Now().UTC().Month()
+
+	builer := scheduler.NewCalendarBuilder[*SchedulerTask]()
+
+	// Create the log directory if it doesn't exist
+	if _, err := os.Stat("/var/log/mirror"); os.IsNotExist(err) {
+		err := os.Mkdir("/var/log/mirror", 0755)
 		if err != nil {
-			logging.Warn("failed to create RSYNC_LOGS directory", syncLogs, err, "not saving rsync logs")
-			syncLogs = ""
-		} else {
-			logging.Success("opened RSYNC_LOGS directory", syncLogs)
+			return Scheduler{}, fmt.Errorf("failed to create log directory: %s", err)
 		}
 	}
-}
 
-func rsync(project *Project, options string) ([]byte, *os.ProcessState) {
-	// split up the options TODO maybe precompute this?
-	// actually in hindsight this whole thing can be precomputed
-	args := strings.Split(options, " ")
+	for short, project := range config.Projects {
+		var task Task
+		var syncsPerDay uint
 
-	// Run with dry run if specified
-	if syncDryRun {
-		args = append(args, "--dry-run")
-		logging.Info("Syncing", project.Short, "with --dry-run")
-	}
+		switch project.SyncStyle {
+		case "rsync":
+			task = NewRSYNCTask(project.Rsync, short)
+			syncsPerDay = project.Rsync.SyncsPerDay
+		case "script":
+			task = NewScriptTask(project.Script, short)
+			syncsPerDay = project.Script.SyncsPerDay
+		default:
+			continue
+		}
 
-	// Set the source and destination
-	if project.Rsync.User != "" {
-		args = append(args, fmt.Sprintf("%s@%s::%s", project.Rsync.User, project.Rsync.Host, project.Rsync.Src))
-	} else {
-		args = append(args, fmt.Sprintf("%s::%s", project.Rsync.Host, project.Rsync.Src))
-	}
-	args = append(args, project.Rsync.Dest)
+		q := datarithms2.NewCircularQueue[logging2.LogEntry](64)
+		results := datarithms2.NewCircularQueue[syncResult](64)
 
-	command := exec.Command("rsync", args...)
+		channel := make(chan logging2.LogEntry, 64)
+		go func() {
+			for {
+				select {
+				case <-ctx.Done():
+					return
+				case entry := <-channel:
+					q.Push(entry)
+				}
+			}
+		}()
 
-	// Add the password environment variable if needed
-	if project.Rsync.Password != "" {
-		command.Env = append(os.Environ(), "RSYNC_PASSWORD="+project.Rsync.Password)
-	}
-
-	logging.Info(command)
-
-	output, _ := command.CombinedOutput()
-
-	return output, command.ProcessState
-}
-
-func appendToLogFile(short string, data []byte) {
-	// Get month
-	month := fmt.Sprintf("%02d", time.Now().UTC().Month())
-
-	// Open the log file
-	path := syncLogs + "/" + short + "-" + month + ".log"
-	file, err := os.OpenFile(path, os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0640)
-	if err != nil {
-		logging.Warn("failed to open log file ", path, err)
-	}
-
-	if admGroup != 0 {
-		// Set the file to be owned by the adm group
-		err = file.Chown(os.Getuid(), admGroup)
+		stdout, err := os.OpenFile(fmt.Sprintf("/var/log/mirror/%s-%s.log", short, month), os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 		if err != nil {
-			logging.Warn("failed to set log file ownership", path, err)
+			return Scheduler{}, fmt.Errorf("failed to open stdout file for %q: %s", short, err)
 		}
+		stderr, err := os.OpenFile(fmt.Sprintf("/var/log/mirror/%s-%s.err", short, month), os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+		if err != nil {
+			return Scheduler{}, fmt.Errorf("failed to open stderr file for %q: %s", short, err)
+		}
+
+		builer.AddTask(&SchedulerTask{
+			running: false,
+			short:   short,
+			queue:   q,
+			results: results,
+			channel: channel,
+			stdout:  bufio.NewWriter(stdout),
+			stderr:  bufio.NewWriter(stderr),
+			task:    task,
+		}, syncsPerDay)
 	}
 
-	// Write to the log file
-	_, err = file.Write(data)
-	if err != nil {
-		logging.Warn("failed to write to log file ", path, err)
-	}
+	return Scheduler{
+		ctx:      ctx,
+		calendar: builer.Build(),
+	}, nil
 }
 
-func syncProject(config *ConfigFile, status RSYNCStatus, short string) {
-	logging.Info("Running job: SYNC", short)
+// Start begins the scheduler and blocks until the context is canceled
+func (sc *Scheduler) Start(manual <-chan string) {
+	timer := time.NewTimer(0)
+	month := time.NewTimer(timeToNextMonth())
 
-	// Lock the project
-	syncLock.Lock()
-	if syncLocks[short] {
-		syncLock.Unlock()
-		logging.Warn("Sync is already running for ", short)
-		return
-	}
-	syncLocks[short] = true
-	syncLock.Unlock()
-
-	start := time.Now()
-
-	if config.Mirrors[short].SyncStyle == "rsync" {
-		// 1 stage syncs are the norm
-		output1, state1 := rsync(config.Mirrors[short], config.Mirrors[short].Rsync.Options)
-		status[short].Push(Status{StartTime: start.Unix(), EndTime: time.Now().Unix(), ExitCode: state1.ExitCode()})
-
-		// append stage 1 to its log file
-		if syncLogs != "" {
-			appendToLogFile(short, []byte("\n\n"+start.Format(time.RFC1123)+"\n"))
-			appendToLogFile(short, output1)
-		}
-
-		checkRSYNCState(short, state1, output1)
-
-		// 2 stage syncs happen sometimes
-		if config.Mirrors[short].Rsync.Second != "" {
-			start = time.Now()
-			output2, state2 := rsync(config.Mirrors[short], config.Mirrors[short].Rsync.Second)
-			status[short].Push(Status{StartTime: start.Unix(), EndTime: time.Now().Unix(), ExitCode: state2.ExitCode()})
-
-			if syncLogs != "" {
-				appendToLogFile(short, []byte("\n\n"+start.Format(time.RFC1123)+"\n"))
-				appendToLogFile(short, output2)
-			}
-
-			checkRSYNCState(short, state2, output2)
-		}
-
-		// A few mirrors are 3 stage syncs
-		if config.Mirrors[short].Rsync.Third != "" {
-			start = time.Now()
-			output3, state3 := rsync(config.Mirrors[short], config.Mirrors[short].Rsync.Third)
-			status[short].Push(Status{StartTime: start.Unix(), EndTime: time.Now().Unix(), ExitCode: state3.ExitCode()})
-
-			if syncLogs != "" {
-				appendToLogFile(short, []byte("\n\n"+start.Format(time.RFC1123)+"\n"))
-				appendToLogFile(short, output3)
-			}
-
-			checkRSYNCState(short, state3, output3)
-		}
-	} else if config.Mirrors[short].SyncStyle == "script" {
-		if syncDryRun {
-			logging.Info("Did not sync", short, "because --dry-run was specified")
-			return
-		}
-
-		// Execute the script
-		logging.Info(config.Mirrors[short].Script.Command, config.Mirrors[short].Script.Arguments)
-		command := exec.Command(config.Mirrors[short].Script.Command, config.Mirrors[short].Script.Arguments...)
-		output, _ := command.CombinedOutput()
-
-		if syncLogs != "" {
-			appendToLogFile(short, []byte("\n\n"+start.Format(time.RFC1123)+"\n"))
-			appendToLogFile(short, output)
-		}
-	}
-
-	// Unlock the project
-	syncLock.Lock()
-	syncLocks[short] = false
-	syncLock.Unlock()
-}
-
-// handleSyncs is the main scheduler
-// It builds a schedule of when to sync projects in such a way they are equally spaced across the day
-// tasks are run in a separate goroutine and there is a lock to prevent the same project from being synced simultaneously
-// the stop channel gracefully stops the scheduler after all active rsync tasks have completed
-// the manual channel is used to manually sync a project, assuming it is not already currently syncing
-func handleSyncs(config *ConfigFile, status RSYNCStatus, manual <-chan string, stop chan struct{}) {
-	for _, mirror := range config.Mirrors {
-		if mirror.Rsync.SyncsPerDay > 0 {
-			// Store a weeks worth of status messages in memory
-			status[mirror.Short] = datarithms.CircularQueueInit[Status](7 * mirror.Rsync.SyncsPerDay)
-		}
-	}
-
-	// prepare the tasks
-	tasks := make([]datarithms.Task, 0, len(config.Mirrors))
-	for _, mirror := range config.Mirrors {
-		if mirror.SyncStyle == "rsync" {
-			tasks = append(tasks, datarithms.Task{
-				Short: mirror.Short,
-				Syncs: mirror.Rsync.SyncsPerDay,
-			})
-		} else if mirror.SyncStyle == "script" {
-			tasks = append(tasks, datarithms.Task{
-				Short: mirror.Short,
-				Syncs: mirror.Script.SyncsPerDay,
-			})
-		}
-	}
-
-	// build the schedule
-	schedule := datarithms.BuildSchedule(tasks)
-
-	// error checking on the schedule
-	if !datarithms.Verify(schedule, tasks) {
-		// A "warn" should do because a human should always be watching this when it's called
-		logging.Warn("RSYNC schedule fails verification")
-	}
-
-	// a project can only be syncing once at a time
-	syncLock = sync.Mutex{}
-	syncLocks = make(map[string]bool)
-	for _, project := range config.Mirrors {
-		syncLocks[project.Short] = false
-	}
-
-	// skip the first job
-	_, sleep := schedule.NextJob()
-	timer := time.NewTimer(sleep)
-
-	logging.Success("RSYNC scheduler started, next sync in", sleep)
-
-	// run the schedule
 	for {
 		select {
-		case <-stop:
-			logging.Info("RSYNC scheduler stopping...")
-			timer.Stop()
-
-			// Wait for all the rsync tasks to finish
-			for {
-				// Check if all the rsync tasks are done
-				syncLock.Lock()
-				allDone := true
-				for _, running := range syncLocks {
-					if running {
-						allDone = false
-						break
-					}
-				}
-				syncLock.Unlock()
-
-				// If all the rsync tasks are done, break
-				if allDone {
-					break
-				}
-
-				time.Sleep(time.Second)
-			}
-
-			// Respond to the stop signal
-			stop <- struct{}{}
+		case <-sc.ctx.Done():
 			return
-		case <-timer.C:
-			short, sleep := schedule.NextJob()
-			timer.Reset(sleep + time.Second)
-
-			go syncProject(config, status, short)
-		case short := <-manual:
-			go syncProject(config, status, short)
-		}
-	}
-}
-
-func checkRSYNCState(short string, state *os.ProcessState, output []byte) {
-	if state != nil && state.Success() {
-		logging.Success("Job rsync:", short, "finished successfully")
-	} else {
-		if state.ExitCode() == 23 || state.ExitCode() == 24 {
-			// states 23 "Partial transfer due to error" and 24 "Partial transfer" are not considered important enough to message discord
-			logging.Error("Job rsync: ", short, " failed. Exit code: ", state.ExitCode(), " ", rsyncErrorCodes[state.ExitCode()])
-		} else {
-			// We have some human readable error descriptions
-			if meaning, ok := rsyncErrorCodes[state.ExitCode()]; ok {
-				logging.ErrorWithAttachment(output, "Job rsync: ", short, " failed. Exit code: ", state.ExitCode(), " ", meaning)
-			} else {
-				logging.ErrorWithAttachment(output, "Job rsync: ", short, " failed. Exit code: ", state.ExitCode())
-			}
-		}
-	}
-}
-
-// On start up then once a week checks and deletes all logs older than 3 months
-func checkOldLogs() {
-	ticker := time.NewTicker(168 * time.Hour)
-	deleteOldLogs()
-
-	for range ticker.C {
-		deleteOldLogs()
-	}
-}
-
-// deletes all logs older than 3 months
-func deleteOldLogs() {
-	logFiles, err := os.ReadDir(syncLogs)
-	if err != nil {
-		logging.Error(err)
-	} else {
-		for _, logFile := range logFiles {
-			path := syncLogs + "/" + logFile.Name()
-			fileStat, err := os.Stat(path)
-			if err != nil {
-				logging.Warn(err)
-			} else {
-				modTime := fileStat.ModTime()
-				if modTime.Before(time.Now().Add(-2160 * time.Hour)) {
-					err = os.Remove(path)
+		case <-month.C:
+			month.Reset(timeToNextMonth())
+			month := time.Now().Local().Month()
+			sc.calendar.ForEach(
+				func(task **SchedulerTask) {
+					t := *task
+					t.Lock()
+					t.stdout.Flush()
+					t.stderr.Flush()
+					// Create new files for the next month
+					stdout, err := os.OpenFile(fmt.Sprintf("/var/log/mirror/%s-%s.log", t.short, month), os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 					if err != nil {
-						logging.Warn(err)
+						logging2.Error("Failed to open stdout file for %q: %s", t.short, err)
 					} else {
-						logging.Info("removed " + path)
+						t.stdout.Reset(stdout)
 					}
-				}
-			}
+					stderr, err := os.OpenFile(fmt.Sprintf("/var/log/mirror/%s-%s.err", t.short, month), os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+					if err != nil {
+						logging2.Error("Failed to open stderr file for %q: %s", t.short, err)
+					} else {
+						t.stderr.Reset(stderr)
+					}
+					t.Unlock()
+				})
+		case <-timer.C:
+			t, dt := sc.calendar.NextJob()
+			timer.Reset(dt)
+			t.runTask(sc.ctx)
+		case short := <-manual:
+			t := *sc.calendar.Find(func(t *SchedulerTask) bool {
+				return t.short == short
+			})
+			t.runTask(sc.ctx)
 		}
 	}
+}
+
+// runTask handles locking and unlocking the task and logging the results
+func (t *SchedulerTask) runTask(ctx context.Context) {
+	t.Lock()
+	if t.running {
+		t.Unlock()
+		return
+	}
+	t.running = true
+	t.Unlock()
+
+	go func() {
+		start := time.Now()
+		status := t.task.Run(ctx, t.stdout, t.stderr, t.channel)
+		t.stdout.Flush()
+		t.stderr.Flush()
+		end := time.Now()
+		t.results.Push(syncResult{
+			start:  start,
+			end:    end,
+			status: status,
+		})
+		t.Lock()
+		t.running = false
+		t.Unlock()
+	}()
+}
+
+// timeToNextMonth returns the duration until the next month
+func timeToNextMonth() time.Duration {
+	now := time.Now().UTC()
+	return time.Until(time.Date(now.Year(), now.Month()+1, 1, 0, 0, 0, 0, time.Local))
 }

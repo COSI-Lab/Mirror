@@ -7,10 +7,22 @@ assignees: ''
 
 ---
 
-## Include full project name, a short name, and the home page url
+## Include full project name
 
-## Are you an official maintainer of this project? How would we become an "Official" mirror
+ie. Arch Linux, Blender, Gentoo
 
-## Is there a link to documentation on how to mirror the project
+## A short name url friendly name
 
-## (Optional) Around how much disk space is required to host the project
+ie. archlinux, blender, gentoo
+
+## The project's website
+
+ie. <https://archlinux.org>, <https://blender.org>, <https://gentoo.org>
+
+## Please provide some information on how to mirror the project
+
+Either link to documentation <https://wiki.archlinux.org/title/DeveloperWiki:NewMirrors>
+
+## Are you an official maintainer of this project?
+
+Yes/No
