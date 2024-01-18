@@ -21,8 +21,6 @@ const (
 	WarnT
 	// ErrorT is used for logging error [ERROR] messages
 	ErrorT
-	// PanicT is used for logging panic [PANIC] messages
-	PanicT
 	// SuccessT is used for logging success [SUCCESS] messages
 	SuccessT
 )
@@ -37,8 +35,6 @@ func (mt messageType) String() string {
 		return "\033[1m\033[33m[WARN]    \033[0m| "
 	case ErrorT:
 		return "\033[1m\033[31m[ERROR]   \033[0m| "
-	case PanicT:
-		return "\033[1m\033[34m[PANIC]   \033[0m| "
 	case SuccessT:
 		return "\033[1m\033[32m[SUCCESS] \033[0m| "
 	default:
@@ -77,11 +73,6 @@ func ErrorLogEntry(message string) LogEntry {
 	return NewLogEntry(ErrorT, message)
 }
 
-// PanicLogEntry creates a new LogEntry with the current time and [PANIC] tag
-func PanicLogEntry(message string) LogEntry {
-	return NewLogEntry(PanicT, message)
-}
-
 // SuccessLogEntry creates a new LogEntry with the current time and [SUCCESS] tag
 func SuccessLogEntry(message string) LogEntry {
 	return NewLogEntry(SuccessT, message)
@@ -102,7 +93,19 @@ func (le LogEntry) Log() {
 	logger.Unlock()
 }
 
-func logf(mt messageType, format string, v ...interface{}) {
+// Joins a `v ...any` slice into a string with spaces between each element
+func join(v ...any) string {
+	s := ""
+	for i := 0; i < len(v); i++ {
+		s += fmt.Sprint(v[i])
+		if i != len(v)-1 {
+			s += " "
+		}
+	}
+	return s
+}
+
+func logf(mt messageType, format string, v ...any) {
 	logger.Lock()
 	if format[len(format)-1] != '\n' {
 		fmt.Printf("%s %s %s\n", time.Now().Format(tm), mt.String(), fmt.Sprintf(format, v...))
@@ -112,70 +115,58 @@ func logf(mt messageType, format string, v ...interface{}) {
 	logger.Unlock()
 }
 
-func logln(mt messageType, v ...interface{}) {
+func logln(mt messageType, v ...any) {
 	logger.Lock()
-	fmt.Printf("%s %s %s\n", time.Now().Format(tm), mt.String(), fmt.Sprint(v...))
+	fmt.Printf("%s %s %s\n", time.Now().Format(tm), mt.String(), join(v...))
 	logger.Unlock()
 }
 
 // Infof formats a message and logs it with [INFO] tag, it adds a newline if the message didn't end with one
-func Infof(format string, v ...interface{}) {
+func Infof(format string, v ...any) {
 	logf(InfoT, format, v...)
 }
 
 // Info logs a message with [INFO] tag and a newline
-func Info(v ...interface{}) {
+func Info(v ...any) {
 	logln(InfoT, v...)
 }
 
-// WarnF formats a message and logs it with [WARN] tag, it adds a newline if the message didn't end with one
-func WarnF(format string, v ...interface{}) {
+// Warnf formats a message and logs it with [WARN] tag, it adds a newline if the message didn't end with one
+func Warnf(format string, v ...any) {
 	logf(WarnT, format, v...)
 }
 
 // Warn logs a message with [WARN] tag and a newline
-func Warn(v ...interface{}) {
+func Warn(v ...any) {
 	logln(WarnT, v...)
 }
 
 // Errorf formats a message and logs it with [ERROR] tag, it adds a newline if the message didn't end with one
-func Errorf(format string, v ...interface{}) {
+func Errorf(format string, v ...any) {
 	logf(ErrorT, format, v...)
 }
 
 // Error logs a message with [ERROR] tag and a newline
-func Error(v ...interface{}) {
+func Error(v ...any) {
 	logln(ErrorT, v...)
 }
 
-// Panicf formats a message and logs it with [PANIC] tag, it adds a newline if the message didn't end with one
-// Note: this function does not call panic() or otherwise stops the program
-func Panicf(format string, v ...interface{}) {
-	logf(PanicT, format, v...)
-}
-
-// Panic logs a message with [PANIC] tag and a newline
-// Note: this function does not call panic() or otherwise stops the program
-func Panic(v ...interface{}) {
-	logln(PanicT, v...)
-}
-
 // Successf formats a message and logs it with [SUCCESS] tag, it adds a newline if the message didn't end with one
-func Successf(format string, v ...interface{}) {
+func Successf(format string, v ...any) {
 	logf(SuccessT, format, v...)
 }
 
 // Success logs a message with [SUCCESS] tag and a newline
-func Success(v ...interface{}) {
+func Success(v ...any) {
 	logln(SuccessT, v...)
 }
 
 // Logf formats a message and logs it with provided tag, it adds a newline if the message didn't end with one
-func Logf(mt messageType, format string, v ...interface{}) {
+func Logf(mt messageType, format string, v ...any) {
 	logf(mt, format, v...)
 }
 
 // Log logs a message with provided tag and a newline
-func Log(mt messageType, v ...interface{}) {
+func Log(mt messageType, v ...any) {
 	logln(mt, v...)
 }
