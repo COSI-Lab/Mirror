@@ -282,7 +282,7 @@ func Sendstatistics() {
 	}, t)
 	writer.WritePoint(p)
 
-	// To be safe we release the lock before logging because logging takes a seperate lock
+	// To be safe we release the lock before logging because logging takes a separate lock
 	statistics.RUnlock()
 
 	logging.Info("Sent statistics")
