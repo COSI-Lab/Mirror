@@ -23,6 +23,15 @@ MAXMIND_LICENSE_KEY=
 INFLUX_TOKEN=
 ```
 
+## NGINX
+
+The NGINX aggregator requires this `access_log` configuration:
+
+```nginx
+log_format config '"$time_local" "$remote_addr" "$request" "$status" "$body_bytes_sent" "$request_length" "$http_user_agent"';
+access_log /var/log/nginx/access.log config;
+```
+
 ## Dependencies
 
 Quick-Fedora-Mirror requires `zsh`

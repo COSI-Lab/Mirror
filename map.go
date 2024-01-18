@@ -3,7 +3,9 @@ package main
 import (
 	"net"
 	"net/http"
+	"time"
 
+	"github.com/COSI-Lab/Mirror/aggregator"
 	"github.com/COSI-Lab/Mirror/logging"
 	"github.com/gorilla/mux"
 	"github.com/gorilla/websocket"
@@ -61,12 +63,12 @@ func (hub *hub) run() {
 			close(client.send)
 			logging.Info("Unregistered client", client.conn.RemoteAddr())
 		case message := <-hub.broadcast:
-			// broadcasts the message to all clients
 			for client := range hub.clients {
 				select {
 				case client.send <- message:
 				default:
-					// If the client blocks we skip it
+					// If the client is not receiving messages, unregister it
+					hub.unregister <- client
 				}
 			}
 		}
@@ -117,20 +119,28 @@ func MapRouter(r *mux.Router, broadcast chan []byte) {
 	go h.run()
 }
 
-func entriesToMessages(entries <-chan NGINXLogEntry, messages chan<- []byte) {
-	// Send groups of 8 messages
+func entriesToMessages(entries <-chan aggregator.NGINXLogEntry, messages chan<- []byte) {
+	// Send a group of messages every second
 	ch := make(chan []byte)
 	go func() {
+		ticker := time.NewTicker(time.Second)
+		group := make([]byte, 0)
 		for {
-			group := make([]byte, 0, 40)
-			for i := 0; i < 8; i++ {
-				group = append(group, <-ch...)
+			select {
+			case msg := <-ch:
+				group = append(group, msg...)
+			case <-ticker.C:
+				if len(group) == 0 {
+					continue
+				}
+
+				messages <- group
+				group = make([]byte, 0)
 			}
-			messages <- group
 		}
 	}()
 
-	// Track the previous IP to avoid sending duplicate data
+	// Deduplicate neighboring entries with the same IP
 	prevIP := net.IPv4(0, 0, 0, 0)
 	for {
 		entry := <-entries

@@ -1,9 +1,8 @@
-package main
+package aggregator
 
 import (
 	"bufio"
 	"context"
-	"errors"
 	"fmt"
 	"io"
 	"os"
@@ -45,7 +44,6 @@ func (a *RSYNCDAggregator) Init(reader api.QueryAPI) (lastUpdated time.Time, err
 		result, err = reader.Query(context.Background(), request)
 
 		if err != nil {
-			logging.Warn("Failed to querying influxdb rsyncd statistics", err)
 			time.Sleep(time.Second)
 			continue
 		}
@@ -54,7 +52,7 @@ func (a *RSYNCDAggregator) Init(reader api.QueryAPI) (lastUpdated time.Time, err
 	}
 
 	if result == nil {
-		return time.Time{}, errors.New("Error querying influxdb for rsyncd stat")
+		return time.Time{}, err
 	}
 
 	for result.Next() {

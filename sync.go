@@ -64,11 +64,18 @@ type SchedulerTask struct {
 }
 
 // NewScheduler creates a new scheduler from a config.File
-func NewScheduler(ctx context.Context, config *config.File) Scheduler {
-	failed := false
+func NewScheduler(ctx context.Context, config *config.File) (Scheduler, error) {
 	month := time.Now().UTC().Month()
 
 	builer := scheduler.NewCalendarBuilder[*SchedulerTask]()
+
+	// Create the log directory if it doesn't exist
+	if _, err := os.Stat("/var/log/mirror"); os.IsNotExist(err) {
+		err := os.Mkdir("/var/log/mirror", 0755)
+		if err != nil {
+			return Scheduler{}, fmt.Errorf("failed to create log directory: %s", err)
+		}
+	}
 
 	for short, project := range config.Projects {
 		var task Task
@@ -102,13 +109,11 @@ func NewScheduler(ctx context.Context, config *config.File) Scheduler {
 
 		stdout, err := os.OpenFile(fmt.Sprintf("/var/log/mirror/%s-%s.log", short, month), os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 		if err != nil {
-			logging.Error("Failed to open stdout file for project ", short, ": ", err)
-			failed = true
+			return Scheduler{}, fmt.Errorf("failed to open stdout file for %q: %s", short, err)
 		}
 		stderr, err := os.OpenFile(fmt.Sprintf("/var/log/mirror/%s-%s.err", short, month), os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 		if err != nil {
-			logging.Error("Failed to open stderr file for project ", short, ": ", err)
-			failed = true
+			return Scheduler{}, fmt.Errorf("failed to open stderr file for %q: %s", short, err)
 		}
 
 		builer.AddTask(&SchedulerTask{
@@ -123,30 +128,23 @@ func NewScheduler(ctx context.Context, config *config.File) Scheduler {
 		}, syncsPerDay)
 	}
 
-	if failed {
-		logging.Error("One or more errors occurred while setting up the scheduler")
-		os.Exit(1)
-	}
-
 	return Scheduler{
 		ctx:      ctx,
 		calendar: builer.Build(),
-	}
+	}, nil
 }
 
 // Start begins the scheduler and blocks until the context is canceled
-//
-// manual is a channel that can be used to manually trigger a project sync
 func (sc *Scheduler) Start(manual <-chan string) {
 	timer := time.NewTimer(0)
-	month := time.NewTimer(waitMonth())
+	month := time.NewTimer(timeToNextMonth())
 
 	for {
 		select {
 		case <-sc.ctx.Done():
 			return
 		case <-month.C:
-			month.Reset(waitMonth())
+			month.Reset(timeToNextMonth())
 			month := time.Now().Local().Month()
 			sc.calendar.ForEach(
 				func(task **SchedulerTask) {
@@ -157,13 +155,13 @@ func (sc *Scheduler) Start(manual <-chan string) {
 					// Create new files for the next month
 					stdout, err := os.OpenFile(fmt.Sprintf("/var/log/mirror/%s-%s.log", t.short, month), os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 					if err != nil {
-						logging.Error("Failed to open stdout file for project ", t.short, ": ", err)
+						logging.Error("Failed to open stdout file for %q: %s", t.short, err)
 					} else {
 						t.stdout.Reset(stdout)
 					}
 					stderr, err := os.OpenFile(fmt.Sprintf("/var/log/mirror/%s-%s.err", t.short, month), os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 					if err != nil {
-						logging.Error("Failed to open stderr file for project ", t.short, ": ", err)
+						logging.Error("Failed to open stderr file for %q: %s", t.short, err)
 					} else {
 						t.stderr.Reset(stderr)
 					}
@@ -209,8 +207,8 @@ func (t *SchedulerTask) runTask(ctx context.Context) {
 	}()
 }
 
-// waitMonth returns a timer that will fire at the beginning of the next month
-func waitMonth() time.Duration {
+// timeToNextMonth returns the duration until the next month
+func timeToNextMonth() time.Duration {
 	now := time.Now().UTC()
 	return time.Until(time.Date(now.Year(), now.Month()+1, 1, 0, 0, 0, 0, time.Local))
 }

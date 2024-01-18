@@ -4,12 +4,12 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"net"
 	"os"
 	"os/signal"
 	"runtime"
 	"time"
 
+	"github.com/COSI-Lab/Mirror/aggregator"
 	"github.com/COSI-Lab/Mirror/config"
 	"github.com/COSI-Lab/Mirror/logging"
 	"github.com/COSI-Lab/geoip"
@@ -89,58 +89,8 @@ func loadTokens() (*config.Tokens, error) {
 	return tokens, nil
 }
 
-func startNGINX(config *config.File) (chan<- NGINXLogEntry, time.Time, error) {
-	nginxAg := NewNGINXProjectAggregator()
-	nginxAg.AddMeasurement("nginx", func(re NGINXLogEntry) bool {
-		return true
-	})
-
-	// Add subnet aggregators
-	for name, subnetStrings := range config.Subnets {
-		subnets := make([]*net.IPNet, 0)
-		for _, subnetString := range subnetStrings {
-			_, subnet, err := net.ParseCIDR(subnetString)
-			if err != nil {
-				logging.Warn("Failed to parse subnet", subnetString, "for", name)
-				continue
-			}
-			subnets = append(subnets, subnet)
-		}
-
-		if len(subnets) == 0 {
-			logging.Warn("No valid subnets for", name)
-			continue
-		}
-
-		nginxAg.AddMeasurement(name, func(re NGINXLogEntry) bool {
-			for _, subnet := range subnets {
-				if subnet.Contains(re.IP) {
-					return true
-				}
-			}
-			return false
-		})
-
-		logging.Info("Added subnet aggregator for", name)
-	}
-
-	nginxMetrics := make(chan NGINXLogEntry)
-	nginxLastUpdated, err := StartAggregator[NGINXLogEntry](nginxAg, nginxMetrics)
-
-	return nginxMetrics, nginxLastUpdated, err
-}
-
-func startRSYNC() (chan<- RSCYNDLogEntry, time.Time, error) {
-	rsyncAg := NewRSYNCProjectAggregator()
-
-	rsyncMetrics := make(chan RSCYNDLogEntry)
-	rsyncLastUpdated, err := StartAggregator[RSCYNDLogEntry](rsyncAg, rsyncMetrics)
-
-	return rsyncMetrics, rsyncLastUpdated, err
-}
-
 func main() {
-	// Enforce we are running linux or macos
+	// Mirror only runs on linux or macos
 	if runtime.GOOS != "linux" && runtime.GOOS != "darwin" {
 		fmt.Println("This program is only meant to be run on *nix systems")
 		os.Exit(1)
@@ -180,13 +130,14 @@ func main() {
 		os.Exit(1)
 	}
 
+	// Initialize the tokens file for manual syncing
 	tokens, err := loadTokens()
 	if err != nil {
 		logging.Error("Failed to load tokens file:", err)
 		os.Exit(1)
 	}
 
-	// GeoIP lookup
+	// GeoIP lookup for the map
 	if maxmindLicenseKey != "" {
 		geoipHandler, err = geoip.NewGeoIPHandler(maxmindLicenseKey)
 		if err != nil {
@@ -197,24 +148,27 @@ func main() {
 	// Update rsyncd.conf file based on the config file
 	rsyncdConf, err := os.OpenFile("/etc/rsyncd.conf", os.O_CREATE|os.O_WRONLY, 0644)
 	if err != nil {
-		logging.Error("Could not open rsyncd.conf: ", err.Error())
-	}
-	err = cfg.CreateRSCYNDConfig(rsyncdConf)
-	if err != nil {
-		logging.Error("Failed to create rsyncd.conf: ", err.Error())
+		logging.Error(err.Error())
+	} else {
+		err = cfg.CreateRSCYNDConfig(rsyncdConf)
+		if err != nil {
+			logging.Error("Failed to create rsyncd.conf: ", err.Error())
+		}
 	}
 
-	nginxChannels := make([]chan<- NGINXLogEntry, 0)
+	// TODO: Update nginx.conf file based on the config file
+
+	nginxChannels := make([]chan<- aggregator.NGINXLogEntry, 0)
 	nginxLastUpdated := time.Now()
-	rsyncChannels := make([]chan<- RSCYNDLogEntry, 0)
+	rsyncChannels := make([]chan<- aggregator.RSCYNDLogEntry, 0)
 	rsyncLastUpdated := time.Now()
 
 	if influxToken != "" {
 		// Setup reader and writer for influxdb
-		SetupInfluxClients(influxToken)
+		reader, writer := SetupInfluxClients(influxToken)
 
 		// Start the nginx aggregator
-		nginxMetrics, lastupdated, err := startNGINX(cfg)
+		nginxMetrics, lastupdated, err := StartNGINXAggregator(reader, writer, cfg)
 		if err != nil {
 			logging.Error("Failed to start nginx aggregator:", err)
 			nginxLastUpdated = time.Now()
@@ -224,7 +178,7 @@ func main() {
 		}
 
 		// Start the rsync aggregator
-		rsyncMetrics, lastupdated, err := startRSYNC()
+		rsyncMetrics, lastupdated, err := StartRSYNCAggregator(reader, writer)
 		if err != nil {
 			logging.Error("Failed to start rsync aggregator:", err)
 			rsyncLastUpdated = time.Now()
@@ -235,18 +189,23 @@ func main() {
 	}
 
 	manual := make(chan string)
-	scheduler := NewScheduler(context.Background(), cfg)
+	scheduler, err := NewScheduler(context.Background(), cfg)
+	if err != nil {
+		logging.Error("Failed to create scheduler:", err)
+		os.Exit(1)
+	}
+
 	go scheduler.Start(manual)
 
 	// WebServer
-	mapEntries := make(chan NGINXLogEntry)
+	mapEntries := make(chan aggregator.NGINXLogEntry)
 	nginxChannels = append(nginxChannels, mapEntries)
 
 	WebServerLoadConfig(cfg, tokens)
 	go HandleWebServer(manual, mapEntries)
 
-	go TailNGINXLogFile("/var/log/nginx/access.log", nginxLastUpdated, nginxChannels)
-	go TailRSYNCLogFile("/var/log/nginx/rsyncd.log", rsyncLastUpdated, rsyncChannels)
+	go aggregator.TailNGINXLogFile("/var/log/nginx/access.log", nginxLastUpdated, nginxChannels, geoipHandler)
+	go aggregator.TailRSYNCLogFile("/var/log/nginx/rsyncd.log", rsyncLastUpdated, rsyncChannels)
 
 	// Wait forever
 	select {}

@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"sync"
 
+	"github.com/COSI-Lab/Mirror/aggregator"
 	"github.com/COSI-Lab/Mirror/config"
 	"github.com/COSI-Lab/Mirror/logging"
 	"github.com/gorilla/mux"
@@ -64,8 +65,9 @@ func handleProjects(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// handleManualSyncs is a endpoint that allows a privileged user to manually cause a project to sync
-// Access token is included in the query string. The http method is not considered.
+// handleManualSyncs is an endpoint that allows privileged users to manually trigger a project to sync
+// Access token must be included in the query string.
+// HTTP method is ignored
 //
 // /sync/{project}?token={token}
 func handleManualSyncs(manual chan<- string) http.HandlerFunc {
@@ -77,7 +79,7 @@ func handleManualSyncs(manual chan<- string) http.HandlerFunc {
 
 		// Get the project name
 		vars := mux.Vars(r)
-		projectName := vars["project"]
+		project := vars["project"]
 
 		// Get the access token
 		token := r.URL.Query().Get("token")
@@ -86,25 +88,19 @@ func handleManualSyncs(manual chan<- string) http.HandlerFunc {
 			return
 		}
 
-		// Check if the token has permission for projectName
+		// Check if this token exists
 		t := tokens.GetToken(token)
-		if t == nil {
-			http.Error(w, "Invalid access token", http.StatusForbidden)
-			return
-		}
-
-		// Check if the token has permission for projectName
-		if !t.HasProject(projectName) {
+		if t == nil || !t.HasProject(project) {
 			http.Error(w, "Invalid access token", http.StatusForbidden)
 			return
 		}
 
 		// Return a success message
-		fmt.Fprintf(w, "Sync requested for project: %s", projectName)
+		fmt.Fprintf(w, "Sync successfully requested for project: %s", project)
 
 		// Sync the project
-		logging.Info("Manual sync requested for project: _", projectName, "_")
-		manual <- projectName
+		logging.Info("Manual sync requested for project %q", project)
+		manual <- project
 	}
 }
 
@@ -126,7 +122,7 @@ func WebServerLoadConfig(cfg *config.File, t *config.Tokens) {
 // HandleWebServer starts the webserver and listens for incoming connections
 // manual is a channel that project short names are sent down to manually trigger a projects rsync
 // entries is a channel that contains log entries that are disabled by the mirror map
-func HandleWebServer(manual chan<- string, entries <-chan NGINXLogEntry) {
+func HandleWebServer(manual chan<- string, entries <-chan aggregator.NGINXLogEntry) {
 	r := mux.NewRouter()
 
 	// Setup the map
@@ -149,7 +145,7 @@ func HandleWebServer(manual chan<- string, entries <-chan NGINXLogEntry) {
 		http.FileServer(http.Dir("static")).ServeHTTP(w, r)
 	}))
 
-	// Serve on 8080
+	// Serve on 8012
 	l := &http.Server{
 		Addr:    ":8012",
 		Handler: r,

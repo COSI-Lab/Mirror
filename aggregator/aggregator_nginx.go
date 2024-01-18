@@ -1,4 +1,4 @@
-package main
+package aggregator
 
 import (
 	"bufio"
@@ -17,6 +17,7 @@ import (
 	"time"
 
 	"github.com/COSI-Lab/Mirror/logging"
+	"github.com/COSI-Lab/geoip"
 	"github.com/IncSW/geoip2"
 	influxdb2 "github.com/influxdata/influxdb-client-go/v2"
 	"github.com/influxdata/influxdb-client-go/v2/api"
@@ -79,7 +80,6 @@ func (aggregator *NGINXProjectAggregator) Init(reader api.QueryAPI) (lastUpdated
 			result, err = reader.Query(context.Background(), request)
 
 			if err != nil {
-				logging.Warn("Failed to querying influxdb nginx statistics", err)
 				time.Sleep(time.Second)
 				continue
 			}
@@ -88,7 +88,7 @@ func (aggregator *NGINXProjectAggregator) Init(reader api.QueryAPI) (lastUpdated
 		}
 
 		if err != nil {
-			return lastUpdated, errors.New("error querying influxdb")
+			return lastUpdated, err
 		}
 
 		stats := make(ProjectStatistics)
@@ -207,7 +207,7 @@ func (aggregator *NGINXProjectAggregator) Send(writer api.WriteAPI) {
 	}
 }
 
-// NGINXLogEntry is a struct that represents a parsed nginx log entry
+// NGINXLogEntry represents a parsed nginx log entry
 type NGINXLogEntry struct {
 	IP        net.IP
 	City      *geoip2.CityResult
@@ -225,7 +225,7 @@ type NGINXLogEntry struct {
 var reQuotes = regexp.MustCompile(`"(.*?)"`)
 
 // TailNGINXLogFile tails a log file and sends the parsed log entries to the specified channels
-func TailNGINXLogFile(logFile string, lastUpdated time.Time, channels []chan<- NGINXLogEntry) {
+func TailNGINXLogFile(logFile string, lastUpdated time.Time, channels []chan<- NGINXLogEntry, geoipHandler *geoip.GeoIPHandler) {
 	start := time.Now()
 
 	f, err := os.Open(logFile)
@@ -261,7 +261,7 @@ func TailNGINXLogFile(logFile string, lastUpdated time.Time, channels []chan<- N
 
 	// Parse each line as we receive it
 	for line := range tail.Lines {
-		entry, err := parseNginxLine(line.Text)
+		entry, err := parseNginxLine(geoipHandler, line.Text)
 
 		if err == nil {
 			for ch := range channels {
@@ -280,7 +280,7 @@ func parseNginxDate(line string) (time.Time, error) {
 // It's critical the log file uses the correct format found at the top of this file
 // If the log file is not in the correct format or if some other part of the parsing fails
 // this function will return an error
-func parseNginxLine(line string) (entry NGINXLogEntry, err error) {
+func parseNginxLine(geoipHandler *geoip.GeoIPHandler, line string) (entry NGINXLogEntry, err error) {
 	// "$time_local" "$remote_addr" "$request" "$status" "$body_bytes_sent" "$request_length" "$http_user_agent";
 	quoteList := reQuotes.FindAllString(line, -1)
 
@@ -305,8 +305,8 @@ func parseNginxLine(line string) (entry NGINXLogEntry, err error) {
 		return entry, errors.New("failed to parse ip")
 	}
 
-	// Optional GeoIP lookup
-	if geoipHandler != nil {
+	// GeoIP lookup
+	if geoipHandler == nil {
 		city, err := geoipHandler.Lookup(entry.IP)
 		if err != nil {
 			entry.City = nil
