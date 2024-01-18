@@ -7,7 +7,7 @@ import (
 	"github.com/COSI-Lab/Mirror/config"
 )
 
-// Test tokens.txt parsing
+// Test tokens.toml parsing
 func TestTokens(t *testing.T) {
 	example := `
 		[[tokens]]
