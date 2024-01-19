@@ -509,7 +509,7 @@
         "options": "-avzrHy --no-perms --no-group --no-owner --delete --delete-delay --delay-updates --ignore-errors --exclude \".~tmp~\"",
         "syncs_per_day": 6
       },
-      "official": true,
+      "official": false,
       "homepage": "https://manjaro.org/",
       "color": "#d9004c",
       "publicRsync": true,
