@@ -1,11 +1,8 @@
-module github.com/COSI_Lab/Mirror
+module github.com/COSI-Lab/Mirror
 
 go 1.20
 
 require (
-	github.com/COSI-Lab/datarithms v1.0.2
-	github.com/COSI-Lab/geoip v1.0.0
-	github.com/COSI-Lab/logging v1.0.3
 	github.com/IncSW/geoip2 v0.1.2
 	github.com/gocolly/colly v1.2.0
 	github.com/gorilla/mux v1.8.0

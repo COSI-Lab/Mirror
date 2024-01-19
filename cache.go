@@ -6,7 +6,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/COSI-Lab/logging"
+	"github.com/COSI-Lab/Mirror/logging"
 )
 
 type ProxyWriter struct {

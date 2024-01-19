@@ -4,7 +4,7 @@ import (
 	"net"
 	"net/http"
 
-	"github.com/COSI-Lab/logging"
+	"github.com/COSI-Lab/Mirror/logging"
 	"github.com/gorilla/mux"
 	"github.com/gorilla/websocket"
 )
