@@ -16,7 +16,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/COSI-Lab/Mirror/logging2"
+	"github.com/COSI-Lab/Mirror/logging"
 	"github.com/COSI-Lab/geoip"
 	"github.com/IncSW/geoip2"
 	influxdb2 "github.com/influxdata/influxdb-client-go/v2"
@@ -95,7 +95,7 @@ func (aggregator *NGINXProjectAggregator) Init(reader api.QueryAPI) (lastUpdated
 
 		for result.Next() {
 			if result.Err() != nil {
-				logging2.Warn("QueryProjectStatistics Flux Query Error", result.Err())
+				logging.Warn("QueryProjectStatistics Flux Query Error", result.Err())
 				continue
 			}
 
@@ -105,7 +105,7 @@ func (aggregator *NGINXProjectAggregator) Init(reader api.QueryAPI) (lastUpdated
 			// Get the Project short name
 			Project, ok := dp.ValueByKey("Project").(string)
 			if !ok {
-				logging2.Warn("Error getting Project short name")
+				logging.Warn("Error getting Project short name")
 				fmt.Printf("%T %v\n", Project, Project)
 				continue
 			}
@@ -117,7 +117,7 @@ func (aggregator *NGINXProjectAggregator) Init(reader api.QueryAPI) (lastUpdated
 
 			field, ok := dp.ValueByKey("_field").(string)
 			if !ok {
-				logging2.Warn("Error getting field")
+				logging.Warn("Error getting field")
 				fmt.Printf("%T %v\n", field, field)
 				continue
 			}
@@ -126,7 +126,7 @@ func (aggregator *NGINXProjectAggregator) Init(reader api.QueryAPI) (lastUpdated
 			case "bytes_sent":
 				sent, ok := dp.ValueByKey("_value").(int64)
 				if !ok {
-					logging2.Warn("Error getting bytes sent")
+					logging.Warn("Error getting bytes sent")
 					fmt.Printf("%T %v\n", dp.ValueByKey("_value"), dp.ValueByKey("_value"))
 					continue
 				}
@@ -134,7 +134,7 @@ func (aggregator *NGINXProjectAggregator) Init(reader api.QueryAPI) (lastUpdated
 			case "bytes_recv":
 				received, ok := dp.ValueByKey("_value").(int64)
 				if !ok {
-					logging2.Warn("Error getting bytes recv")
+					logging.Warn("Error getting bytes recv")
 					fmt.Printf("%T %v\n", dp.ValueByKey("_value"), dp.ValueByKey("_value"))
 					continue
 				}
@@ -142,7 +142,7 @@ func (aggregator *NGINXProjectAggregator) Init(reader api.QueryAPI) (lastUpdated
 			case "requests":
 				requests, ok := dp.ValueByKey("_value").(int64)
 				if !ok {
-					logging2.Warn("Error getting requests")
+					logging.Warn("Error getting requests")
 					fmt.Printf("%T %v\n", dp.ValueByKey("_value"), dp.ValueByKey("_value"))
 					continue
 				}
@@ -230,7 +230,7 @@ func TailNGINXLogFile(logFile string, lastUpdated time.Time, channels []chan<- N
 
 	f, err := os.Open(logFile)
 	if err != nil {
-		logging2.Error(err)
+		logging.Error(err)
 		return
 	}
 
@@ -244,7 +244,7 @@ func TailNGINXLogFile(logFile string, lastUpdated time.Time, channels []chan<- N
 		}
 		offset += int64(len(s.Text()) + 1)
 	}
-	logging2.Info("Found nginx log offset in", time.Since(start))
+	logging.Info("Found nginx log offset in", time.Since(start))
 
 	// Tail the log file `tail -F` starting at the offset
 	seek := tail.SeekInfo{
@@ -253,11 +253,11 @@ func TailNGINXLogFile(logFile string, lastUpdated time.Time, channels []chan<- N
 	}
 	tail, err := tail.TailFile(logFile, tail.Config{Follow: true, ReOpen: true, MustExist: true, Location: &seek})
 	if err != nil {
-		logging2.Error("Failed to start tailing `nginx.log`:", err)
+		logging.Error("Failed to start tailing `nginx.log`:", err)
 		return
 	}
 
-	logging2.Success("Tailing nginx log file")
+	logging.Success("Tailing nginx log file")
 
 	// Parse each line as we receive it
 	for line := range tail.Lines {

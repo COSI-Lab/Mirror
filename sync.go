@@ -10,8 +10,8 @@ import (
 	"time"
 
 	"github.com/COSI-Lab/Mirror/config"
-	"github.com/COSI-Lab/Mirror/datarithms2"
-	"github.com/COSI-Lab/Mirror/logging2"
+	"github.com/COSI-Lab/Mirror/datarithms"
+	"github.com/COSI-Lab/Mirror/logging"
 	"github.com/COSI-Lab/Mirror/scheduler"
 )
 
@@ -31,7 +31,7 @@ const (
 //
 // Each task runs in its own go-routine and the scheduler ensures that only one instance of task `Run` will be called at a time
 type Task interface {
-	Run(context context.Context, stdout io.Writer, stderr io.Writer, status chan<- logging2.LogEntry) TaskStatus
+	Run(context context.Context, stdout io.Writer, stderr io.Writer, status chan<- logging.LogEntry) TaskStatus
 }
 
 type syncResult struct {
@@ -54,10 +54,10 @@ type SchedulerTask struct {
 
 	short string
 
-	queue   *datarithms2.CircularQueue[logging2.LogEntry]
-	results *datarithms2.CircularQueue[syncResult]
+	queue   *datarithms.CircularQueue[logging.LogEntry]
+	results *datarithms.CircularQueue[syncResult]
 
-	channel chan logging2.LogEntry
+	channel chan logging.LogEntry
 	stdout  *bufio.Writer
 	stderr  *bufio.Writer
 	task    Task
@@ -92,10 +92,10 @@ func NewScheduler(ctx context.Context, config *config.File) (Scheduler, error) {
 			continue
 		}
 
-		q := datarithms2.NewCircularQueue[logging2.LogEntry](64)
-		results := datarithms2.NewCircularQueue[syncResult](64)
+		q := datarithms.NewCircularQueue[logging.LogEntry](64)
+		results := datarithms.NewCircularQueue[syncResult](64)
 
-		channel := make(chan logging2.LogEntry, 64)
+		channel := make(chan logging.LogEntry, 64)
 		go func() {
 			for {
 				select {
@@ -155,13 +155,13 @@ func (sc *Scheduler) Start(manual <-chan string) {
 					// Create new files for the next month
 					stdout, err := os.OpenFile(fmt.Sprintf("/var/log/mirror/%s-%s.log", t.short, month), os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 					if err != nil {
-						logging2.Error("Failed to open stdout file for %q: %s", t.short, err)
+						logging.Error("Failed to open stdout file for %q: %s", t.short, err)
 					} else {
 						t.stdout.Reset(stdout)
 					}
 					stderr, err := os.OpenFile(fmt.Sprintf("/var/log/mirror/%s-%s.err", t.short, month), os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 					if err != nil {
-						logging2.Error("Failed to open stderr file for %q: %s", t.short, err)
+						logging.Error("Failed to open stderr file for %q: %s", t.short, err)
 					} else {
 						t.stderr.Reset(stderr)
 					}

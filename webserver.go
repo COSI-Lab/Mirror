@@ -8,7 +8,7 @@ import (
 
 	"github.com/COSI-Lab/Mirror/aggregator"
 	"github.com/COSI-Lab/Mirror/config"
-	"github.com/COSI-Lab/Mirror/logging2"
+	"github.com/COSI-Lab/Mirror/logging"
 	"github.com/gorilla/mux"
 )
 
@@ -27,14 +27,14 @@ func init() {
 		},
 	}).ParseGlob("templates/*.gohtml"))
 
-	logging2.Info(tmpls.DefinedTemplates())
+	logging.Info(tmpls.DefinedTemplates())
 }
 
 func handleHome(w http.ResponseWriter, r *http.Request) {
 	err := tmpls.ExecuteTemplate(w, "home.gohtml", "")
 
 	if err != nil {
-		logging2.Warn("handleHome;", err)
+		logging.Warn("handleHome;", err)
 	}
 }
 
@@ -44,7 +44,7 @@ func handleMap(w http.ResponseWriter, r *http.Request) {
 	dataLock.RUnlock()
 
 	if err != nil {
-		logging2.Warn("handleMap;", err)
+		logging.Warn("handleMap;", err)
 	}
 }
 
@@ -52,7 +52,7 @@ func handleHistory(w http.ResponseWriter, r *http.Request) {
 	err := tmpls.ExecuteTemplate(w, "history.gohtml", "")
 
 	if err != nil {
-		logging2.Warn("handleHistory;", err)
+		logging.Warn("handleHistory;", err)
 	}
 }
 
@@ -61,7 +61,7 @@ func handleProjects(w http.ResponseWriter, r *http.Request) {
 	err := tmpls.ExecuteTemplate(w, "projects.gohtml", projectsGrouped)
 	dataLock.RUnlock()
 	if err != nil {
-		logging2.Warn("handleProjects,", projects, err)
+		logging.Warn("handleProjects,", projects, err)
 	}
 }
 
@@ -99,7 +99,7 @@ func handleManualSyncs(manual chan<- string) http.HandlerFunc {
 		fmt.Fprintf(w, "Sync successfully requested for project: %s", project)
 
 		// Sync the project
-		logging2.Info("Manual sync requested for project %q", project)
+		logging.Info("Manual sync requested for project %q", project)
 		manual <- project
 	}
 }
@@ -151,6 +151,6 @@ func HandleWebServer(manual chan<- string, entries <-chan aggregator.NGINXLogEnt
 		Handler: r,
 	}
 
-	logging2.Success("Serving on http://localhost:8012")
+	logging.Success("Serving on http://localhost:8012")
 	go l.ListenAndServe()
 }

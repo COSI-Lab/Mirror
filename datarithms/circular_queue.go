@@ -1,4 +1,4 @@
-package datarithms2
+package datarithms
 
 import (
 	"fmt"

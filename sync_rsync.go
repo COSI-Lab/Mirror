@@ -8,7 +8,7 @@ import (
 	"os/exec"
 
 	"github.com/COSI-Lab/Mirror/config"
-	"github.com/COSI-Lab/Mirror/logging2"
+	"github.com/COSI-Lab/Mirror/logging"
 )
 
 var rsyncErrorCodes map[int]string
@@ -73,7 +73,7 @@ func NewRSYNCTask(declaration *config.Rsync, short string) *RSYNCTask {
 	if declaration.PasswordFile != "" {
 		password, err = os.ReadFile(declaration.PasswordFile)
 		if err != nil {
-			logging2.Error("Failed to read password file:", err)
+			logging.Error("Failed to read password file:", err)
 		}
 
 		return &RSYNCTask{
@@ -93,8 +93,8 @@ func NewRSYNCTask(declaration *config.Rsync, short string) *RSYNCTask {
 }
 
 // Run runs the script, blocking until it finishes
-func (r *RSYNCTask) Run(ctx context.Context, stdout, stderr io.Writer, status chan<- logging2.LogEntry) TaskStatus {
-	status <- logging2.InfoLogEntry(fmt.Sprintf("%s: Starting rsync", r.short))
+func (r *RSYNCTask) Run(ctx context.Context, stdout, stderr io.Writer, status chan<- logging.LogEntry) TaskStatus {
+	status <- logging.InfoLogEntry(fmt.Sprintf("%s: Starting rsync", r.short))
 
 	for i := 0; i < len(r.stages); i++ {
 		status := r.RunStage(ctx, stdout, stderr, status, i)
@@ -107,7 +107,7 @@ func (r *RSYNCTask) Run(ctx context.Context, stdout, stderr io.Writer, status ch
 }
 
 // RunStage runs a single stage of the rsync task
-func (r *RSYNCTask) RunStage(ctx context.Context, stdout, stderr io.Writer, status chan<- logging2.LogEntry, stage int) TaskStatus {
+func (r *RSYNCTask) RunStage(ctx context.Context, stdout, stderr io.Writer, status chan<- logging.LogEntry, stage int) TaskStatus {
 	// join r.args and r.stages[stage]
 	args := make([]string, len(r.args))
 	copy(args, r.args)
@@ -121,11 +121,11 @@ func (r *RSYNCTask) RunStage(ctx context.Context, stdout, stderr io.Writer, stat
 		cmd.Env = append(os.Environ(), "RSYNC_PASSWORD="+r.password)
 	}
 
-	status <- logging2.InfoLogEntry("Running: " + cmd.String())
+	status <- logging.InfoLogEntry("Running: " + cmd.String())
 
 	err := cmd.Start()
 	if err != nil {
-		status <- logging2.ErrorLogEntry(fmt.Sprintf("%s: Stage %d failed to start: %s", r.short, stage, err.Error()))
+		status <- logging.ErrorLogEntry(fmt.Sprintf("%s: Stage %d failed to start: %s", r.short, stage, err.Error()))
 		return TaskStatusFailure
 	}
 
@@ -140,16 +140,16 @@ func (r *RSYNCTask) RunStage(ctx context.Context, stdout, stderr io.Writer, stat
 		break
 	case <-ctx.Done():
 		cmd.Process.Kill()
-		status <- logging2.InfoLogEntry(fmt.Sprintf("%s: Stage %d stopped", r.short, stage))
+		status <- logging.InfoLogEntry(fmt.Sprintf("%s: Stage %d stopped", r.short, stage))
 		return TaskStatusStopped
 	}
 
 	// Report the exit code
 	if cmd.ProcessState.Success() {
-		status <- logging2.SuccessLogEntry(fmt.Sprintf("%s: Stage %d completed successfully", r.short, stage))
+		status <- logging.SuccessLogEntry(fmt.Sprintf("%s: Stage %d completed successfully", r.short, stage))
 		return TaskStatusSuccess
 	}
 
-	status <- logging2.ErrorLogEntry(fmt.Sprintf("%s: Stage %d failed with exit code %d (%s)", r.short, stage, cmd.ProcessState.ExitCode(), RSYNCErrorCodeToString(cmd.ProcessState.ExitCode())))
+	status <- logging.ErrorLogEntry(fmt.Sprintf("%s: Stage %d failed with exit code %d (%s)", r.short, stage, cmd.ProcessState.ExitCode(), RSYNCErrorCodeToString(cmd.ProcessState.ExitCode())))
 	return TaskStatusFailure
 }

@@ -11,7 +11,7 @@ import (
 
 	"github.com/COSI-Lab/Mirror/aggregator"
 	"github.com/COSI-Lab/Mirror/config"
-	"github.com/COSI-Lab/Mirror/logging2"
+	"github.com/COSI-Lab/Mirror/logging"
 	"github.com/COSI-Lab/geoip"
 	"github.com/gofrs/flock"
 	"github.com/joho/godotenv"
@@ -32,7 +32,7 @@ func init() {
 	// Load the environment variables
 	err := godotenv.Load()
 	if err != nil {
-		logging2.Warn("No .env file found")
+		logging.Warn("No .env file found")
 	}
 
 	// Parse the necessary environment variables
@@ -41,16 +41,16 @@ func init() {
 
 	// Check if the environment variables are set
 	if maxmindLicenseKey == "" {
-		logging2.Warn("No MAXMIND_LICENSE_KEY environment variable found. GeoIP database will not be updated")
+		logging.Warn("No MAXMIND_LICENSE_KEY environment variable found. GeoIP database will not be updated")
 	}
 
 	if influxToken == "" {
-		logging2.Warn("No INFLUX_TOKEN environment variable found. InfluxDB will not be used")
+		logging.Warn("No INFLUX_TOKEN environment variable found. InfluxDB will not be used")
 	}
 
 	// check that the system is linux
 	if runtime.GOOS != "linux" && runtime.GOOS != "darwin" {
-		logging2.Warn("Torrent syncing is only support on *nix systems including the `find` command")
+		logging.Warn("Torrent syncing is only support on *nix systems including the `find` command")
 	}
 }
 
@@ -115,25 +115,25 @@ func main() {
 
 	locked, err := f.TryLock()
 	if err != nil {
-		logging2.Error(f.Path(), " could not be locked: ", err)
+		logging.Error(f.Path(), " could not be locked: ", err)
 		os.Exit(1)
 	}
 	if !locked {
-		logging2.Error(f.Path(), " is already locked")
+		logging.Error(f.Path(), " is already locked")
 		os.Exit(1)
 	}
 
 	// Parse the config file
 	cfg, err := loadConfig()
 	if err != nil {
-		logging2.Error("Failed to load config file:", err)
+		logging.Error("Failed to load config file:", err)
 		os.Exit(1)
 	}
 
 	// Initialize the tokens file for manual syncing
 	tokens, err := loadTokens()
 	if err != nil {
-		logging2.Error("Failed to load tokens file:", err)
+		logging.Error("Failed to load tokens file:", err)
 		os.Exit(1)
 	}
 
@@ -141,18 +141,18 @@ func main() {
 	if maxmindLicenseKey != "" {
 		geoipHandler, err = geoip.NewGeoIPHandler(maxmindLicenseKey)
 		if err != nil {
-			logging2.Error("Failed to initialize GeoIP handler:", err)
+			logging.Error("Failed to initialize GeoIP handler:", err)
 		}
 	}
 
 	// Update rsyncd.conf file based on the config file
 	rsyncdConf, err := os.OpenFile("/etc/rsyncd.conf", os.O_CREATE|os.O_WRONLY, 0644)
 	if err != nil {
-		logging2.Error(err.Error())
+		logging.Error(err.Error())
 	} else {
 		err = cfg.CreateRSCYNDConfig(rsyncdConf)
 		if err != nil {
-			logging2.Error("Failed to create rsyncd.conf: ", err.Error())
+			logging.Error("Failed to create rsyncd.conf: ", err.Error())
 		}
 	}
 
@@ -170,7 +170,7 @@ func main() {
 		// Start the nginx aggregator
 		nginxMetrics, lastupdated, err := StartNGINXAggregator(reader, writer, cfg)
 		if err != nil {
-			logging2.Error("Failed to start nginx aggregator:", err)
+			logging.Error("Failed to start nginx aggregator:", err)
 			nginxLastUpdated = time.Now()
 		} else {
 			nginxChannels = append(nginxChannels, nginxMetrics)
@@ -180,7 +180,7 @@ func main() {
 		// Start the rsync aggregator
 		rsyncMetrics, lastupdated, err := StartRSYNCAggregator(reader, writer)
 		if err != nil {
-			logging2.Error("Failed to start rsync aggregator:", err)
+			logging.Error("Failed to start rsync aggregator:", err)
 			rsyncLastUpdated = time.Now()
 		} else {
 			rsyncChannels = append(rsyncChannels, rsyncMetrics)
@@ -191,7 +191,7 @@ func main() {
 	manual := make(chan string)
 	scheduler, err := NewScheduler(context.Background(), cfg)
 	if err != nil {
-		logging2.Error("Failed to create scheduler:", err)
+		logging.Error("Failed to create scheduler:", err)
 		os.Exit(1)
 	}
 

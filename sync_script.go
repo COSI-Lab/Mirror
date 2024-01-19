@@ -8,7 +8,7 @@ import (
 	"os/exec"
 
 	"github.com/COSI-Lab/Mirror/config"
-	"github.com/COSI-Lab/Mirror/logging2"
+	"github.com/COSI-Lab/Mirror/logging"
 )
 
 // ScriptTask is a task that runs a script project
@@ -30,8 +30,8 @@ func NewScriptTask(declaration *config.Script, short string) *ScriptTask {
 }
 
 // Run runs the script, blocking until it finishes
-func (s *ScriptTask) Run(ctx context.Context, stdout, stderr io.Writer, status chan<- logging2.LogEntry) TaskStatus {
-	status <- logging2.InfoLogEntry(fmt.Sprintf("%s: Starting script", s.short))
+func (s *ScriptTask) Run(ctx context.Context, stdout, stderr io.Writer, status chan<- logging.LogEntry) TaskStatus {
+	status <- logging.InfoLogEntry(fmt.Sprintf("%s: Starting script", s.short))
 	cmd := exec.Command(s.command, s.arguments...)
 	cmd.Stdout = stdout
 	cmd.Stderr = stderr
@@ -43,11 +43,11 @@ func (s *ScriptTask) Run(ctx context.Context, stdout, stderr io.Writer, status c
 	}
 	cmd.Env = env
 
-	status <- logging2.InfoLogEntry("Running: " + cmd.String())
+	status <- logging.InfoLogEntry("Running: " + cmd.String())
 
 	err := cmd.Start()
 	if err != nil {
-		status <- logging2.ErrorLogEntry(fmt.Sprintf("%s: Failed to start script: %s", s.short, err.Error()))
+		status <- logging.ErrorLogEntry(fmt.Sprintf("%s: Failed to start script: %s", s.short, err.Error()))
 		return TaskStatusFailure
 	}
 
@@ -62,15 +62,15 @@ func (s *ScriptTask) Run(ctx context.Context, stdout, stderr io.Writer, status c
 		break
 	case <-ctx.Done():
 		cmd.Process.Kill()
-		status <- logging2.InfoLogEntry(fmt.Sprintf("%s: Script stopped", s.short))
+		status <- logging.InfoLogEntry(fmt.Sprintf("%s: Script stopped", s.short))
 		return TaskStatusStopped
 	}
 
 	if cmd.ProcessState.Success() {
-		status <- logging2.SuccessLogEntry(fmt.Sprintf("%s: Script finished successfully", s.short))
+		status <- logging.SuccessLogEntry(fmt.Sprintf("%s: Script finished successfully", s.short))
 		return TaskStatusSuccess
 	}
 
-	status <- logging2.ErrorLogEntry(fmt.Sprintf("%s: Script failed with exit code %d", s.short, cmd.ProcessState.ExitCode()))
+	status <- logging.ErrorLogEntry(fmt.Sprintf("%s: Script failed with exit code %d", s.short, cmd.ProcessState.ExitCode()))
 	return TaskStatusFailure
 }

@@ -6,7 +6,7 @@ import (
 
 	"github.com/COSI-Lab/Mirror/aggregator"
 	"github.com/COSI-Lab/Mirror/config"
-	"github.com/COSI-Lab/Mirror/logging2"
+	"github.com/COSI-Lab/Mirror/logging"
 	"github.com/influxdata/influxdb-client-go/v2/api"
 )
 
@@ -23,14 +23,14 @@ func StartNGINXAggregator(reader api.QueryAPI, writer api.WriteAPI, config *conf
 		for _, subnetString := range subnetStrings {
 			_, subnet, err := net.ParseCIDR(subnetString)
 			if err != nil {
-				logging2.Warnf("Failed to parse subnet %q for %q", subnetString, name)
+				logging.Warnf("Failed to parse subnet %q for %q", subnetString, name)
 				continue
 			}
 			subnets = append(subnets, subnet)
 		}
 
 		if len(subnets) == 0 {
-			logging2.Warn("No valid subnets for", name)
+			logging.Warn("No valid subnets for", name)
 			continue
 		}
 
@@ -43,7 +43,7 @@ func StartNGINXAggregator(reader api.QueryAPI, writer api.WriteAPI, config *conf
 			return false
 		})
 
-		logging2.Infof("Added subnet aggregator for %q", name)
+		logging.Infof("Added subnet aggregator for %q", name)
 	}
 
 	nginxMetrics := make(chan aggregator.NGINXLogEntry)

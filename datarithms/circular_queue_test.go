@@ -1,14 +1,14 @@
-package datarithms2_test
+package datarithms_test
 
 import (
 	"testing"
 
-	"github.com/COSI-Lab/Mirror/datarithms2"
+	"github.com/COSI-Lab/Mirror/datarithms"
 )
 
 func TestQueue(t *testing.T) {
 	// Create a new queue
-	q := datarithms2.NewCircularQueue[int](5)
+	q := datarithms.NewCircularQueue[int](5)
 
 	if q.Capacity() != 5 {
 		t.Error("Capacity is not 5")

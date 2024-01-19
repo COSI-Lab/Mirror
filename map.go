@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/COSI-Lab/Mirror/aggregator"
-	"github.com/COSI-Lab/Mirror/logging2"
+	"github.com/COSI-Lab/Mirror/logging"
 	"github.com/gorilla/mux"
 	"github.com/gorilla/websocket"
 )
@@ -19,7 +19,7 @@ func handleWebsocket(w http.ResponseWriter, r *http.Request) {
 	// Upgrade the connection to a websocket
 	conn, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
-		logging2.Warn(err)
+		logging.Warn(err)
 		return
 	}
 
@@ -56,12 +56,12 @@ func (hub *hub) run() {
 		case client := <-hub.register:
 			// registers a client
 			hub.clients[client] = struct{}{}
-			logging2.Info("Registered client", client.conn.RemoteAddr())
+			logging.Info("Registered client", client.conn.RemoteAddr())
 		case client := <-hub.unregister:
 			// unregister a client
 			delete(hub.clients, client)
 			close(client.send)
-			logging2.Info("Unregistered client", client.conn.RemoteAddr())
+			logging.Info("Unregistered client", client.conn.RemoteAddr())
 		case message := <-hub.broadcast:
 			for client := range hub.clients {
 				select {
@@ -92,7 +92,7 @@ func (c *client) write() {
 	for message := range c.send {
 		w, err := c.conn.NextWriter(websocket.BinaryMessage)
 		if err != nil {
-			logging2.Info("Closing websocket connection", err)
+			logging.Info("Closing websocket connection", err)
 			break
 		}
 

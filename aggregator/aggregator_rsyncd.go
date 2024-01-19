@@ -10,7 +10,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/COSI-Lab/Mirror/logging2"
+	"github.com/COSI-Lab/Mirror/logging"
 	influxdb2 "github.com/influxdata/influxdb-client-go/v2"
 	"github.com/influxdata/influxdb-client-go/v2/api"
 	"github.com/nxadm/tail"
@@ -64,7 +64,7 @@ func (a *RSYNCDAggregator) Init(reader api.QueryAPI) (lastUpdated time.Time, err
 			// Get the field
 			field, ok := dp.ValueByKey("_field").(string)
 			if !ok {
-				logging2.Warn("Error getting field")
+				logging.Warn("Error getting field")
 				fmt.Printf("%T %v\n", field, field)
 				continue
 			}
@@ -74,7 +74,7 @@ func (a *RSYNCDAggregator) Init(reader api.QueryAPI) (lastUpdated time.Time, err
 			case "bytes_sent":
 				sent, ok := dp.ValueByKey("_value").(int64)
 				if !ok {
-					logging2.Warn("Error getting bytes sent")
+					logging.Warn("Error getting bytes sent")
 					fmt.Printf("%T %v\n", dp.ValueByKey("_value"), dp.ValueByKey("_value"))
 					continue
 				}
@@ -82,7 +82,7 @@ func (a *RSYNCDAggregator) Init(reader api.QueryAPI) (lastUpdated time.Time, err
 			case "bytes_recv":
 				received, ok := dp.ValueByKey("_value").(int64)
 				if !ok {
-					logging2.Warn("Error getting bytes recv")
+					logging.Warn("Error getting bytes recv")
 					fmt.Printf("%T %v\n", dp.ValueByKey("_value"), dp.ValueByKey("_value"))
 					continue
 				}
@@ -90,14 +90,14 @@ func (a *RSYNCDAggregator) Init(reader api.QueryAPI) (lastUpdated time.Time, err
 			case "requests":
 				requests, ok := dp.ValueByKey("_value").(int64)
 				if !ok {
-					logging2.Warn("Error getting requests")
+					logging.Warn("Error getting requests")
 					fmt.Printf("%T %v\n", dp.ValueByKey("_value"), dp.ValueByKey("_value"))
 					continue
 				}
 				a.stat.Requests = requests
 			}
 		} else {
-			logging2.Warn("Error querying influxdb for rsyncd stat", result.Err())
+			logging.Warn("Error querying influxdb for rsyncd stat", result.Err())
 		}
 	}
 
@@ -137,7 +137,7 @@ func TailRSYNCLogFile(logFile string, lastUpdated time.Time, channels []chan<- R
 
 	f, err := os.Open(logFile)
 	if err != nil {
-		logging2.Error(err)
+		logging.Error(err)
 		return
 	}
 
@@ -151,7 +151,7 @@ func TailRSYNCLogFile(logFile string, lastUpdated time.Time, channels []chan<- R
 		}
 		offset += int64(len(s.Text()) + 1)
 	}
-	logging2.Info("Found rsyncd log offset in", time.Since(start))
+	logging.Info("Found rsyncd log offset in", time.Since(start))
 
 	// Tail the log file `tail -F` starting at the offset
 	seek := tail.SeekInfo{
@@ -160,11 +160,11 @@ func TailRSYNCLogFile(logFile string, lastUpdated time.Time, channels []chan<- R
 	}
 	tail, err := tail.TailFile(logFile, tail.Config{Follow: true, ReOpen: true, MustExist: true, Location: &seek})
 	if err != nil {
-		logging2.Error("Failed to start tailing `rsyncd.log`:", err)
+		logging.Error("Failed to start tailing `rsyncd.log`:", err)
 		return
 	}
 
-	logging2.Success("Tailing rsyncd log file")
+	logging.Success("Tailing rsyncd log file")
 
 	// Parse each line as we receive it
 	for line := range tail.Lines {
