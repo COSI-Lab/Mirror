@@ -437,7 +437,7 @@
         "command": "/bin/python3",
         "arguments": ["scripts/kicad/kicad_sync.py"]
       },
-      "official": false,
+      "official": true,
       "homepage": "https://www.kicad.org",
       "color": "#ff7700",
       "publicRsync": true,
