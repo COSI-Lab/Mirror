@@ -429,6 +429,21 @@
       "alternative": "http://mirror.cse.unsw.edu.au/pub/isabelle/",
       "icon": "img/projects/isabelle.gif"
     },
+    "kicad": {
+      "name": "KiCad",
+      "page": "Software",
+      "script": {
+        "syncs_per_day": 4,
+        "command": "/bin/python3",
+        "arguments": ["scripts/kicad/kicad_sync.py"]
+      },
+      "official": false,
+      "homepage": "https://www.kicad.org",
+      "color": "#ff7700",
+      "publicRsync": true,
+      "alternative": "http://kicad-downloads.s3.cern.ch/",
+      "icon": "img/projects/kicad.svg"
+    },
     "linux": {
       "name": "Linux (including source)",
       "page": "Software",
