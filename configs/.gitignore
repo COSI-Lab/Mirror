@@ -1,2 +1,3 @@
 *.secret
 tokens.txt
+tokens.toml

@@ -1,64 +1,35 @@
 # Mirror
 
-Monolithic software for our [mirror](https://mirror.clarkson.edu) that handles the website, tracking, and scheduling systems. We use an influxdb time series database for storage. 
+Monolithic software for our [mirror](https://mirror.clarkson.edu) that handles the website, tracking, and scheduling systems. We use an influxdb time series database for storage.
 
 ![preview](./preview.png)
 
 ## Setup
 
-```
+```cli
 git clone --recurse-submodule https://github.com/COSI-Lab/Mirror
 ```
 
 ## `.env`
 
-Secrets and some configuration is managed through creating a `.env` file.
+Secrets are managed through creating a `.env` file.
 
 ```text
-# "adm" group id. check with "getent group admin"
-# the user running this script should be in the "adm" group
-# so that they can read and write log files.
-ADM_GROUP=
-
-# Discord Webhook URL and id to ping when things panic
-# Omit either and the bot will not communicate with discord
-HOOK_URL=
-PING_ID=
-
-# Maxmind DB token to update the database, omit and we'll only use a local copy if it exists
+# Maxmind DB token to update the database. Omit and we'll only use a local copy if it exists
+# Note: The maxmind DB license requires we use an up-to-date copy
 MAXMIND_LICENSE_KEY=
 
-# InfluxDB Token
+# InfluxDB Token must support read/write access to the database
 INFLUX_TOKEN=
+```
 
-# "true" if we only read from the database
-INFLUX_READ_ONLY=
+## NGINX
 
-# Location on disk to save torrents to leave
-# empty to disable the torrent syncing system
-TORRENT_DIR=
+The NGINX aggregator requires this `access_log` configuration:
 
-# File to tail NGINX access logs, if empty then we read the static ./access.log file
-NGINX_TAIL=/var/log/nginx/access.log
-
-# File to tail rsyncd log file. If empty then we read a local ./rsyncd.log file
-RSYNCD_TAIL=/var/log/rsyncd.log
-
-# Set to "true" to pause scheduling sync tasks
-SCHEDULER_PAUSED=true
-
-# "true" if the --dry-run flag to the rsync jobs
-# and we skip other scripts pulls
-SYNC_DRY_RUN=true
-
-# Directory to store the rsync log files, if empty then we don't keep logs. It will be created if it doesn't exist.
-RSYNC_LOGS=
-
-# "true" if we should cache the result of executing templates
-WEB_SERVER_CACHE=false
-
-# Secret pull token
-PULL_TOKEN=token
+```nginx
+log_format config '"$time_local" "$remote_addr" "$request" "$status" "$body_bytes_sent" "$request_length" "$http_user_agent"';
+access_log /var/log/nginx/access.log config;
 ```
 
 ## Dependencies
