@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"sync"
 
-	"github.com/COSI-Lab/logging"
+	"github.com/COSI-Lab/Mirror/logging"
 	"github.com/gorilla/mux"
 	"github.com/wcharczuk/go-chart/v2"
 )

@@ -7,7 +7,7 @@ import (
 	"sort"
 	"time"
 
-	"github.com/COSI-Lab/logging"
+	"github.com/COSI-Lab/Mirror/logging"
 	"github.com/influxdata/influxdb-client-go/v2/api"
 	"github.com/wcharczuk/go-chart/v2"
 	"github.com/wcharczuk/go-chart/v2/drawing"
