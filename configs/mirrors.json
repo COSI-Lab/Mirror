@@ -394,6 +394,23 @@
       "alternative": "http://mirrors.rit.edu/gentoo-rsync/",
       "icon": "img/projects/gentoo.png"
     },
+    "gimp": {
+      "name": "GIMP",
+      "official": false,
+      "page": "Software",
+      "homepage": "",
+      "color": "#665f4b",
+      "publicRsync": true,
+      "rsync": {
+        "user": "mirror",
+        "password_file": "gimp.secret",
+        "host": "master.gnome.org",
+        "src": "gimp",
+        "dest": "/storage/gimp",
+        "options": "-avzrHy --no-perms --no-group --no-owner --delete --delete-delay --delay-updates --ignore-errors --exclude \".~tmp~\"",
+        "syncs_per_day": 24
+      }
+    },
     "ipfire": {
       "name": "IPFire",
       "page": "Distributions",
