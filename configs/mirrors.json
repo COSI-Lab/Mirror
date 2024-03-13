@@ -408,7 +408,7 @@
         "src": "gimp",
         "dest": "/storage/gimp",
         "options": "-avzrHy --no-perms --no-group --no-owner --delete --delete-delay --delay-updates --ignore-errors --exclude \".~tmp~\"",
-        "syncs_per_day": 24
+        "syncs_per_day": 4
       }
     },
     "ipfire": {
