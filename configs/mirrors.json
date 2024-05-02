@@ -621,8 +621,8 @@
       "name": "RebornOS",
       "page": "Distributions",
       "rsync": {
-        "host": "144.126.251.157",
-        "src": "rsync",
+        "host": "rsync.rebornos.org",
+        "src": "rebornos",
         "dest": "/storage/RebornOS",
         "options": "-vrlptHy --no-perms --no-owner --no-group --safe-links --delete-delay --delay-updates",
         "syncs_per_day": 2
