@@ -10,8 +10,8 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/COSI-Lab/geoip"
-	"github.com/COSI-Lab/logging"
+	"github.com/COSI-Lab/Mirror/geoip"
+	"github.com/COSI-Lab/Mirror/logging"
 	"github.com/joho/godotenv"
 )
 
