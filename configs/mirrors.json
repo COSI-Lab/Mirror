@@ -598,7 +598,7 @@
         "src": "reposilite-data",
         "dest": "/storage/photonvision",
         "syncs_per_day": 1,
-        "options": "-avzrHy --no-perms --no-group --no-owner --ignore-errors --exclude \".~tmp~\""
+        "options": "-avzrHy --no-perms --no-group --no-owner --ignore-errors --exclude \".~tmp~\" --exclude \"snapshots\""
       },
       "official": true,
       "homepage": "https://photonvision.org/",
