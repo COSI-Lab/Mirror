@@ -1,0 +1,12 @@
+--2024-07-31 21:47:50--  https://photonvision.org/images/PhotonVision-Icon-BG.png
+Loaded CA certificate '/etc/ssl/certs/ca-certificates.crt'
+Resolving photonvision.org (photonvision.org)... 148.135.85.134
+Connecting to photonvision.org (photonvision.org)|148.135.85.134|:443... connected.
+HTTP request sent, awaiting response... 200 OK
+Length: 32295 (32K) [image/png]
+Saving to: ‘PhotonVision-Icon-BG.png’
+
+     0K .......... .......... .......... .                    100%  347K=0.09s
+
+2024-07-31 21:47:51 (347 KB/s) - ‘PhotonVision-Icon-BG.png’ saved [32295/32295]
+

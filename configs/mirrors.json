@@ -248,7 +248,9 @@
       "page": "Distributions",
       "script": {
         "command": "./scripts/archvsync/bin/ftpsync",
-        "arguments": ["sync:all"],
+        "arguments": [
+          "sync:all"
+        ],
         "syncs_per_day": 4
       },
       "official": true,
@@ -351,7 +353,10 @@
       "script": {
         "syncs_per_day": 4,
         "command": "./scripts/quick-fedora-mirror/quick-fedora-mirror",
-        "arguments": ["-c", "configs/quick-fedora-mirror.conf"]
+        "arguments": [
+          "-c",
+          "configs/quick-fedora-mirror.conf"
+        ]
       },
       "official": true,
       "homepage": "https://www.fedoraproject.org/",
@@ -435,7 +440,9 @@
       "script": {
         "syncs_per_day": 4,
         "command": "/bin/python3",
-        "arguments": ["scripts/kicad/kicad_sync.py"]
+        "arguments": [
+          "scripts/kicad/kicad_sync.py"
+        ]
       },
       "official": true,
       "homepage": "https://www.kicad.org",
@@ -582,6 +589,22 @@
       "alternative": "http://mirrors.mit.edu/parrot/",
       "icon": "img/projects/parrot.svg",
       "torrents": "/storage/parrot/iso/*/"
+    },
+    "photonvision": {
+      "name": "PhotonVision archives",
+      "page": "Software",
+      "rsync": {
+        "host": "maven.photonvision.org",
+        "src": "reposilite-data",
+        "dest": "/storage/photonvision",
+        "syncs_per_day": 1,
+        "options": "-avzrHy --no-perms --no-group --no-owner --ignore-errors --exclude \".~tmp~\""
+      },
+      "official": true,
+      "homepage": "https://photonvision.org/",
+      "color": "#006492",
+      "publicRsync": true,
+      "icon": "img/projects/photonvision.png"
     },
     "raspbian": {
       "name": "Raspbian",
