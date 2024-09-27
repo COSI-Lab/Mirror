@@ -11,7 +11,7 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/COSI-Lab/logging"
+	"github.com/COSI-Lab/Mirror/logging"
 	"github.com/gocolly/colly"
 )
 
