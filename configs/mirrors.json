@@ -711,7 +711,7 @@
       "page": "Distributions",
       "rsync": {
         "options": "-avzrHy --no-perms --no-group --no-owner --delete --delete-delay --delay-updates --ignore-errors --exclude \".~tmp~\"",
-        "host": "mirrors.rsync.tails.boum.org",
+        "host": "rsync.tails.net",
         "src": "amnesia-archive",
         "dest": "/storage/tailsos",
         "syncs_per_day": 24
