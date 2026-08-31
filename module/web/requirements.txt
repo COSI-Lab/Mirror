@@ -1,4 +1,0 @@
-django
-pyzmq
-black
-isort
