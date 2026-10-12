@@ -1,22 +1,16 @@
-{% extends "./base.html" %}
-{% load static %}
-
-{% block title %}Projects{% endblock %}
-
-{% block body %}
-<div class="navbar_spacer"></div>
-
-<div>
-    <div id="map_legend">
-        ...
+<main>
+    <div>
+        <div id="map_legend">
+            ...
+        </div>
+        <img id="map" src="/static/img/map.jpg" alt="" style="display: none;" />
+        <canvas id="canvas" style="position:sticky"></canvas>
     </div>
-    <img id="map" src="{% static 'img/map.jpg' %}" alt="" style="display: none;" />
-    <canvas id="canvas" style="position:sticky"></canvas>
-</div>
+</main>
 
-<script src="{% static 'js/map.js' %}"></script>
+
+<script src="/static/js/map.js"></script>
 
 <script>
     document.getElementById("navbar_map").classList.add("active");
 </script>
-{% endblock %}

@@ -1,12 +1,3 @@
-{% extends "./base.html" %}
-{% load static %}
-
-{% block title %}Home{% endblock %}
-
-{% block body %}
-
-<div class="navbar_spacer"></div>
-
 <header class="banner">
     <h1>Welcome to Mirror</h1>
 </header>
@@ -33,7 +24,7 @@
             </header>
             <div class="content">
                 We host over 20
-                <a href="{% url 'projects' %}#distributions">distributions,</a>
+                <a href="/projects#distributions">distributions,</a>
                 including Debian, Ubuntu, Arch Linux, Linux Mint, and many more. 
                 Many are official mirrors, and the majority are updated 4 times per
                 day.
@@ -48,7 +39,7 @@
             </header>
             <div class="content">
                 We host a variety of third party
-                <a href="{% url 'projects' %}#software">software</a>
+                <a href="/projects#software">software</a>
                 including Blender, KiCad, Cygwin, Eclipse, among many others.
             </div>
         </article>
@@ -61,7 +52,7 @@
             </header>
             <div class="content">
                 We also host
-                <a href="{% url 'projects' %}#misc">miscellaneous projects,</a>
+                <a href="/projects/#misc">miscellaneous projects,</a>
                 including Wikipedia dumps and torrents.
             </div>
         </article>
@@ -96,4 +87,3 @@
 <script>
     document.getElementById("navbar_home").classList.add("active");
 </script>
-{% endblock %}
