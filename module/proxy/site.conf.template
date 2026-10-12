@@ -22,7 +22,7 @@ server {
         xslt_stylesheet /etc/nginx/xslt/base.xslt;
         xslt_types text/html;
         root /var/www/static/pages;
-        try_files $uri $uri.html;
+        try_files $uri $uri.html 404;
     }
 
     # static website resources
