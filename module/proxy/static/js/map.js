@@ -1,4 +1,5 @@
 const MAP_LEGEND = document.getElementById("map_legend");
+const MAP_MAIN = document.getElementById("map_main");
 const MAX_CIRCLES = 1000;
 const CANVAS = document.getElementById("canvas");
 const IMG = document.getElementById("map");
@@ -81,8 +82,8 @@ function registerWebsocket() {
 
 // Event listener for window size change
 window.onresize = function(){
-    CANVAS.width = window.innerWidth;
-    CANVAS.height = window.innerHeight;
+    CANVAS.width = MAP_MAIN.clientWidth;
+    CANVAS.height = MAP_MAIN.clientHeight;
 };
 
 /* --- On page load --- */
@@ -92,6 +93,9 @@ registerWebsocket();
 
 // Size canvas properly
 window.onresize();
+
+// Hide footer
+//document.getElementsByTagName("footer")[0].style.display = 'none';
 
 // Draw loop
 setInterval(() => {

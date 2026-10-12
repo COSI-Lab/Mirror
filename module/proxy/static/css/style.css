@@ -2,40 +2,45 @@
     ----- Theme colors -----
 */
 
-:root {
-    --primary_text_color: rgb(0,0,10);
-    --secondary_text_color: rgb(245,245,255);
-    --link_text_color: rgb(0,50,125);
-    --primary_bg: white;
-    --page_gradient: linear-gradient(
-        rgb(255,255,255) 0%,
-        rgb(245,245,250) 70%,
-        rgb(235,235,240) 100%
-    );
-    --navbar_bg: rgb(0, 31, 26);
-    --navbar_selected_bg: rgb(0,62,54);
-    --icon_accent_color: rgb(0,62,54);
-    --footer_bg: rgb(0, 31, 26);
-    --card_border_color: rgba(0,0,0,0.15);
+@media (prefers-color-scheme: light) {
+    :root {
+        --primary_text_color: rgb(0,0,10);
+        --secondary_text_color: rgb(245,245,255);
+        --link_text_color: rgb(0,50,125);
+        --primary_bg: white;
+        --page_gradient: linear-gradient(
+            rgb(255,255,255) 0%,
+            rgb(245,245,250) 70%,
+            rgb(235,235,240) 100%
+        );
+        --navbar_bg: rgb(0, 31, 26);
+        --navbar_selected_bg: rgb(0,62,54);
+        --icon_accent_color: rgb(0,62,54);
+        --footer_bg: var(--navbar_bg);
+        --card_border_color: rgba(0,0,0,0.15);
+        background: var(--navbar_bg);
+    }
 }
 
-[color_theme="dark"] {
-    --primary_text_color: rgb(245,245,255);
-    --secondary_text_color: rgb(245,245,255);
-    --link_text_color: rgb(180,220,255);
-    --primary_bg: rgb(12,13,16);
-    --page_gradient: linear-gradient(
-        rgb(15,15,20) 0%,
-        rgb(10,10,12) 70%,
-        rgb(5,5,7) 100%
-    );
-    --navbar_bg: rgb(0, 31, 26);
-    --navbar_selected_bg: rgb(0,62,54);
-    --icon_accent_color: rgb(0,126,108);
-    --footer_bg: rgb(0, 31, 26);
-    --card_border_color: rgba(255,255,255,0.15);
+@media (prefers-color-scheme: dark) {
+    :root {
+        --primary_text_color: rgb(245,245,255);
+        --secondary_text_color: rgb(245,245,255);
+        --link_text_color: rgb(180,220,255);
+        --primary_bg: rgb(12,13,16);
+        --page_gradient: linear-gradient(
+            rgb(15,15,20) 0%,
+            rgb(10,10,12) 70%,
+            rgb(5,5,7) 100%
+        );
+        --navbar_bg: rgb(0, 31, 26);
+        --navbar_selected_bg: rgb(0,62,54);
+        --icon_accent_color: rgb(0,126,108);
+        --footer_bg: var(--navbar_bg);
+        --card_border_color: rgba(255,255,255,0.15);
+        background: var(--navbar_bg);
+    }
 }
-
 
 
 /*
@@ -258,8 +263,15 @@ body>footer>div.content {
 
 
 /*
-    ----- Map legend -----
+    ----- Map -----
 */
+
+main#map_main {
+    padding: 0 !important; 
+    margin: 0 !important; 
+    max-width: 100%;
+    height: calc(100% - 3.2rem);
+}
 
 #map_legend {
     position: fixed;

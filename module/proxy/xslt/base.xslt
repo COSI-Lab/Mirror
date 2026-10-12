@@ -11,7 +11,6 @@
             <link rel="stylesheet" href="./static/fa/css/solid.min.css"/>
             <link rel="stylesheet" href="./static/fa/css/fontawesome.min.css"/>
             <link rel="icon" href="./static/img/favicon.ico"/>
-            <script src="./static/js/base.js"/>
             <script src="./static/js/jquery/jquery-3.7.1.min.js"/>
         </head>
 
@@ -22,7 +21,6 @@
                 <a href="/projects" id="navbar_projects">Projects</a>
                 <a href="/about" id="navbar_about">About</a>
                 <a href="/map" id="navbar_map">Map</a>
-                <a onclick="changeColorTheme()"><i class="fa-solid fa-circle-half-stroke"></i></a>
             </nav>
 
             <div class="navbar_spacer"></div>
