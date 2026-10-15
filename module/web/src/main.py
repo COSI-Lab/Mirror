@@ -38,7 +38,14 @@ except OSError:
     exit(1)
 else:
     try:
-        mirror_projects = list(map(str.lower, json.load(file)['mirrors'].keys()))
+        # flat list of project keys for map
+        project_keys = list(map(str.lower, json.load(file)['mirrors'].keys()))
+
+        # rich map of project objects for projects page
+        projects = json.load(file)['mirrors']
+        for project, fields in projects.items():
+            projects[project] = {key: fields[key] for key in ["alternative", "homepage", "name", "official", "page"]}
+
     except KeyError:
         logging.critical("Bad mirrors.json format. Exiting.")
         exit(2)
@@ -118,7 +125,7 @@ async def data_thread_task() -> None:
                 last_updated = update_time
 
                 for ip_addr, project in data:
-                    if project.lower() not in mirror_projects:
+                    if project.lower() not in project_keys:
                         continue
 
                     # if we've seen this person recently, skip them
@@ -167,6 +174,10 @@ async def websocket_endpoint(websocket: WebSocket):
                 await websocket.send_text(event.message)
     except WebSocketDisconnect:
         logging.debug(f"Map client {websocket.client.host} disconnected")
+
+@app.get("/projects")
+def get_projects_json():
+    return projects
 
 if __name__ == "__main__":
     import uvicorn

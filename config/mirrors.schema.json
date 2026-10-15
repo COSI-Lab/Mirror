@@ -150,10 +150,6 @@
                         "description": "HTTP Url to another nearby site that hosts the same content that we can forward to incase there is an interruption to Mirror",
                         "pattern": "http?://.*/"
                     },
-                    "icon": {
-                        "type": "string",
-                        "description": "Local path to project logo file"
-                    },
                     "torrents": {
                         "type": "string",
                         "description": "globs to find files. \"*.torrent\" is append to each glob when searching"

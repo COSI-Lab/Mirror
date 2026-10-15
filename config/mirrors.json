@@ -4,7 +4,6 @@
         "almalinux": {
             "alternative": "http://mirror.lshiy.com/almalinux/",
             "homepage": "https://almalinux.org",
-            "icon": "img/projects/almalinux.svg",
             "name": "AlmaLinux",
             "official": true,
             "page": "Distributions",
@@ -31,7 +30,6 @@
         "alpine": {
             "alternative": "http://ewr.edge.kernel.org/alpine/",
             "homepage": "https://www.alpinelinux.org/",
-            "icon": "img/projects/alpinelinux.svg",
             "name": "Alpine Linux",
             "official": true,
             "page": "Distributions",
@@ -61,7 +59,6 @@
         "archlinux": {
             "alternative": "http://mirrors.rit.edu/archlinux/",
             "homepage": "http://www.archlinux.org/",
-            "icon": "img/projects/arch.svg",
             "name": "Arch Linux",
             "official": true,
             "page": "Distributions",
@@ -88,7 +85,6 @@
         "archlinux32": {
             "alternative": "http://mirror.math.princeton.edu/pub/archlinux32/",
             "homepage": "http://www.archlinux32.org/",
-            "icon": "img/projects/arch32.png",
             "name": "Arch Linux 32",
             "official": true,
             "page": "Distributions",
@@ -116,7 +112,6 @@
         "artix-linux": {
             "alternative": "http://mirrors.dotsrc.org/artix-linux/",
             "homepage": "https://artixlinux.org/",
-            "icon": "img/projects/artix.png",
             "name": "Artix Linux",
             "official": true,
             "page": "Distributions",
@@ -144,7 +139,6 @@
         "blender": {
             "alternative": "http://mirrors.ocf.berkeley.edu/blender/",
             "homepage": "https://www.blender.org/",
-            "icon": "img/projects/blender.png",
             "name": "Blender",
             "official": true,
             "page": "Software",
@@ -173,7 +167,6 @@
         "centos": {
             "alternative": "http://mirrors.rit.edu/centos/",
             "homepage": "https://www.centos.org/",
-            "icon": "img/projects/centos.svg",
             "name": "CentOS (≤8)",
             "official": true,
             "page": "Distributions",
@@ -204,7 +197,6 @@
         "centos9": {
             "alternative": "http://mirror.siena.edu/centos-stream/",
             "homepage": "https://centos.org/",
-            "icon": "img/projects/centos.svg",
             "name": "CentOS Stream 9",
             "official": true,
             "page": "Distributions",
@@ -228,7 +220,6 @@
         "cpan": {
             "alternative": "http://mirrors.rit.edu/CPAN/",
             "homepage": "http://www.cpan.org/",
-            "icon": "img/projects/cpan.png",
             "name": "CPAN",
             "official": false,
             "page": "Software",
@@ -257,7 +248,6 @@
         "cran": {
             "alternative": "http://mirror.las.iastate.edu/CRAN/",
             "homepage": "http://cran.r-project.org/",
-            "icon": "img/projects/cran.svg",
             "name": "CRAN",
             "official": false,
             "page": "Software",
@@ -310,7 +300,6 @@
         "cygwin": {
             "alternative": "http://mirrors.rit.edu/cygwin/",
             "homepage": "https://www.cygwin.com/",
-            "icon": "img/projects/cygwin.png",
             "name": "Cygwin",
             "official": true,
             "page": "Software",
@@ -339,7 +328,6 @@
         "debian": {
             "alternative": "http://mirrors.rit.edu/debian/",
             "homepage": "https://www.debian.org",
-            "icon": "img/projects/debian.png",
             "name": "Debian",
             "official": true,
             "page": "Distributions",
@@ -353,7 +341,6 @@
         },
         "debian-archive": {
             "homepage": "",
-            "icon": "img/projects/debian.png",
             "name": "Debian Archive",
             "official": false,
             "page": "Distributions",
@@ -380,7 +367,6 @@
         "debian-cd": {
             "alternative": "http://debian.osuosl.org/debian-cdimage/",
             "homepage": "https://www.debian.org/CD/",
-            "icon": "img/projects/debian.png",
             "name": "Debian Images",
             "official": false,
             "page": "Distributions",
@@ -410,7 +396,6 @@
         "dragonflybsd": {
             "alternative": "http://mirrors.nycbug.org/pub/DragonflyBSD/",
             "homepage": "https://www.dragonflybsd.org/",
-            "icon": "img/projects/dragonflybsd.png",
             "name": "DragonflyBSD Packages",
             "official": false,
             "page": "Distributions",
@@ -435,7 +420,6 @@
         "dragonflybsd-img": {
             "alternative": "http://mirrors.nycbug.org/pub/DragonflyBSD/",
             "homepage": "https://www.dragonflybsd.org/",
-            "icon": "img/projects/dragonflybsd.png",
             "name": "DragonflyBSD Disc Images",
             "official": false,
             "page": "Distributions",
@@ -460,7 +444,6 @@
         "eclipse": {
             "alternative": "http://mirror.umd.edu/eclipse/",
             "homepage": "https://www.eclipse.org/",
-            "icon": "img/projects/eclipse.svg",
             "name": "Eclipse",
             "official": true,
             "page": "Software",
@@ -502,7 +485,6 @@
         "fedora": {
             "alternative": "http://mirror.rit.edu/fedora/",
             "homepage": "https://www.fedoraproject.org/",
-            "icon": "img/projects/fedora.png",
             "name": "Fedora",
             "official": false,
             "page": "Distributions",
@@ -518,7 +500,6 @@
         "gentoo": {
             "alternative": "http://mirrors.rit.edu/gentoo/",
             "homepage": "https://www.gentoo.org/",
-            "icon": "img/projects/gentoo.png",
             "name": "Gentoo",
             "official": true,
             "page": "Distributions",
@@ -544,7 +525,6 @@
         "gentoo-portage": {
             "alternative": "http://mirrors.rit.edu/gentoo-rsync/",
             "homepage": "https://www.gentoo.org/",
-            "icon": "img/projects/gentoo.png",
             "name": "Gentoo Portage",
             "official": false,
             "page": "Distributions",
@@ -571,7 +551,6 @@
             "official": false,
             "page": "Software",
             "homepage": "https://gimp.org/",
-            "icon": "img/projects/gimp.png",
             "rsync": {
                 "host": "master.gimp.org",
                 "src": "gimp/pub",
@@ -588,7 +567,6 @@
         "ipfire": {
             "alternative": "http://mirrors.rit.edu/ipfire/",
             "homepage": "https://www.ipfire.org/",
-            "icon": "img/projects/ipfire.png",
             "name": "IPFire",
             "official": true,
             "page": "Distributions",
@@ -613,7 +591,6 @@
         "isabelle": {
             "alternative": "http://mirror.cse.unsw.edu.au/pub/isabelle/",
             "homepage": "https://isabelle.in.tum.de/",
-            "icon": "img/projects/isabelle.gif",
             "name": "Isabelle",
             "official": true,
             "page": "Software",
@@ -642,7 +619,6 @@
         "kicad": {
             "alternative": "http://kicad-downloads.s3.cern.ch/",
             "homepage": "https://www.kicad.org",
-            "icon": "img/projects/kicad.svg",
             "name": "KiCad",
             "official": true,
             "page": "Software",
@@ -655,7 +631,6 @@
         "linux": {
             "alternative": "http://mirrors.edge.kernel.org/pub/",
             "homepage": "http://kernel.org",
-            "icon": "img/projects/linux.png",
             "name": "Linux (including source)",
             "official": true,
             "page": "Software",
@@ -684,7 +659,6 @@
         "linux-lite": {
             "alternative": "http://repo.linuxliteos.com/linuxlite",
             "homepage": "https://www.linuxliteos.com/index.html",
-            "icon": "img/projects/linux-lite.png",
             "name": "Linux Lite",
             "official": false,
             "page": "Distributions",
@@ -714,7 +688,6 @@
         "linuxmint-images": {
             "alternative": "http://mirrors.advancedhosters.com/linuxmint/isos/",
             "homepage": "https://linuxmint.com/",
-            "icon": "img/projects/mint.svg",
             "name": "LinuxMint Images",
             "official": true,
             "page": "Distributions",
@@ -743,7 +716,6 @@
         "linuxmint-packages": {
             "alternative": "http://mirror.csclub.uwaterloo.ca/linuxmint-packages/",
             "homepage": "https://linuxmint.com/",
-            "icon": "img/projects/mint.svg",
             "name": "LinuxMint Packages",
             "official": true,
             "page": "Distributions",
@@ -786,7 +758,6 @@
         "manjaro": {
             "alternative": "http://mirror.math.princeton.edu/pub/manjaro/",
             "homepage": "https://manjaro.org/",
-            "icon": "img/projects/manjaro.svg",
             "name": "Manjaro",
             "official": false,
             "page": "Distributions",
@@ -811,7 +782,6 @@
         "msys2": {
             "alternative": "http://mirror.umd.edu/msys2/",
             "homepage": "https://www.msys2.org/",
-            "icon": "img/projects/msys2.png",
             "name": "msys2",
             "official": true,
             "page": "Software",
@@ -836,7 +806,6 @@
         "opensuse": {
             "alternative": "http://mirrors.rit.edu/opensuse/",
             "homepage": "https://www.opensuse.org/",
-            "icon": "img/projects/opensuse.svg",
             "name": "OpenSUSE",
             "official": true,
             "page": "Distributions",
@@ -862,7 +831,6 @@
         "parrot": {
             "alternative": "http://mirrors.mit.edu/parrot/",
             "homepage": "https://www.parrotsec.org/",
-            "icon": "img/projects/parrot.svg",
             "name": "Parrot Security OS",
             "official": true,
             "page": "Distributions",
@@ -885,7 +853,6 @@
         },
         "photonvision": {
             "homepage": "https://photonvision.org/",
-            "icon": "img/projects/photonvision.png",
             "name": "PhotonVision archives",
             "official": true,
             "page": "Software",
@@ -912,7 +879,6 @@
         "raspbian": {
             "alternative": "http://mirrors.mit.edu/raspbian/",
             "homepage": "https://www.raspbian.org/",
-            "icon": "img/projects/raspbian.png",
             "name": "Raspbian",
             "official": false,
             "page": "Distributions",
@@ -941,7 +907,6 @@
         "ravynos": {
             "alternative": "http://mirror2.sandyriver.net/pub/ravynos/",
             "homepage": "https://airyx.org/",
-            "icon": "img/projects/ravyn.svg",
             "name": "ravynOS",
             "official": true,
             "page": "Distributions",
@@ -965,7 +930,6 @@
         "RebornOS": {
             "alternative": "http://repo.rebornos.org/RebornOS/",
             "homepage": "https://rebornos.org/",
-            "icon": "img/projects/reborn.svg",
             "name": "RebornOS",
             "official": true,
             "page": "Distributions",
@@ -992,7 +956,6 @@
         "RebornOS-ARM": {
             "alternative": "http://mirrors.dotsrc.org/osdn/storage/g/r/re/rebornos/armrepo/",
             "homepage": "https://rebornos.org/",
-            "icon": "img/projects/rebornarm.svg",
             "name": "RebornOS ARM",
             "official": true,
             "page": "Distributions",
@@ -1005,7 +968,6 @@
         "slackware": {
             "alternative": "http://mirror.math.princeton.edu/pub/slackware/",
             "homepage": "https://www.slackware.com/",
-            "icon": "img/projects/slackware.svg",
             "name": "Slackware",
             "official": false,
             "page": "Distributions",
@@ -1034,7 +996,6 @@
         "slitaz": {
             "alternative": "http://mirror1.slitaz.org/",
             "homepage": "http://www.slitaz.org/en/",
-            "icon": "img/projects/slitaz.svg",
             "name": "SliTaz Linux",
             "official": true,
             "page": "Distributions",
@@ -1062,7 +1023,6 @@
         },
         "tailsos": {
             "homepage": "https://tails.net",
-            "icon": "img/projects/tailsos.svg",
             "name": "TailsOS",
             "official": false,
             "page": "Distributions",
@@ -1091,7 +1051,6 @@
         "tdf": {
             "alternative": "http://ftp.osuosl.org/pub/tdf/",
             "homepage": "http://www.documentfoundation.org/",
-            "icon": "img/projects/libreoffice.png",
             "name": "LibreOffice",
             "official": true,
             "page": "Software",
@@ -1120,7 +1079,6 @@
         "templeos": {
             "alternative": "http://templeos.org/",
             "homepage": "https://templeos.org/",
-            "icon": "img/projects/templeos.jpg",
             "name": "TempleOS",
             "official": false,
             "page": "Software",
@@ -1135,7 +1093,6 @@
             "name": "Termux-Pacman",
             "official": true,
             "page": "Software",
-            "icon": "img/projects/termux-pacman.png",
             "rsync": {
                 "dest": "/storage/termux-pacman",
                 "host": "sync.termux-pacman.dev",
@@ -1160,7 +1117,6 @@
         },
         "torrents": {
             "homepage": "https://mirror.clarkson.edu",
-            "icon": "img/projects/transmission.png",
             "name": "Torrents",
             "official": false,
             "page": "Miscellaneous",
@@ -1173,7 +1129,6 @@
         "ubuntu": {
             "alternative": "http://mirrors.mit.edu/ubuntu/",
             "homepage": "https://www.ubuntu.com/",
-            "icon": "img/projects/ubuntu.png",
             "name": "Ubuntu",
             "official": true,
             "page": "Distributions",
@@ -1215,7 +1170,6 @@
         "ubuntu-releases": {
             "alternative": "http://mirrors.mit.edu/ubuntu-releases/",
             "homepage": "https://ubuntu.com/#download",
-            "icon": "img/projects/ubuntu.png",
             "name": "Ubuntu Releases",
             "official": true,
             "page": "Distributions",
@@ -1245,7 +1199,6 @@
         "videolan": {
             "alternative": "http://ftp.osuosl.org/pub/videolan/",
             "homepage": "https://www.videolan.org/index.html",
-            "icon": "img/projects/vlc.png",
             "name": "VLC",
             "official": true,
             "page": "Software",
@@ -1270,7 +1223,6 @@
         "voidlinux": {
             "alternative": "http://mirrors.summithq.com/voidlinux/",
             "homepage": "https://www.voidlinux.org/",
-            "icon": "img/projects/void.png",
             "name": "VoidLinux",
             "official": false,
             "page": "Distributions",
@@ -1302,7 +1254,6 @@
         "wikimedia": {
             "alternative": "http://dumps.wikimedia.your.org/",
             "homepage": "https://dumps.wikimedia.org/",
-            "icon": "img/wikimedia.png",
             "name": "Wikimedia XML Dumps",
             "official": true,
             "page": "Miscellaneous",
@@ -1332,7 +1283,6 @@
         "zorinos": {
             "alternative": "http://mirror.umd.edu/zorin/",
             "homepage": "https://zorinos.com/",
-            "icon": "img/projects/zorin.svg",
             "name": "Zorin OS",
             "official": true,
             "page": "Distributions",
