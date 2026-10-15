@@ -176,7 +176,7 @@
                     "--no-group",
                     "--exclude='.~tmp~'"
                 ],
-                "password_file": "secrets/blender.secret",
+                "password_file": "config/secret/blender.secret",
                 "src": "blender",
                 "syncs_per_day": 6,
                 "user": "clarksonedu"
@@ -373,7 +373,7 @@
                 "arguments": [
                     "sync:all"
                 ],
-                "command": "./scripts/archvsync/bin/ftpsync",
+                "command": "./script/archvsync/bin/ftpsync",
                 "syncs_per_day": 4
             }
         },
@@ -549,7 +549,7 @@
                     "-c",
                     "./configs/quick-fedora-mirror.conf"
                 ],
-                "command": "./scripts/quick-fedora-mirror/quick-fedora-mirror",
+                "command": "./script/quick-fedora-mirror/quick-fedora-mirror",
                 "syncs_per_day": 4
             }
         },
@@ -620,7 +620,7 @@
                 "host":"master.gimp.org",
                 "src":"gimp/pub",
                 "dest":"/storage/gimp",
-                "password_file":"secrets/gimp.secret",
+                "password_file":"config/secret/gimp.secret",
                 "options": [
                     "-vrlpt",
                     "--delete-after"
@@ -698,7 +698,7 @@
             "publicRsync": true,
             "script": {
                 "arguments": [],
-                "command": "scripts/kicad/kicad_sync.py",
+                "command": "script/kicad/kicad_sync.py",
                 "syncs_per_day": 4
             }
         },

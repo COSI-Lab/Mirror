@@ -1,6 +1,6 @@
 #
-# docker-compose.yaml (PROD)
-# https://github.com/COSI-Lab/
+# compose.yml
+# https://git.cosi.clarkson.edu/mirror/mirror
 #
 
 name: mirror
@@ -18,15 +18,14 @@ services:
       - MANUAL_SYNC_PORT=${SYNC_MANUAL_SYNC_PORT}
     volumes:
       - "${MIRROR_STORAGE}:/storage"
-      - "./config/sync/configs:/mirror/configs:ro"
-      - "./script:/mirror/scripts:ro"
-      - "./config/sync/secrets:/mirror/secrets:ro"
+      - "./config:/mirror/config:ro"
+      - "./script:/mirror/script:ro"
       - /var/log/mirror:/mirror/error-logs
     networks:
       - mirror
   # --- Web Proxy ---
   proxy:
-    image: nginx:latest
+    build: ./modules/proxy
     container_name: proxy
     ports:
       - "0.0.0.0:443:443"
@@ -35,11 +34,7 @@ services:
       - "[::]:80:80"
     restart: unless-stopped
     volumes:
-      - "./config/nginx-prod.conf:/etc/nginx/templates/default.conf.template:ro"
       - "${MIRROR_STORAGE}:/storage:ro"
-      - "./module/web/mirror_website/static:/var/www/static:ro"
-      - "/var/www/.well-known/acme-challenge:/var/www/.well_known/acme-challenge:ro"
-      - "/etc/letsencrypt:/etc/letsencrypt:ro"
     environment:
       - DNS_BASENAME=${MIRROR_DNS_BASENAME}
     networks:
@@ -55,24 +50,10 @@ services:
     restart: unless-stopped
     volumes:
       - "./config/sync/configs/mirrors.json:/mirrors.json:ro"
-      - "/storage:/storage"
+      - "${MIRROR_STORAGE}:/storage"
     networks:
       - mirror
-  # --- Website ---
-  web:
-    build: ./module/web
-    container_name: web
-    expose:
-      - 8000
-    restart: unless-stopped
-    environment:
-      - DEBUG=false
-      - SECRET_KEY=${WEB_DJANGO_SECRET}
-    volumes:
-      - "./config/sync/configs:/configs:ro"
-    networks:
-      - mirror
-  # --- Map ---
+  # --- Map API ---
   map:
     build: ./module/map
     container_name: map
