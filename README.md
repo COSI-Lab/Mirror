@@ -3,7 +3,7 @@
 Software for Clarkson University's open source mirror.
 
 # Features
-- All mirrors are configured in `config/sync/configs/mirrors.json`
+- All mirrors are configured in `config/mirrors.json`
 - Sync scheduler to keep mirrors up to date
 - Website with a list of mirrors and general info
 - Live map of downloads

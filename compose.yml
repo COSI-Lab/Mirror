@@ -49,7 +49,7 @@ services:
       - "[::]:873:873"
     restart: unless-stopped
     volumes:
-      - "./config/sync/configs/mirrors.json:/mirrors.json:ro"
+      - "./config/mirrors.json:/mirrors.json:ro"
       - "${MIRROR_STORAGE}:/storage"
     networks:
       - mirror
@@ -63,7 +63,7 @@ services:
     environment:
       - LOGLEVEL=${MAP_LOG_LEVEL}
     volumes:
-      - "./config/sync/configs/mirrors.json:/map/mirrors.json:ro"
+      - "./config/mirrors.json:/map/mirrors.json:ro"
     networks:
       - mirror
       - loki

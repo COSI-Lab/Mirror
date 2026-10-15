@@ -43,7 +43,7 @@ SyncScheduler::SyncScheduler()
 try // Function try block my beloved
     : m_ProjectCatalogue(
           SyncScheduler::generate_project_catalogue(
-              SyncScheduler::load_json_config("configs/mirrors.json")
+              SyncScheduler::load_json_config("config/mirrors.json")
                   .value("mirrors", nlohmann::json())
           )
       ),
