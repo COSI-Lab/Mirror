@@ -3,13 +3,11 @@
     "mirrors": {
         "almalinux": {
             "alternative": "http://mirror.lshiy.com/almalinux/",
-            "color": "#7851a9",
             "homepage": "https://almalinux.org",
             "icon": "img/projects/almalinux.svg",
             "name": "AlmaLinux",
             "official": true,
             "page": "Distributions",
-            "publicRsync": true,
             "rsync": {
                 "dest": "/storage/almalinux",
                 "host": "rsync.repo.almalinux.org",
@@ -32,13 +30,11 @@
         },
         "alpine": {
             "alternative": "http://ewr.edge.kernel.org/alpine/",
-            "color": "#cd5700",
             "homepage": "https://www.alpinelinux.org/",
             "icon": "img/projects/alpinelinux.svg",
             "name": "Alpine Linux",
             "official": true,
             "page": "Distributions",
-            "publicRsync": true,
             "rsync": {
                 "dest": "/storage/alpine",
                 "host": "rsync.alpinelinux.org",
@@ -64,13 +60,11 @@
         },
         "archlinux": {
             "alternative": "http://mirrors.rit.edu/archlinux/",
-            "color": "#f0d4f0",
             "homepage": "http://www.archlinux.org/",
             "icon": "img/projects/arch.svg",
             "name": "Arch Linux",
             "official": true,
             "page": "Distributions",
-            "publicRsync": true,
             "rsync": {
                 "dest": "/storage/archlinux",
                 "host": "mirrors.kernel.org",
@@ -93,13 +87,11 @@
         },
         "archlinux32": {
             "alternative": "http://mirror.math.princeton.edu/pub/archlinux32/",
-            "color": "#d8bfd8",
             "homepage": "http://www.archlinux32.org/",
             "icon": "img/projects/arch32.png",
             "name": "Arch Linux 32",
             "official": true,
             "page": "Distributions",
-            "publicRsync": true,
             "rsync": {
                 "dest": "/storage/archlinux32",
                 "host": "mirror.archlinux32.org",
@@ -123,13 +115,11 @@
         },
         "artix-linux": {
             "alternative": "http://mirrors.dotsrc.org/artix-linux/",
-            "color": "#de6fa1",
             "homepage": "https://artixlinux.org/",
             "icon": "img/projects/artix.png",
             "name": "Artix Linux",
             "official": true,
             "page": "Distributions",
-            "publicRsync": true,
             "rsync": {
                 "dest": "/storage/artix-linux/repos",
                 "host": "mirror1.artixlinux.org",
@@ -153,13 +143,11 @@
         },
         "blender": {
             "alternative": "http://mirrors.ocf.berkeley.edu/blender/",
-            "color": "#eb7700",
             "homepage": "https://www.blender.org/",
             "icon": "img/projects/blender.png",
             "name": "Blender",
             "official": true,
             "page": "Software",
-            "publicRsync": true,
             "rsync": {
                 "dest": "/storage/blender",
                 "host": "rsync.download.blender.org",
@@ -184,13 +172,11 @@
         },
         "centos": {
             "alternative": "http://mirrors.rit.edu/centos/",
-            "color": "#0abab5",
             "homepage": "https://www.centos.org/",
             "icon": "img/projects/centos.svg",
             "name": "CentOS (≤8)",
             "official": true,
             "page": "Distributions",
-            "publicRsync": true,
             "rsync": {
                 "dest": "/storage/centos",
                 "host": "msync.centos.org",
@@ -217,13 +203,11 @@
         },
         "centos9": {
             "alternative": "http://mirror.siena.edu/centos-stream/",
-            "color": "#0abab5",
             "homepage": "https://centos.org/",
             "icon": "img/projects/centos.svg",
             "name": "CentOS Stream 9",
             "official": true,
             "page": "Distributions",
-            "publicRsync": true,
             "rsync": {
                 "dest": "/storage/centos9",
                 "host": "rsync.stream.centos.org",
@@ -243,13 +227,11 @@
         },
         "cpan": {
             "alternative": "http://mirrors.rit.edu/CPAN/",
-            "color": "#dbd7d2",
             "homepage": "http://www.cpan.org/",
             "icon": "img/projects/cpan.png",
             "name": "CPAN",
             "official": false,
             "page": "Software",
-            "publicRsync": true,
             "rsync": {
                 "dest": "/storage/cpan",
                 "host": "mirrors.rit.edu",
@@ -274,13 +256,11 @@
         },
         "cran": {
             "alternative": "http://mirror.las.iastate.edu/CRAN/",
-            "color": "#eee600",
             "homepage": "http://cran.r-project.org/",
             "icon": "img/projects/cran.svg",
             "name": "CRAN",
             "official": false,
             "page": "Software",
-            "publicRsync": true,
             "rsync": {
                 "dest": "/storage/cran",
                 "host": "cran.r-project.org",
@@ -301,12 +281,10 @@
         },
         "ctan": {
             "alternative": "http://mirrors.rit.edu/CTAN/",
-            "color": "#ff6347",
             "homepage": "http://www.ctan.org/",
             "name": "CTAN",
             "official": false,
             "page": "Software",
-            "publicRsync": true,
             "rsync": {
                 "dest": "/storage/ctan",
                 "host": "ctan.math.utah.edu",
@@ -331,13 +309,11 @@
         },
         "cygwin": {
             "alternative": "http://mirrors.rit.edu/cygwin/",
-            "color": "#746cc0",
             "homepage": "https://www.cygwin.com/",
             "icon": "img/projects/cygwin.png",
             "name": "Cygwin",
             "official": true,
             "page": "Software",
-            "publicRsync": true,
             "rsync": {
                 "dest": "/storage/cygwin",
                 "host": "cygwin.org",
@@ -362,13 +338,11 @@
         },
         "debian": {
             "alternative": "http://mirrors.rit.edu/debian/",
-            "color": "#ffc87c",
             "homepage": "https://www.debian.org",
             "icon": "img/projects/debian.png",
             "name": "Debian",
             "official": true,
             "page": "Distributions",
-            "publicRsync": true,
             "script": {
                 "arguments": [
                     "sync:all"
@@ -378,13 +352,11 @@
             }
         },
         "debian-archive": {
-            "color": "#ffc87c",
             "homepage": "",
             "icon": "img/projects/debian.png",
             "name": "Debian Archive",
             "official": false,
             "page": "Distributions",
-            "publicRsync": true,
             "rsync": {
                 "dest": "/storage/debian-archive",
                 "host": "rsync.archive.debian.org",
@@ -407,13 +379,11 @@
         },
         "debian-cd": {
             "alternative": "http://debian.osuosl.org/debian-cdimage/",
-            "color": "#ffc87c",
             "homepage": "https://www.debian.org/CD/",
             "icon": "img/projects/debian.png",
             "name": "Debian Images",
             "official": false,
             "page": "Distributions",
-            "publicRsync": true,
             "rsync": {
                 "dest": "/storage/debian-cd",
                 "host": "cdimage.debian.org",
@@ -439,13 +409,11 @@
         },
         "dragonflybsd": {
             "alternative": "http://mirrors.nycbug.org/pub/DragonflyBSD/",
-            "color": "#eeeeee",
             "homepage": "https://www.dragonflybsd.org/",
             "icon": "img/projects/dragonflybsd.png",
             "name": "DragonflyBSD Packages",
             "official": false,
             "page": "Distributions",
-            "publicRsync": true,
             "rsync": {
                 "dest": "/storage/dragonflybsd",
                 "host": "avalon.dragonflybsd.org",
@@ -466,13 +434,11 @@
         },
         "dragonflybsd-img": {
             "alternative": "http://mirrors.nycbug.org/pub/DragonflyBSD/",
-            "color": "#eeeeee",
             "homepage": "https://www.dragonflybsd.org/",
             "icon": "img/projects/dragonflybsd.png",
             "name": "DragonflyBSD Disc Images",
             "official": false,
             "page": "Distributions",
-            "publicRsync": true,
             "rsync": {
                 "dest": "/storage/dragonflybsd-img",
                 "host": "avalon.dragonflybsd.org",
@@ -493,13 +459,11 @@
         },
         "eclipse": {
             "alternative": "http://mirror.umd.edu/eclipse/",
-            "color": "#00755e",
             "homepage": "https://www.eclipse.org/",
             "icon": "img/projects/eclipse.svg",
             "name": "Eclipse",
             "official": true,
             "page": "Software",
-            "publicRsync": true,
             "rsync": {
                 "dest": "/storage/eclipse",
                 "host": "download.eclipse.org",
@@ -537,13 +501,11 @@
         },
         "fedora": {
             "alternative": "http://mirror.rit.edu/fedora/",
-            "color": "#0b57a4",
             "homepage": "https://www.fedoraproject.org/",
             "icon": "img/projects/fedora.png",
             "name": "Fedora",
             "official": false,
             "page": "Distributions",
-            "publicRsync": true,
             "script": {
                 "arguments": [
                     "-c",
@@ -555,13 +517,11 @@
         },
         "gentoo": {
             "alternative": "http://mirrors.rit.edu/gentoo/",
-            "color": "#30d5c8",
             "homepage": "https://www.gentoo.org/",
             "icon": "img/projects/gentoo.png",
             "name": "Gentoo",
             "official": true,
             "page": "Distributions",
-            "publicRsync": true,
             "rsync": {
                 "dest": "/storage/gentoo",
                 "host": "masterdistfiles.gentoo.org",
@@ -583,13 +543,11 @@
         },
         "gentoo-portage": {
             "alternative": "http://mirrors.rit.edu/gentoo-rsync/",
-            "color": "#30d5c8",
             "homepage": "https://www.gentoo.org/",
             "icon": "img/projects/gentoo.png",
             "name": "Gentoo Portage",
             "official": false,
             "page": "Distributions",
-            "publicRsync": true,
             "rsync": {
                 "dest": "/storage/gentoo-portage",
                 "host": "rsync.us.gentoo.org",
@@ -613,9 +571,7 @@
             "official": false,
             "page": "Software",
             "homepage": "https://gimp.org/",
-            "color": "#235add",
             "icon": "img/projects/gimp.png",
-            "publicRsync": true,
             "rsync": {
                 "host": "master.gimp.org",
                 "src": "gimp/pub",
@@ -631,13 +587,11 @@
         },
         "ipfire": {
             "alternative": "http://mirrors.rit.edu/ipfire/",
-            "color": "#7c4848",
             "homepage": "https://www.ipfire.org/",
             "icon": "img/projects/ipfire.png",
             "name": "IPFire",
             "official": true,
             "page": "Distributions",
-            "publicRsync": true,
             "rsync": {
                 "dest": "/storage/ipfire",
                 "host": "rsync.ipfire.org",
@@ -658,13 +612,11 @@
         },
         "isabelle": {
             "alternative": "http://mirror.cse.unsw.edu.au/pub/isabelle/",
-            "color": "#8a496b",
             "homepage": "https://isabelle.in.tum.de/",
             "icon": "img/projects/isabelle.gif",
             "name": "Isabelle",
             "official": true,
             "page": "Software",
-            "publicRsync": true,
             "rsync": {
                 "dest": "/storage/isabelle",
                 "host": "isabelle.in.tum.de",
@@ -689,13 +641,11 @@
         },
         "kicad": {
             "alternative": "http://kicad-downloads.s3.cern.ch/",
-            "color": "#ff7700",
             "homepage": "https://www.kicad.org",
             "icon": "img/projects/kicad.svg",
             "name": "KiCad",
             "official": true,
             "page": "Software",
-            "publicRsync": true,
             "script": {
                 "arguments": [],
                 "command": "script/kicad/kicad_sync.py",
@@ -704,13 +654,11 @@
         },
         "linux": {
             "alternative": "http://mirrors.edge.kernel.org/pub/",
-            "color": "#930056",
             "homepage": "http://kernel.org",
             "icon": "img/projects/linux.png",
             "name": "Linux (including source)",
             "official": true,
             "page": "Software",
-            "publicRsync": true,
             "rsync": {
                 "dest": "/storage/linux",
                 "host": "rsync.kernel.org",
@@ -735,13 +683,11 @@
         },
         "linux-lite": {
             "alternative": "http://repo.linuxliteos.com/linuxlite",
-            "color": "#03a9f4",
             "homepage": "https://www.linuxliteos.com/index.html",
             "icon": "img/projects/linux-lite.png",
             "name": "Linux Lite",
             "official": false,
             "page": "Distributions",
-            "publicRsync": true,
             "rsync": {
                 "dest": "/storage/linux-lite",
                 "host": "repo.linuxliteos.com",
@@ -767,13 +713,11 @@
         },
         "linuxmint-images": {
             "alternative": "http://mirrors.advancedhosters.com/linuxmint/isos/",
-            "color": "#62b858",
             "homepage": "https://linuxmint.com/",
             "icon": "img/projects/mint.svg",
             "name": "LinuxMint Images",
             "official": true,
             "page": "Distributions",
-            "publicRsync": true,
             "rsync": {
                 "dest": "/storage/linuxmint-images",
                 "host": "pub.linuxmint.com",
@@ -798,13 +742,11 @@
         },
         "linuxmint-packages": {
             "alternative": "http://mirror.csclub.uwaterloo.ca/linuxmint-packages/",
-            "color": "#62b858",
             "homepage": "https://linuxmint.com/",
             "icon": "img/projects/mint.svg",
             "name": "LinuxMint Packages",
             "official": true,
             "page": "Distributions",
-            "publicRsync": true,
             "rsync": {
                 "dest": "/storage/linuxmint-packages",
                 "host": "rsync-packages.linuxmint.com",
@@ -843,13 +785,11 @@
         },
         "manjaro": {
             "alternative": "http://mirror.math.princeton.edu/pub/manjaro/",
-            "color": "#d9004c",
             "homepage": "https://manjaro.org/",
             "icon": "img/projects/manjaro.svg",
             "name": "Manjaro",
             "official": false,
             "page": "Distributions",
-            "publicRsync": true,
             "rsync": {
                 "dest": "/storage/manjaro",
                 "host": "ftp.lysator.liu.se",
@@ -870,13 +810,11 @@
         },
         "msys2": {
             "alternative": "http://mirror.umd.edu/msys2/",
-            "color": "#8878c3",
             "homepage": "https://www.msys2.org/",
             "icon": "img/projects/msys2.png",
             "name": "msys2",
             "official": true,
             "page": "Software",
-            "publicRsync": true,
             "rsync": {
                 "dest": "/storage/msys2",
                 "host": "repo.msys2.org",
@@ -897,13 +835,11 @@
         },
         "opensuse": {
             "alternative": "http://mirrors.rit.edu/opensuse/",
-            "color": "#4bb679",
             "homepage": "https://www.opensuse.org/",
             "icon": "img/projects/opensuse.svg",
             "name": "OpenSUSE",
             "official": true,
             "page": "Distributions",
-            "publicRsync": true,
             "rsync": {
                 "dest": "/storage/opensuse",
                 "host": "rsync.opensuse.org",
@@ -925,13 +861,11 @@
         },
         "parrot": {
             "alternative": "http://mirrors.mit.edu/parrot/",
-            "color": "#ff6fff",
             "homepage": "https://www.parrotsec.org/",
             "icon": "img/projects/parrot.svg",
             "name": "Parrot Security OS",
             "official": true,
             "page": "Distributions",
-            "publicRsync": true,
             "rsync": {
                 "dest": "/storage/parrot",
                 "host": "rsync.parrot.sh",
@@ -950,13 +884,11 @@
             "torrents": "/storage/parrot/iso/*/"
         },
         "photonvision": {
-            "color": "#006492",
             "homepage": "https://photonvision.org/",
             "icon": "img/projects/photonvision.png",
             "name": "PhotonVision archives",
             "official": true,
             "page": "Software",
-            "publicRsync": true,
             "rsync": {
                 "dest": "/storage/photonvision",
                 "host": "maven.photonvision.org",
@@ -979,13 +911,11 @@
         },
         "raspbian": {
             "alternative": "http://mirrors.mit.edu/raspbian/",
-            "color": "#c51d4a",
             "homepage": "https://www.raspbian.org/",
             "icon": "img/projects/raspbian.png",
             "name": "Raspbian",
             "official": false,
             "page": "Distributions",
-            "publicRsync": true,
             "rsync": {
                 "dest": "/storage/raspbian",
                 "host": "archive.raspbian.org",
@@ -1010,13 +940,11 @@
         },
         "ravynos": {
             "alternative": "http://mirror2.sandyriver.net/pub/ravynos/",
-            "color": "#ff42b0",
             "homepage": "https://airyx.org/",
             "icon": "img/projects/ravyn.svg",
             "name": "ravynOS",
             "official": true,
             "page": "Distributions",
-            "publicRsync": false,
             "rsync": {
                 "dest": "/storage/ravynos",
                 "host": "mirrors.nomadlogic.org",
@@ -1036,13 +964,11 @@
         },
         "RebornOS": {
             "alternative": "http://repo.rebornos.org/RebornOS/",
-            "color": "#1e73be",
             "homepage": "https://rebornos.org/",
             "icon": "img/projects/reborn.svg",
             "name": "RebornOS",
             "official": true,
             "page": "Distributions",
-            "publicRsync": true,
             "rsync": {
                 "dest": "/storage/RebornOS",
                 "host": "rsync.rebornos.org",
@@ -1065,13 +991,11 @@
         },
         "RebornOS-ARM": {
             "alternative": "http://mirrors.dotsrc.org/osdn/storage/g/r/re/rebornos/armrepo/",
-            "color": "#1e73be",
             "homepage": "https://rebornos.org/",
             "icon": "img/projects/rebornarm.svg",
             "name": "RebornOS ARM",
             "official": true,
             "page": "Distributions",
-            "publicRsync": true,
             "static": {
                 "description": "RebornOS-ARM has been moved to a new project called BredOS. For support and newer versions please visit their website https://bredos.org/.",
                 "location": "/storage/RebornOS-Arm",
@@ -1080,13 +1004,11 @@
         },
         "slackware": {
             "alternative": "http://mirror.math.princeton.edu/pub/slackware/",
-            "color": "#b78727",
             "homepage": "https://www.slackware.com/",
             "icon": "img/projects/slackware.svg",
             "name": "Slackware",
             "official": false,
             "page": "Distributions",
-            "publicRsync": true,
             "rsync": {
                 "dest": "/storage/slackware",
                 "host": "mirror.cs.princeton.edu",
@@ -1111,13 +1033,11 @@
         },
         "slitaz": {
             "alternative": "http://mirror1.slitaz.org/",
-            "color": "#ffff60",
             "homepage": "http://www.slitaz.org/en/",
             "icon": "img/projects/slitaz.svg",
             "name": "SliTaz Linux",
             "official": true,
             "page": "Distributions",
-            "publicRsync": true,
             "rsync": {
                 "dest": "/storage/slitaz",
                 "host": "mirror1.slitaz.org",
@@ -1141,13 +1061,11 @@
             }
         },
         "tailsos": {
-            "color": "#56347c",
             "homepage": "https://tails.net",
             "icon": "img/projects/tailsos.svg",
             "name": "TailsOS",
             "official": false,
             "page": "Distributions",
-            "publicRsync": true,
             "rsync": {
                 "dest": "/storage/tailsos",
                 "host": "rsync.tails.net",
@@ -1172,13 +1090,11 @@
         },
         "tdf": {
             "alternative": "http://ftp.osuosl.org/pub/tdf/",
-            "color": "#00a500",
             "homepage": "http://www.documentfoundation.org/",
             "icon": "img/projects/libreoffice.png",
             "name": "LibreOffice",
             "official": true,
             "page": "Software",
-            "publicRsync": true,
             "rsync": {
                 "dest": "/storage/tdf",
                 "host": "rsync.documentfoundation.org",
@@ -1203,13 +1119,11 @@
         },
         "templeos": {
             "alternative": "http://templeos.org/",
-            "color": "#efcc00",
             "homepage": "https://templeos.org/",
             "icon": "img/projects/templeos.jpg",
             "name": "TempleOS",
             "official": false,
             "page": "Software",
-            "publicRsync": true,
             "static": {
                 "description": "This project is no longer receiving updates.",
                 "location": "/storage/templeos",
@@ -1217,10 +1131,8 @@
             }
         },
         "termux-pacman": {
-            "color": "#201ad8",
             "homepage": "https://termux-pacman.dev/",
             "name": "Termux-Pacman",
-            "publicRsync": true,
             "official": true,
             "page": "Software",
             "icon": "img/projects/termux-pacman.png",
@@ -1247,13 +1159,11 @@
             }
         },
         "torrents": {
-            "color": "#a500a5",
             "homepage": "https://mirror.clarkson.edu",
             "icon": "img/projects/transmission.png",
             "name": "Torrents",
             "official": false,
             "page": "Miscellaneous",
-            "publicRsync": false,
             "static": {
                 "description": "An index of all torrents currently seeded by the mirror.",
                 "location": "/storage/torrents",
@@ -1262,13 +1172,11 @@
         },
         "ubuntu": {
             "alternative": "http://mirrors.mit.edu/ubuntu/",
-            "color": "#ffd300",
             "homepage": "https://www.ubuntu.com/",
             "icon": "img/projects/ubuntu.png",
             "name": "Ubuntu",
             "official": true,
             "page": "Distributions",
-            "publicRsync": true,
             "rsync": {
                 "dest": "/storage/ubuntu",
                 "host": "mirrors.rit.edu",
@@ -1306,13 +1214,11 @@
         },
         "ubuntu-releases": {
             "alternative": "http://mirrors.mit.edu/ubuntu-releases/",
-            "color": "#ffd300",
             "homepage": "https://ubuntu.com/#download",
             "icon": "img/projects/ubuntu.png",
             "name": "Ubuntu Releases",
             "official": true,
             "page": "Distributions",
-            "publicRsync": true,
             "rsync": {
                 "dest": "/storage/ubuntu-releases",
                 "host": "releases.ubuntu.com",
@@ -1338,13 +1244,11 @@
         },
         "videolan": {
             "alternative": "http://ftp.osuosl.org/pub/videolan/",
-            "color": "#bb85fc",
             "homepage": "https://www.videolan.org/index.html",
             "icon": "img/projects/vlc.png",
             "name": "VLC",
             "official": true,
             "page": "Software",
-            "publicRsync": true,
             "rsync": {
                 "dest": "/storage/videolan",
                 "host": "rsync.videolan.org",
@@ -1365,13 +1269,11 @@
         },
         "voidlinux": {
             "alternative": "http://mirrors.summithq.com/voidlinux/",
-            "color": "#000000",
             "homepage": "https://www.voidlinux.org/",
             "icon": "img/projects/void.png",
             "name": "VoidLinux",
             "official": false,
             "page": "Distributions",
-            "publicRsync": true,
             "rsync": {
                 "dest": "/storage/voidlinux",
                 "host": "repo-sync.voidlinux.org",
@@ -1399,13 +1301,11 @@
         },
         "wikimedia": {
             "alternative": "http://dumps.wikimedia.your.org/",
-            "color": "#ffffff",
             "homepage": "https://dumps.wikimedia.org/",
             "icon": "img/wikimedia.png",
             "name": "Wikimedia XML Dumps",
             "official": true,
             "page": "Miscellaneous",
-            "publicRsync": false,
             "rsync": {
                 "dest": "/storage/wikimedia",
                 "host": "dumps-rsync.wikimedia.org",
@@ -1431,13 +1331,11 @@
         },
         "zorinos": {
             "alternative": "http://mirror.umd.edu/zorin/",
-            "color": "#fc6c85",
             "homepage": "https://zorinos.com/",
             "icon": "img/projects/zorin.svg",
             "name": "Zorin OS",
             "official": true,
             "page": "Distributions",
-            "publicRsync": true,
             "rsync": {
                 "dest": "/storage/zorinos/isos",
                 "host": "mirror.zorinos.com",
