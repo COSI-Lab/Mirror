@@ -491,7 +491,7 @@
             "script": {
                 "arguments": [
                     "-c",
-                    "./configs/quick-fedora-mirror.conf"
+                    "./config/quick-fedora-mirror.conf"
                 ],
                 "command": "./script/quick-fedora-mirror/quick-fedora-mirror",
                 "syncs_per_day": 4
