@@ -4,6 +4,12 @@
     <div class="card_container">
       <xsl:for-each select="list/directory">
         <article class="card">
+          <xsl:attribute name="id">
+            <xsl:text>
+              PROJECT_
+            </xsl:text>
+            <xsl:value-of select="./text()"/>
+          </xsl:attribute>
             <img class="mirror_icon">
               <xsl:attribute name="src">
                 <xsl:text>/static/img/projects/</xsl:text>
@@ -24,6 +30,10 @@
         </article>
       </xsl:for-each>
     </div>
+
+    <script>
+      document.getElementById("navbar_projects").classList.add("active");
+    </script>
     </main>
   </xsl:template>
 </xsl:stylesheet>
