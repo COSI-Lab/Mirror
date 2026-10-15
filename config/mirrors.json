@@ -613,20 +613,20 @@
             "official": false,
             "page": "Software",
             "homepage": "https://gimp.org/",
-            "color":"#235add",
-            "icon":"img/projects/gimp.png",
-            "publicRsync":true,
-            "rsync":{
-                "host":"master.gimp.org",
-                "src":"gimp/pub",
-                "dest":"/storage/gimp",
-                "password_file":"config/secret/gimp.secret",
+            "color": "#235add",
+            "icon": "img/projects/gimp.png",
+            "publicRsync": true,
+            "rsync": {
+                "host": "master.gimp.org",
+                "src": "gimp/pub",
+                "dest": "/storage/gimp",
+                "password_file": "config/secret/gimp.secret",
                 "options": [
                     "-vrlpt",
                     "--delete-after"
                 ],
                 "syncs_per_day": 2,
-                "user":"clarkson-edu"
+                "user": "clarkson-edu"
             }
         },
         "ipfire": {
@@ -1223,7 +1223,7 @@
             "publicRsync": true,
             "official": true,
             "page": "Software",
-            "icon":"img/projects/termux-pacman.png",
+            "icon": "img/projects/termux-pacman.png",
             "rsync": {
                 "dest": "/storage/termux-pacman",
                 "host": "sync.termux-pacman.dev",
