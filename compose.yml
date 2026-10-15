@@ -53,10 +53,10 @@ services:
       - "${MIRROR_STORAGE}:/storage"
     networks:
       - mirror
-  # --- Map API ---
-  map:
-    build: ./module/map
-    container_name: map
+  # --- Web API ---
+  web:
+    build: ./module/web
+    container_name: web
     expose:
       - 8080
     restart: unless-stopped
