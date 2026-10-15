@@ -88,46 +88,36 @@ services:
       - loki
   # --- Monitoring stack (Loki + Grafana + Alloy) ---
   alloy:
-    image: grafana/alloy:v1.7.5
+    build: ./modules/alloy
     container_name: alloy
     expose:
       - 4317
       - 4318
     volumes:
-      - ./config/config.alloy:/etc/alloy/config.alloy:ro
       - /var/run/docker.sock:/var/run/docker.sock
-    command: run --storage.path=/var/lib/alloy/data /etc/alloy/config.alloy
     depends_on:
       - loki
     networks:
       - loki
   loki:
-    image: grafana/loki:3.4.2
+    build: ./module/loki
     container_name: loki
     expose:
       - 3100
-    volumes:
-      - ./config/loki-config.yaml:/etc/loki/local-config.yaml:ro
-    command: -config.file=/etc/loki/local-config.yaml
     networks:
       - loki
   grafana:
-    image: grafana/grafana:12.4.2
+    build: ./modules/grafana
     container_name: grafana
-    # TODO: Enable auth
     environment:
       - GF_FEATURE_TOGGLES_ENABLE=grafanaManagedRecordingRules
-#      - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
-#      - GF_AUTH_ANONYMOUS_ENABLED=true
       - GF_AUTH_BASIC_ENABLED=false
       - GF_INSTALL_PLUGINS=grafana-lokiexplore-app 1.0.39
       - GF_SERVER_ROOT_URL=https://${MIRROR_DNS_BASENAME}/grafana/
     expose:
       - 3000
     volumes:
-      - ./config/ds.yaml:/etc/grafana/provisioning/datasources/ds.yaml:ro
       - grafana:/var/lib/grafana
-    entrypoint: /run.sh
     networks:
       - loki
 
