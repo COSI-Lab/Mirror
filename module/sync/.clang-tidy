@@ -1,3 +1,17 @@
-InheritParentConfig: true
 Checks:
-    - -clang-analyzer-optin.cplusplus.UninitializedObject # spdlog causing issues
+  - bugprone-*,
+  - clang-analyzer-*,
+  - concurrency-*,
+  - cppcoreguidelines-*,
+  - hicpp-*,
+  - llvm-*,
+  - -llvmlibc-*,
+  - misc-*,
+  - modernize-*,
+  - performance-*,
+  - portability-*,
+  - readability-*
+  - -clang-analyzer-optin.cplusplus.UninitializedObject # spdlog causing issues
+WarningsAsErrors: "*"
+FormatStyle: file
+HeaderFilterRegex: "./include/*"
