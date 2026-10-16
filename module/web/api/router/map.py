@@ -1,57 +1,20 @@
-import time
-import json
-import asyncio
-from contextlib import asynccontextmanager
-import aiohttp
-from broadcaster import Broadcast
-from fastapi import FastAPI, WebSocket, WebSocketDisconnect
-import geoip2.database
+from fastapi import APIRouter, WebSocketDisconnect, FastAPI, WebSocket
 from cachetools import TTLCache
+import geoip2.database
+from broadcaster import Broadcast
 import logging
-import os
-
-# string constants
-LOKI_HOSTNAME = "loki:3100"
-QUERY_ENDPOINT = "http://" + LOKI_HOSTNAME + "/loki/api/v1/query_range"
-PROXY_QUERY = r'{container="proxy"} | json | __error__=`` | line_format `{{.request}}` | regexp `^GET /(?P<project>[^ /]*)` | keep project, remote_addr'
-RSYNC_QUERY = r'{container="rsyncd"} |= `rsync on` | regexp `^.*? rsync on (?P<project>[^ /]*).*? from .* \((?P<remote_addr>.*?)\)` | keep project, remote_addr'
-MIRROR_FILE = "./mirrors.json"
+import aiohttp
+import asyncio
+import time
+from contextlib import asynccontextmanager
+from ..config import QUERY_ENDPOINT, RSYNC_QUERY, PROXY_QUERY, project_keys
 
 # globals
 ip_cache = TTLCache(maxsize=10000, ttl=5*60)
 ip_database = geoip2.database.Reader('./data/GeoLite2-City.mmdb')
 broadcast = Broadcast('memory://')
 
-# setup logger to mimic style of other components
-logging.basicConfig(
-    format='[%(asctime)s] [%(levelname)s] %(message)s', 
-    datefmt='%m/%d/%Y %I:%M:%S %p',
-    level=os.environ.get('LOGLEVEL', 'INFO').upper()
-)
-logging.debug("Logger Initialized")
-
-# get project names from mirrors.json
-try:
-    file = open(MIRROR_FILE, 'r')
-except OSError:
-    logging.critical("Unable to open mirrors.json. Exiting.")
-    exit(1)
-else:
-    try:
-        # flat list of project keys for map
-        project_keys = list(map(str.lower, json.load(file)['mirrors'].keys()))
-
-        # rich map of project objects for projects page
-        projects = json.load(file)['mirrors']
-        for project, fields in projects.items():
-            projects[project] = {key: fields[key] for key in ["alternative", "homepage", "name", "official", "page"]}
-
-    except KeyError:
-        logging.critical("Bad mirrors.json format. Exiting.")
-        exit(2)
-finally:
-    file.close()
-    logging.info("Loaded project list from mirrors.json")
+router = APIRouter(prefix="/map")
 
 def lookup_ip(ip_addr: str) -> tuple[int,int]:
     """
@@ -157,10 +120,8 @@ async def lifespan(app: FastAPI):
     yield
     data_task.cancel()
     await broadcast.disconnect()
-    
-app = FastAPI(lifespan=lifespan)
 
-@app.websocket("/ws")
+@router.websocket("/ws")
 async def websocket_endpoint(websocket: WebSocket):
     """
     WebSocket connection handler
@@ -174,12 +135,3 @@ async def websocket_endpoint(websocket: WebSocket):
                 await websocket.send_text(event.message)
     except WebSocketDisconnect:
         logging.debug(f"Map client {websocket.client.host} disconnected")
-
-@app.get("/projects")
-def get_projects_json():
-    return projects
-
-if __name__ == "__main__":
-    import uvicorn
-    logging.debug("About to start uvicorn")
-    uvicorn.run(app, host="0.0.0.0", port=8080, workers=1, lifespan="on",log_config=None)
